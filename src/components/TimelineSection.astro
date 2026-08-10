@@ -6,13 +6,16 @@ import type { IconName } from '../lib/icons';
 /**
  * TimelineSection.astro — the Timeline section body.
  *
- * A single chronological rail of notable moments. Built with CSS grid rather
- * than absolutely-positioned pixel offsets, so it reflows cleanly from 360px to
- * 2560px and survives browser zoom:
+ * A single chronological rail with the spine pinned to the left at every
+ * viewport and one column of cards beside it.
  *
- * - Mobile: one column with the rail pinned to the left.
- * - >=768px: two columns with entries alternating left/right around a centered
- *   rail.
+ * This replaced an alternating two-column layout, which broke down in the
+ * `max-w-3xl` page container for two reasons: each card only got ~21rem, which
+ * is too narrow for three lines of prose, and pairs of entries shared a grid row,
+ * so every row stretched to its taller card and left a ragged hole under the
+ * shorter one. Mirroring also forced right-aligned body copy on one side, which
+ * is hard to read at this length. One column fixes all three and reads the same
+ * from 360px to 2560px.
  *
  * Each entry is scroll-revealed once per load through the shared AnimationEngine
  * and renders in its final visible state by default, so nothing is hidden
@@ -38,11 +41,11 @@ const ICON_MAP: Record<string, IconName> = {
         <li class="tl-item" data-timeline-reveal>
           <span class="tl-dot" aria-hidden="true" />
           <article class="tl-card glass glass-hover">
+            <p class="tl-card-date">{entry.date}</p>
             <h3 class="tl-card-title">
               <Icon name={ICON_MAP[entry.icon] ?? 'sparkle'} size={16} class="text-primary" />
               <span>{entry.title}</span>
             </h3>
-            <p class="tl-card-date">{entry.date}</p>
             <p class="tl-card-body">{entry.description}</p>
             {entry.flair && <p class="tl-card-flair">{entry.flair}</p>}
           </article>
@@ -56,19 +59,20 @@ const ICON_MAP: Record<string, IconName> = {
   .tl-list {
     position: relative;
     display: grid;
-    gap: 1.25rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  /* The vertical rail. Left-pinned on mobile. */
+  /* The vertical spine. Inset top and bottom so it starts and ends at the first
+     and last dot rather than overshooting past the cards. */
   .tl-list::before {
     content: '';
     position: absolute;
-    top: 0.5rem;
-    bottom: 0.5rem;
-    left: 0.5rem;
+    top: 1.125rem;
+    bottom: 1rem;
+    left: 0.3125rem;
     width: 2px;
     border-radius: 2px;
     background: linear-gradient(
@@ -80,20 +84,21 @@ const ICON_MAP: Record<string, IconName> = {
 
   .tl-item {
     position: relative;
-    padding-left: 2rem;
+    padding-left: 1.75rem;
     min-width: 0;
   }
 
+  /* Sits on the spine, vertically centred on the date line of its card. */
   .tl-dot {
     position: absolute;
-    top: 1.1rem;
-    left: 0.5rem;
-    width: 0.75rem;
-    height: 0.75rem;
-    transform: translateX(-50%);
+    top: 0.8125rem;
+    left: 0.3125rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    transform: translateX(calc(-50% + 1px));
     border-radius: 9999px;
-    background: rgb(var(--background));
-    border: 2px solid rgb(var(--primary));
+    background: rgb(var(--primary));
+    box-shadow: 0 0 0 3px rgb(var(--background));
     z-index: 1;
   }
 
@@ -101,37 +106,48 @@ const ICON_MAP: Record<string, IconName> = {
      only geometry is set here. */
   .tl-card {
     border-radius: 0.75rem;
-    padding: 0.875rem 1rem;
+    padding: 0.75rem 1rem 0.875rem;
+  }
+
+  /* Date leads as an eyebrow above the title: it is the thing being scanned when
+     you read a timeline, and putting it first stops the tiny grey line from
+     looking like an orphan under the heading. */
+  .tl-card-date {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(var(--muted-foreground));
+    font-variant-numeric: tabular-nums;
   }
 
   .tl-card-title {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 0.5rem;
+    margin-top: 0.1875rem;
     font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.35;
     color: rgb(var(--card-foreground));
   }
 
-  .tl-card-date {
-    margin-top: 0.125rem;
-    font-size: 0.6875rem;
-    color: rgb(var(--muted-foreground));
-    font-variant-numeric: tabular-nums;
+  /* Keeps the glyph on the first line of a wrapping title instead of letting
+     `align-items: baseline` drag it down. */
+  .tl-card-title :global(svg) {
+    flex: none;
+    transform: translateY(0.125rem);
   }
 
   .tl-card-body {
-    margin-top: 0.5rem;
+    margin-top: 0.375rem;
     font-size: 0.8125rem;
     line-height: 1.6;
     color: rgb(var(--muted-foreground));
   }
 
-  /* The aside. Set apart from the body by a hairline rule rather than a box, so
-     it reads as a footnote to the entry and not a second paragraph. The rule
-     hangs on the inline-start edge, which flips with the alternating layout
-     below via `border-inline-start`. */
+  /* The aside. Set apart by a hairline rule rather than a box, so it reads as a
+     footnote to the entry and not a second paragraph. */
   .tl-card-flair {
     margin-top: 0.5rem;
     padding-left: 0.5rem;
@@ -144,55 +160,18 @@ const ICON_MAP: Record<string, IconName> = {
     color: rgb(var(--muted-foreground) / 0.9);
   }
 
-  /* Alternating two-column layout on wider viewports. */
-  @media (min-width: 768px) {
-    .tl-list {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 0;
-    }
-
-    .tl-list::before {
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
+  @media (min-width: 640px) {
     .tl-item {
-      padding-left: 0;
+      padding-left: 2.25rem;
     }
 
-    /* Odd entries sit in the left column, right-aligned toward the rail. */
-    .tl-item:nth-child(odd) {
-      grid-column: 1;
-      padding-right: 2rem;
-      text-align: right;
-    }
-    .tl-item:nth-child(odd) .tl-dot {
-      left: auto;
-      right: 0;
-      transform: translateX(50%);
-    }
-    /* Flip the title row so the glyph stays adjacent to the rail. */
-    .tl-item:nth-child(odd) .tl-card-title {
-      flex-direction: row-reverse;
-    }
-    /* Mirror the flair rule too, so it hangs on the text's ragged edge rather
-       than floating away from the right-aligned copy. */
-    .tl-item:nth-child(odd) .tl-card-flair {
-      padding-left: 0;
-      padding-right: 0.5rem;
-      border-left: 0;
-      border-right: 2px solid rgb(var(--accent) / 0.55);
+    .tl-card {
+      padding: 0.875rem 1.125rem 1rem;
     }
 
-    /* Even entries sit in the right column, left-aligned toward the rail. */
-    .tl-item:nth-child(even) {
-      grid-column: 2;
-      padding-left: 2rem;
-      text-align: left;
-    }
-    .tl-item:nth-child(even) .tl-dot {
-      left: 0;
-      transform: translateX(-50%);
+    /* Follows the card's extra top padding so the dot stays level with the date. */
+    .tl-dot {
+      top: 0.9375rem;
     }
   }
 </style>
