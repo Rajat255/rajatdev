@@ -424,6 +424,63 @@
       attributeFilter: ['class'],
     });
 
+    // --- Scroll-idle pause ---------------------------------------------------
+    //
+    // The page carries ~24 `backdrop-filter` surfaces covering close to two
+    // viewports of area, and each one re-blurs whenever the pixels behind it
+    // change. While the shader runs they all change every frame, so a scroll asks
+    // the GPU to re-blur that whole area AND advance a full-viewport raymarch in
+    // the same frame, on top of the compositing the scroll itself needs.
+    //
+    // Holding the aurora still for the duration of a scroll removes one of those
+    // two costs at exactly the moment it is contended, and it is close to
+    // imperceptible: a slow-drifting aurora is not something anyone studies while
+    // the page is moving. The frozen last frame stays on screen, so the glass
+    // still has a real backdrop to sample.
+    //
+    // Nothing here throttles: `pause()` and `resume()` are cheap and guarded, and
+    // the timeout is what coalesces the burst of scroll events.
+    const SCROLL_IDLE_MS = 160;
+    let scrollIdleTimer: number | null = null;
+    let pausedByScroll = false;
+
+    const resumeAfterScroll = () => {
+      pausedByScroll = false;
+      // Re-checked rather than trusting the state captured when the scroll began:
+      // the theme may have flipped to light mid-scroll, and resuming would fight
+      // the pause the theme observer just applied.
+      if (handle && !isLight()) handle.resume();
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        // In light mode the shader is already paused and must stay that way.
+        if (!handle || isLight()) return;
+
+        if (!pausedByScroll) {
+          pausedByScroll = true;
+          handle.pause();
+        }
+
+        if (scrollIdleTimer !== null) window.clearTimeout(scrollIdleTimer);
+        scrollIdleTimer = window.setTimeout(() => {
+          scrollIdleTimer = null;
+          // Only resume for a visitor who is actually here. Scrolling an
+          // unfocused window is ordinary on macOS, and resuming would undo the
+          // blur pause the render loop applies for exactly that case. The focus
+          // listener below is what restarts it, so this cannot strand the aurora
+          // in a frozen state.
+          if (document.hasFocus()) resumeAfterScroll();
+        }, SCROLL_IDLE_MS);
+      },
+      { passive: true },
+    );
+
+    window.addEventListener('focus', () => {
+      if (pausedByScroll) resumeAfterScroll();
+    });
+
     // If the visitor turns reduced motion on mid-session, tear the shader down.
     if (typeof window.matchMedia === 'function') {
       const mql = window.matchMedia('(prefers-reduced-motion: reduce)');

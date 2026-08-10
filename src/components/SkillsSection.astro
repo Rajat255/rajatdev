@@ -117,12 +117,13 @@ import { skillGroups } from '../content/skills';
       row-gap: 0;
     }
 
-    /* Right-aligned so the labels and the badges meet at a single clean gutter,
-       which is what reads as a table without drawing any rules. The padding is
-       optical, aligning the label's cap height with the first badge's text
-       rather than with the badge's outer edge. */
+    /* Left-aligned, so every category starts on the section's left edge and reads
+       as a single column down the page. A wrapped label like "INFRASTRUCTURE AS
+       CODE" keeps a straight left edge this way; right-alignment left those
+       ragged. The padding is optical, aligning the label's cap height with the
+       first badge's text rather than with the badge's outer edge. */
     .skill-row__label {
-      text-align: right;
+      text-align: left;
       padding-top: 0.4375rem;
     }
   }

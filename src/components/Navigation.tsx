@@ -455,10 +455,24 @@ export default function Navigation({ targets = defaultNavTargets }: NavigationPr
                 )}
                 <li className="group relative flex flex-col items-center">
                   {/* Tooltip with a caret, shown on hover and keyboard focus.
-                      Hidden below `md`, where there is no cursor to hover with. */}
+                      Hidden below `md`, where there is no cursor to hover with.
+
+                      Keyboard focus is matched with `:has(:focus-visible)` rather
+                      than `focus-within`. The group is this `<li>`, which is not
+                      focusable, so `group-focus-visible` can never match it — but
+                      plain `focus-within` matches a mouse click too, and a clicked
+                      dock link keeps focus, which left the label stuck open after
+                      the pointer moved away. `:focus-visible` is only set when the
+                      browser decides focus should be shown, i.e. keyboard
+                      navigation, which is exactly the case the label is for.
+
+                      Where `:has()` is unsupported the label simply stops
+                      appearing on focus. That is a safe degradation: this span is
+                      `aria-hidden` and the link carries the same text as its
+                      `aria-label`, so nothing is lost to assistive tech. */}
                   <span
                     aria-hidden="true"
-                    className="glass-panel pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 hidden -translate-x-1/2 scale-95 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium text-foreground opacity-0 transition-all duration-150 group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100 motion-reduce:transition-none md:block"
+                    className="glass-panel pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 hidden -translate-x-1/2 scale-95 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium text-foreground opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 group-[:has(:focus-visible)]:scale-100 group-[:has(:focus-visible)]:opacity-100 motion-reduce:transition-none md:block"
                   >
                     {item.label}
                     {/* Caret: a rotated square tucked under the bubble's edge.
