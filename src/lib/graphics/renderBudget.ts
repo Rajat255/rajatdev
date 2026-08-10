@@ -27,11 +27,18 @@ export interface QualitySettings {
  * The shader's per-step contribution decays as `exp2(-i * 0.065)`, so the last
  * steps add very little light. Dropping from 50 to 32 steps is a large GPU saving
  * for a barely perceptible change in the trails.
+ *
+ * The three knobs multiply, which is why they were all pulled down together: GPU
+ * cost per second is roughly `pixels x steps x fps`. Against the original high
+ * tier (0.7 / 48 / 30), the numbers below cost about a quarter as much — the
+ * resolution drop alone is halved pixel count — and the aurora is a soft,
+ * heavily-blurred field sitting behind frosted panels, so the upscale is far
+ * less visible than the frame time is.
  */
 export const QUALITY: Record<QualityTier, QualitySettings> = {
-  high: { resolutionScale: 0.7, maxPixels: 1_300_000, steps: 48, maxFps: 30 },
-  medium: { resolutionScale: 0.55, maxPixels: 800_000, steps: 36, maxFps: 30 },
-  low: { resolutionScale: 0.45, maxPixels: 480_000, steps: 26, maxFps: 24 },
+  high: { resolutionScale: 0.5, maxPixels: 900_000, steps: 32, maxFps: 24 },
+  medium: { resolutionScale: 0.42, maxPixels: 600_000, steps: 26, maxFps: 24 },
+  low: { resolutionScale: 0.35, maxPixels: 380_000, steps: 20, maxFps: 20 },
 };
 
 export interface DeviceProfile {

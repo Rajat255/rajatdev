@@ -17,13 +17,14 @@ export type About = z.infer<typeof AboutSchema>;
 
 export const about: About = AboutSchema.parse({
   paragraphs: [
-    // TODO: replace with your own bio.
-    "I'm a Cloud and DevOps engineer based in Pune. I like taking messy, manual infrastructure and turning it into something reproducible, observable, and boring in the best possible way.",
-    'Most of my time goes into containers, CI/CD pipelines, and the AWS ecosystem. Outside of that you will find me on a bicycle, behind a camera, or reading about whatever rabbit hole I fell into that week.',
+    "I'm a Cloud and DevOps engineer in Pune, three years into scaling production workloads on AWS and Azure. I like taking messy, manual infrastructure and turning it into something reproducible, observable, and boring in the best possible way.",
+    'Lately that has meant being the only DevOps engineer behind 50+ services, cutting an AWS bill nearly in half without anyone noticing a difference, and getting incident response down to minutes rather than afternoons. Day to day I live in Kubernetes, Terraform, CI/CD, and whatever dashboard is telling me something is wrong.',
+    'Away from the terminal you will find me on a bicycle, behind a camera, or halfway down whichever rabbit hole I fell into that week.',
   ],
   currently: [
-    'Deepening Kubernetes and platform engineering skills',
+    'Running EKS, Karpenter, and KEDA in production at amber',
+    'Building AI agents that triage CI/CD failures on their own',
     'Writing about cloud and DevOps on my blog',
-    'Open to Cloud / DevOps engineering roles',
+    'Learning French, currently hovering around B1',
   ],
 });

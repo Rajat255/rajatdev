@@ -5,6 +5,11 @@ import { z } from 'zod';
  *
  * EDIT THIS FILE to add projects. Cards render in the order given. Set
  * `featured: true` to pin a project to the top of the grid.
+ *
+ * The featured three are the production programmes from `resume/main.tex`, with
+ * one earlier personal build after them. Work projects carry no links because
+ * the repositories are private, and `image` is omitted so the card falls back to
+ * its neutral placeholder rather than showing a stock diagram.
  */
 
 /** The kind of external link attached to a project. */
@@ -44,6 +49,30 @@ export type Projects = z.infer<typeof Projects>;
 
 export const projects: Projects = Projects.parse([
   {
+    title: 'ECS to EKS Migration',
+    description:
+      'Moved 50+ containerized and non-containerized services from ECS and EC2 onto EKS, with Karpenter provisioning On-Demand and Spot pools just in time and KEDA scaling on SQS queue depth. Cut over blue-green behind an ALB ingress with zero customer-facing downtime.',
+    dates: '2026',
+    tags: ['EKS', 'Kubernetes', 'Karpenter', 'KEDA', 'Terraform', 'Helm'],
+    featured: true,
+  },
+  {
+    title: 'AWS Cost Optimization Program',
+    description:
+      'A 2.5 month programme that took monthly AWS spend from $35–38K to $19–21K, about $200K a year. Re-architected the data tier onto Graviton, moved Redshift to RA3, shifted Fargate to Spot-backed EC2, consolidated 14 load balancers to 4, and layered Savings Plans once capacity was predictable.',
+    dates: '2025',
+    tags: ['FinOps', 'Aurora', 'Redshift', 'Graviton', 'Spot', 'Savings Plans'],
+    featured: true,
+  },
+  {
+    title: 'Agentic CI/CD Failure Triage',
+    description:
+      'A Kubernetes-native agent watching Jenkins and Argo Workflows across 30+ pipelines, using an LLM layer to classify failures by root cause. It posts Slack summaries with fixes, opens targeted pull requests, and retries transient failures over MCP, resolving 40% without a human.',
+    dates: '2026',
+    tags: ['Python', 'LLM Agents', 'MCP', 'Jenkins', 'Argo Workflows', 'Helm'],
+    featured: true,
+  },
+  {
     title: 'GeekFixx',
     description:
       'A wellness application that looks after you while you use your computer. It uses machine learning to correct your posture and nudges you to look away from the screen, drink water, and take breaks.',
@@ -51,28 +80,7 @@ export const projects: Projects = Projects.parse([
     tags: ['React', 'Machine Learning', 'Python'],
     links: [{ type: 'github', href: 'https://github.com/Rajat255/GeekFixx-ReactApp' }],
     image: '/images/projects/geekfixx.png',
-    featured: true,
   },
-  {
-    title: 'Dockerize',
-    description:
-      'Containerized my personal website with Docker and hosted it on Google Kubernetes Engine across multiple nodes, making it fully cloud dependent and automatically load balanced.',
-    dates: '2023',
-    tags: ['Docker', 'Kubernetes', 'GCP', 'GKE'],
-    links: [{ type: 'github', href: 'https://github.com/Rajat255/DockerFiles' }],
-    image: '/images/projects/docker.png',
-    featured: true,
-  },
-  {
-    title: 'Tyr',
-    description:
-      'A smart water monitoring system that uses IoT sensors to collect water usage and quality data, with the ability to remotely shut off any water outlet from a computer.',
-    dates: '2022',
-    tags: ['IoT', 'Embedded', 'Python'],
-    links: [{ type: 'github', href: 'https://github.com/Rajat255?tab=repositories' }],
-    image: '/images/projects/water.png',
-  },
-  // TODO: add the rest of your projects here.
 ]);
 
 /** Featured projects first, then the rest, preserving authored order within each. */

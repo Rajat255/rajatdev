@@ -85,14 +85,17 @@ export function createAuroraBackground(
   // --- Context -------------------------------------------------------------
 
   // `antialias` is off because there is no geometry to alias, and `depth`/
-  // `stencil` are off because nothing is ever depth-tested. `powerPreference`
-  // stays default so laptops are not forced onto a discrete GPU for decoration.
+  // `stencil` are off because nothing is ever depth-tested. `powerPreference` is
+  // an explicit `low-power` request: this is decoration, so on a dual-GPU laptop
+  // it should stay on the integrated chip rather than spinning up the discrete
+  // one (and the fans with it). It is a hint, not a guarantee.
   const contextAttributes: WebGLContextAttributes = {
     alpha: false,
     antialias: false,
     depth: false,
     stencil: false,
     preserveDrawingBuffer: false,
+    powerPreference: 'low-power',
   };
 
   const gl = canvas.getContext('webgl2', contextAttributes);
@@ -294,8 +297,19 @@ export function createAuroraBackground(
 
   const handleVisibility = () => {
     // A hidden tab still receives rAF on some platforms; stop explicitly.
+    // `paused` is checked so a caller-requested pause is not undone by the tab
+    // coming back into view.
     if (document.hidden) stop();
-    else start();
+    else if (!paused) start();
+  };
+
+  // `visibilitychange` only fires when the tab is actually hidden, so a window
+  // that is merely behind another one keeps rendering at full cost. Blur covers
+  // the far more common case of the browser sitting in the background while the
+  // user works in an editor or terminal.
+  const handleBlur = () => stop();
+  const handleFocus = () => {
+    if (!paused && !destroyed && !document.hidden) start();
   };
 
   const handleContextLost = (event: Event) => {
@@ -330,6 +344,8 @@ export function createAuroraBackground(
 
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibility);
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       resizeObserver?.disconnect();
@@ -344,6 +360,8 @@ export function createAuroraBackground(
   };
 
   window.addEventListener('pointermove', handlePointerMove, { passive: true });
+  window.addEventListener('blur', handleBlur);
+  window.addEventListener('focus', handleFocus);
   document.addEventListener('visibilitychange', handleVisibility);
   canvas.addEventListener('webglcontextlost', handleContextLost);
   if (resizeObserver) resizeObserver.observe(canvas);

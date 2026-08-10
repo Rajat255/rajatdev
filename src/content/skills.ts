@@ -6,6 +6,10 @@ import { z } from 'zod';
  * Grouping (rather than one flat list) keeps a long skill inventory scannable.
  * EDIT THIS FILE to change categories or add skills. Labels must be unique
  * across the whole file so the badge cloud never shows a duplicate.
+ *
+ * Mirrors the skills block in `resume/main.tex`, with the resume's overlaps
+ * resolved: each tool is listed under one category only (Helm under containers,
+ * EKS under containers, and so on).
  */
 
 export const SkillGroup = z.object({
@@ -28,30 +32,58 @@ export const SkillGroups = z
 export type SkillGroups = z.infer<typeof SkillGroups>;
 
 export const skillGroups: SkillGroups = SkillGroups.parse([
-  // TODO: prune / extend these to match your real stack.
   {
     category: 'Cloud',
     items: ['AWS', 'Microsoft Azure', 'Google Cloud Platform'],
   },
   {
     category: 'Containers & Orchestration',
-    items: ['Docker', 'Kubernetes', 'Google Kubernetes Engine', 'Helm'],
+    items: ['Docker', 'Kubernetes', 'Amazon EKS', 'ECS', 'Karpenter', 'KEDA', 'Helm'],
   },
   {
-    category: 'CI/CD & IaC',
-    items: ['GitHub Actions', 'Jenkins', 'Terraform', 'Ansible'],
+    category: 'Infrastructure as Code',
+    items: ['Terraform', 'AWS CloudFormation'],
   },
   {
-    category: 'Languages',
-    items: ['Python', 'Bash', 'JavaScript', 'TypeScript', 'SQL'],
+    category: 'CI/CD & GitOps',
+    items: [
+      'ArgoCD',
+      'Argo Workflows',
+      'Jenkins',
+      'GitHub Actions',
+      'AWS CodePipeline',
+      'Git',
+    ],
+  },
+  {
+    category: 'Compute & Serverless',
+    items: ['EC2', 'AWS Lambda', 'Step Functions', 'API Gateway', 'Graviton', 'Spot'],
+  },
+  {
+    category: 'Data & Storage',
+    items: ['Aurora', 'RDS', 'Redshift', 'Valkey', 'S3', 'EFS', 'SQS', 'Athena'],
+  },
+  {
+    category: 'Networking',
+    items: ['Route 53', 'CloudFront', 'Application Load Balancers', 'VPC', 'ACM / TLS'],
   },
   {
     category: 'Observability',
-    items: ['Prometheus', 'Grafana', 'AWS CloudWatch'],
+    items: ['Prometheus', 'Grafana', 'New Relic', 'AWS CloudWatch'],
   },
   {
-    category: 'Tools & Platforms',
-    items: ['Linux', 'Git', 'Nginx', 'React', 'Node.js'],
+    category: 'Languages',
+    items: ['Python', 'Bash', 'JavaScript', 'SQL', 'Linux'],
+  },
+  {
+    category: 'Practices',
+    items: [
+      'Site Reliability Engineering',
+      'Incident Management',
+      'Root Cause Analysis',
+      'FinOps & Cost Optimization',
+      'Capacity Planning',
+    ],
   },
 ]);
 

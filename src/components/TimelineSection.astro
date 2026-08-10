@@ -26,6 +26,7 @@ const ICON_MAP: Record<string, IconName> = {
   graduation: 'graduation',
   rocket: 'rocket',
   code: 'code',
+  pin: 'pin',
   sparkle: 'sparkle',
 };
 ---
@@ -43,6 +44,7 @@ const ICON_MAP: Record<string, IconName> = {
             </h3>
             <p class="tl-card-date">{entry.date}</p>
             <p class="tl-card-body">{entry.description}</p>
+            {entry.flair && <p class="tl-card-flair">{entry.flair}</p>}
           </article>
         </li>
       ))
@@ -126,6 +128,22 @@ const ICON_MAP: Record<string, IconName> = {
     color: rgb(var(--muted-foreground));
   }
 
+  /* The aside. Set apart from the body by a hairline rule rather than a box, so
+     it reads as a footnote to the entry and not a second paragraph. The rule
+     hangs on the inline-start edge, which flips with the alternating layout
+     below via `border-inline-start`. */
+  .tl-card-flair {
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid rgb(var(--accent) / 0.55);
+    font-size: 0.75rem;
+    font-style: italic;
+    line-height: 1.5;
+    /* Muted rather than accent-coloured: the rule already carries the accent, and
+       12px italic in orange would sit near the AA floor on the light theme. */
+    color: rgb(var(--muted-foreground) / 0.9);
+  }
+
   /* Alternating two-column layout on wider viewports. */
   @media (min-width: 768px) {
     .tl-list {
@@ -156,6 +174,14 @@ const ICON_MAP: Record<string, IconName> = {
     /* Flip the title row so the glyph stays adjacent to the rail. */
     .tl-item:nth-child(odd) .tl-card-title {
       flex-direction: row-reverse;
+    }
+    /* Mirror the flair rule too, so it hangs on the text's ragged edge rather
+       than floating away from the right-aligned copy. */
+    .tl-item:nth-child(odd) .tl-card-flair {
+      padding-left: 0;
+      padding-right: 0.5rem;
+      border-left: 0;
+      border-right: 2px solid rgb(var(--accent) / 0.55);
     }
 
     /* Even entries sit in the right column, left-aligned toward the rail. */

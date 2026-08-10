@@ -54,11 +54,7 @@
 \pdfgentounicode=1
 
 % -------------------- CUSTOM COMMANDS --------------------
-\newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
-}
+\newcommand{\resumeItem}[1]{\item\small{#1}}
 
 \newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
@@ -85,7 +81,7 @@
 \newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=2.5pt, parsep=0pt, topsep=3pt, partopsep=0pt]}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
 % Cleaner inline separator for contact line (replaces empty math-mode "$ $")
@@ -103,30 +99,30 @@
     \textbf{\Huge \scshape Rajat Khirid} \\ \vspace{8pt}
     \small
     \faIcon{phone}\ \underline{9145672952}\contactsep
-    \faIcon{envelope}\ \href{mailto:rajatkhirid@gmail.com}{\underline{rajatkhirid@gmail.com}}\contactsep
+    \faIcon{globe}\ \href{https://rajatdev.fun/}{\underline{rajatdev.fun}}\contactsep
     \faIcon{linkedin}\ \href{https://linkedin.com/in/rajatkhirid}{\underline{linkedin.com/in/rajatkhirid}}\contactsep
-    \faIcon{globe}\ \href{https://rajat255.github.io/PortFolio/}{\underline{My Personal Website}}
+    \faIcon{envelope}\ \href{mailto:rajatkhirid@gmail.com}{\underline{rajatkhirid@gmail.com}}
 \end{center}
 
 % -------------------- SUMMARY --------------------
 \section{Summary}
 \begin{itemize}[leftmargin=0.15in, label={}]
   \small\item
-  AWS Certified Solutions Architect -- Professional and DevOps/Cloud Engineer with 3+ years of experience designing, automating, and scaling production workloads on AWS and Azure. Proven impact: \$54K/year in cloud cost savings, 70\% faster environment provisioning, 80\% reduction in infrastructure deployment time via Terraform IaC, and 35\% lower incident MTTR through SRE-driven observability. Hands-on across CI/CD (Jenkins, GitHub Actions, AWS CodePipeline), containers (Docker, Kubernetes, EKS), serverless (Lambda, API Gateway, Step Functions), and observability stacks (Grafana, Prometheus, DataDog, CloudWatch).
+  AWS Certified Solutions Architect -- Professional and DevOps/Cloud Engineer with 3+ years scaling production workloads on AWS and Azure. Delivered \$200K/year in cloud cost savings, faster infrastructure delivery via Terraform and ArgoCD, and sub-5-minute incident resolution through SRE-driven observability. Day-to-day work spans CI/CD, Kubernetes (EKS, Karpenter, KEDA), serverless, and observability tooling.
 \end{itemize}
 
 % -------------------- SKILLS --------------------
 \section{Skills}
 \begin{itemize}[leftmargin=0.15in, label={}]
     \small\item
-    \textbf{Cloud Platforms}: AWS (EC2, ECS, Lambda, CloudFront, RDS, S3, IAM, VPC, API Gateway, Step Functions, CloudWatch, CodePipeline, EMR), Microsoft Azure, GCP \\
+    \textbf{Cloud Platforms}: AWS (EC2, ECS, EKS, Lambda, Aurora/RDS, Redshift, ElastiCache/Valkey, S3, EFS, SQS, Athena, API Gateway, Step Functions, IAM, Graviton, Spot, Savings Plans), Microsoft Azure, GCP \\
     \textbf{Infrastructure as Code}: Terraform, AWS CloudFormation, Helm, EC2 User Data \\
-    \textbf{CI/CD \& Automation}: Jenkins, GitHub Actions, AWS CodePipeline, Git, GitHub \\
-    \textbf{Containers \& Orchestration}: Docker, Kubernetes, Amazon EKS, ECS, KubeEdge, Minikube \\
+    \textbf{CI/CD \& GitOps}: ArgoCD, Argo Workflows, Jenkins, GitHub Actions (self-hosted runners), AWS CodePipeline, Git, GitHub \\
+    \textbf{Containers \& Orchestration}: Docker, Kubernetes, Amazon EKS, ECS, Karpenter, KEDA, HPA, Helm \\
+    \textbf{Networking \& DNS}: Route 53, ACM/TLS certificate automation, Application Load Balancers, VPC, CloudFront \\
     \textbf{Monitoring \& Observability}: Grafana, Prometheus, New Relic, AWS CloudWatch \\
-    \textbf{Programming \& Scripting}: Python, Bash, PowerShell, JavaScript, SQL, Java, HTML/CSS \\
-    \textbf{Operating Systems}: Linux (Ubuntu, Amazon Linux), Unix Shell \\
-    \textbf{Practices}: Site Reliability Engineering (SRE), Incident Management, Root Cause Analysis (RCA), High Availability, Auto-Scaling, Cost Optimization, Agile/Scrum, Prompt Engineering \\
+    \textbf{Programming \& Scripting}: Python, Bash, JavaScript, SQL, Linux (Ubuntu, Amazon Linux) \\
+    \textbf{Practices}: Site Reliability Engineering (SRE), Incident Management, Root Cause Analysis (RCA), High Availability, Auto-Scaling, FinOps \& Cost Optimization, Capacity Planning, Mentoring, Agile/Scrum \\
     \textbf{Spoken Languages}: English, French (B1), Hindi, Marathi
 \end{itemize}
 
@@ -135,25 +131,27 @@
   \resumeSubHeadingListStart
 
     \resumeProjectHeading
-      {\textbf{Amber} $|$ \emph{DevOps Engineer}\vspace{8pt}}{[Mon YYYY] -- Present}
+      {\textbf{Amber} $|$ \emph{DevOps Engineer SDE1}\vspace{8pt}}{[Dec 2024] -- Present}
       \resumeItemListStart
-        \resumeItem{Own and operate production AWS infrastructure supporting [N] services and [N]+ monthly active users, driving reliability, scalability, and cost efficiency across [N] environments.}
-        \resumeItem{Manage Kubernetes (EKS) workloads with Helm-based deployments, Horizontal Pod Autoscaling, and resource tuning, improving cluster utilization by [X]\% and reducing compute spend by \$[N]/month.}
-        \resumeItem{Built and maintain CI/CD pipelines in GitHub Actions covering build, test, and deploy stages, increasing deployment frequency to [N] releases/week and cutting lead time to production by [X]\%.}
-        \resumeItem{Codified infrastructure with Terraform across [N] AWS accounts, introducing reusable modules and remote state management to eliminate manual provisioning and reduce drift by [X]\%.}
-        \resumeItem{Strengthened observability with Grafana, Prometheus, and CloudWatch dashboards, SLO-based alerting, and on-call runbooks, lowering MTTR by [X]\% and sustaining [X]\% uptime.}
-        \resumeItem{Led incident response and blameless post-mortems for [N]+ production incidents, implementing preventative automation that reduced recurring alerts by [X]\%.}
+        \resumeItem{Sole DevOps engineer for 8+ months, owning all production AWS infrastructure and internal tooling for 50+ services serving 50,000+ monthly active users across global environments, with end-to-end accountability for reliability, scalability, and cost.}
+        \resumeItem{Manage EKS workloads with Helm and ArgoCD deployments, autoscaling, and resource tuning, improving cluster utilization by 24\%.}
+        \resumeItem{Owned a company-wide cost optimization initiative cutting monthly AWS spend by 45\% (\$35--38K to \$19--21K, roughly \$200K/year) via Graviton and Spot adoption, Aurora and Redshift re-architecture, Savings Plans, and load balancer consolidation, with no impact on availability.}
+        \resumeItem{Built CI/CD pipelines in Argo Workflows, Jenkins, and GitHub Actions, raising deployment frequency from a few releases a week to several a day.}
+        \resumeItem{Codified infrastructure with Terraform across 4 AWS accounts using reusable modules and remote state, replacing manual provisioning and eliminating configuration drift.}
+        \resumeItem{Manage production DNS and TLS via Route 53 and ACM, converting CNAME to A/ALIAS records to cut resolution latency, and automated SSL renewal pipelines for client-facing sites to eliminate expiry-driven outages.}
+        \resumeItem{Strengthened observability with Grafana, Prometheus, and CloudWatch dashboards, SLO-based alerting, and on-call runbooks, holding production to 3--4 incidents with each detected and resolved within 5 minutes, followed by blameless post-mortems and preventative automation.}
+        \resumeItem{Mentored engineers on Kubernetes, cloud, and CI/CD practices, and embedded with product teams to fast-track delivery of major projects.}
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{IAMOPS} $|$ \emph{DevOps Engineer}\vspace{8pt}}{Sep 2023 -- [Mon YYYY]}
+      {\textbf{IAMOPS} $|$ \emph{DevOps Engineer}\vspace{8pt}}{Oct 2023 -- [Dec 2024]}
       \resumeItemListStart
-        \resumeItem{Architected and executed end-to-end Azure-to-AWS migration POCs leveraging CloudFront, ECS, and RDS aligned with AWS Well-Architected best practices, delivering \$54K/year in cloud cost reduction across [N] workloads.}
-        \resumeItem{Owned weekly client engagements across [N] accounts, presenting migration roadmaps and solution designs that improved stakeholder alignment and lifted CSAT by [X]\%.}
-        \resumeItem{Designed and deployed multi-environment CI/CD pipelines using Jenkins, AWS CodePipeline, and EC2 User Data bootstrap scripts, cutting new environment setup time by 70\% (from [X] hours to [Y] hours).}
-        \resumeItem{Automated event-driven cloud workflows with AWS Lambda, API Gateway, and Step Functions, reducing recurring AWS spend by 25\% and eliminating [N]+ hours/week of manual ops toil.}
-        \resumeItem{Led SRE responsibilities including on-call rotations, end-to-end RCA, and runbook authoring; instrumented services with AWS CloudWatch, Grafana, and New Relic dashboards/alerts to drive a 35\% reduction in MTTR.}
-        \resumeItem{Authored modular Terraform IaC for [N]+ AWS resources with reusable modules and a remote state strategy, plus architecture diagrams and runbooks, reducing infrastructure provisioning time by over 80\%.}
+        \resumeItem{Architected Azure-to-AWS migrations using CloudFront, ECS, and RDS aligned with AWS Well-Architected practices, delivering \$54K/year in cost reduction across multiple client workloads.}
+        \resumeItem{Owned weekly engagements across 4 client accounts, presenting migration roadmaps and solution designs that improved stakeholder alignment and lifted CSAT.}
+        \resumeItem{Deployed parallelized multi-environment CI/CD pipelines with Jenkins, AWS CodePipeline, and EC2 User Data, cutting environment setup time 75\% (2.5 hours to 40 minutes).}
+        \resumeItem{Automated event-driven workflows with Lambda, API Gateway, and Step Functions, reducing recurring AWS spend 25\% and eliminating 10+ hours/week of manual toil.}
+        \resumeItem{Led SRE duties across on-call rotations, end-to-end RCA, and runbook authoring; instrumented client services with CloudWatch, Grafana, and New Relic to shorten detection and resolution of production issues.}
+        \resumeItem{Authored modular Terraform IaC with workspaces and remote state, plus architecture diagrams, cutting provisioning time by over 80\%.}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -163,19 +161,30 @@
   \resumeSubHeadingListStart
 
     \resumeProjectHeading
-      {\textbf{ECS to EKS Migration} $|$ \footnotesize\emph{AWS EKS, ECS, Kubernetes, Terraform, Helm, Docker, CI/CD}}{[Year]}
+      {\textbf{ECS to EKS Migration} $|$ \footnotesize\emph{AWS EKS, ECS, Kubernetes, Terraform, Helm, Docker, CI/CD}}{2026}
       \resumeItemListStart
-        \resumeItem{Migrated 50 plus containerized and non-containerized services hosted AWS ECS and AWS EC2 instances to EKS, authoring Terraform modules for cluster provisioning, managed node groups, IRSA, and VPC CNI networking.}
-        \resumeItem{Packaged workloads as Helm charts with Horizontal Pod Autoscaling and resource requests/limits, improving compute utilization by [X]\% and cutting container spend by [Y]\%.}
-        \resumeItem{Executed a zero-downtime cutover using blue-green traffic shifting behind an ALB Ingress Controller, maintaining [X]\% uptime across the migration window.}
+        \resumeItem{Migrated 50+ containerized and non-containerized services from AWS ECS and EC2 to EKS, standing up cluster provisioning, managed node groups, IRSA-based pod identity, and VPC CNI networking.}
+        \resumeItem{Implemented Karpenter for just-in-time provisioning of On-Demand and Spot node pools with SQS-driven Spot interruption handling, and KEDA for event-driven autoscaling on SQS queue depth where CPU/memory-based HPA was insufficient.}
+        \resumeItem{Executed a zero-downtime cutover using blue-green traffic shifting behind an ALB Ingress Controller, with no customer-facing downtime across the migration window.}
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{AWS Cost Optimization} $|$ \footnotesize\emph{AWS Cost Explorer, CloudWatch, Lambda, Compute Optimizer, Terraform}}{[Year]}
+      {\textbf{AWS Cost Optimization Program} $|$ \footnotesize\emph{Aurora, Redshift, Valkey, AWS Graviton, Spot, Savings Plans, ALB, SQS, EFS, Athena, Cost Explorer}}{2025}
       \resumeItemListStart
-        \resumeItem{Audited AWS spend across [N] accounts using Cost Explorer and Compute Optimizer, identifying rightsizing, idle-resource, and storage-tiering opportunities that cut monthly costs by \$[N] ([X]\%).}
-        \resumeItem{Automated shutdown of non-production EC2 and RDS resources via scheduled Lambda functions and tagging policies, eliminating [X]\% of off-hours compute waste.}
-        \resumeItem{Implemented Savings Plans and Reserved Instance coverage plus S3 lifecycle policies, improving commitment utilization to [X]\% and reducing storage spend by [Y]\%.}
+        \resumeItem{Drove an AWS cost reduction program over 2.5 months, cutting monthly spend from \$35--38K to \$19--21K (45\%, roughly \$200K/year annualized) across compute, database, storage, networking, and messaging.}
+        \resumeItem{Re-architected the data tier by migrating Aurora Serverless to provisioned r7g Graviton instances with optimized storage, re-platforming Redis to Valkey on Graviton, and removing non-essential Multi-AZ replicas; secured Reserved Instance coverage once capacity became predictable.}
+        \resumeItem{Reduced analytics spend by moving Redshift from dc2.large to RA3 nodes to decouple 2 TB of storage from minimal compute demand, and rerouting high-volume Athena scans to a right-sized analytical database, trading marginal query latency for a fraction of the cost.}
+        \resumeItem{Shifted ECS Fargate workloads to EC2-backed Graviton capacity with Spot instances for fault-tolerant jobs, rightsized over-provisioned services, deprecated unused resources and environments, replaced hosted CI runners with self-hosted GitHub Actions runners, and layered Compute Savings Plans after capacity modeling.}
+        \resumeItem{Consolidated 14 Application Load Balancers down to 4 using host- and path-based routing rules, cut SQS costs by nearly 90\% by tuning long-polling receive wait times, and automated EFS lifecycle jobs to purge stale data.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Agentic CI/CD Failure Triage \& Auto-Remediation} $|$ \footnotesize\emph{Python, LLM Agents, MCP, Jenkins, Argo Workflows}}{2026}
+      \resumeItemListStart
+        \resumeItem{Shipped a Kubernetes-native AI agent watching Jenkins and Argo Workflows across 30+ pipelines and 40 services, using an LLM layer to parse job logs and classify failures by root cause (dependency, config, infrastructure, transient).}
+        \resumeItem{Delivered Slack alerts carrying root-cause summaries and recommended fixes, cutting mean triage time by 70\% and saving 8+ hours/week of manual log investigation.}
+        \resumeItem{Automated closed-loop remediation that opens targeted GitHub pull requests for code and config defects and retries transient failures via the Jenkins MCP server, resolving 40\% of failures without human intervention.}
+        \resumeItem{Exposed a ChatOps interface over Jenkins MCP for natural-language build queries and job triggers, and packaged the agent as an RBAC-scoped Helm chart for least-privilege multi-environment deployment, cutting on-call escalations.}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -184,7 +193,8 @@
 \section{Certifications}
   \resumeItemListStart
     \resumeItem{\href{https://www.credly.com/badges/73e66e52-cf7f-433e-a47d-4284a4557dc4/public_url}{\underline{AWS Certified Solutions Architect -- Professional (SAP-C02)}} -- Amazon Web Services}
-    \resumeItem{Microsoft Azure  (AZ-900) -- Microsoft}
+    \resumeItem{\href{https://www.credly.com/badges/7d6115f8-02b7-4810-91e4-ebcd40e182ef/public_url}{\underline{AWS Certified Cloud Practitioner}} -- Amazon Web Services}
+    \resumeItem{\href{https://www.credly.com/badges/0d7c495d-42dc-4aa4-a5a2-c4c09f1e2e2c/public_url}{\underline{Microsoft Azure (AZ-900)}} -- Microsoft}
   \resumeItemListEnd
 
 % -------------------- EDUCATION --------------------

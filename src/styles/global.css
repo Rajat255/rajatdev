@@ -117,11 +117,16 @@ iframe {
    bright aurora ribbons into a soft wash, so a very low alpha is still readable.
    ========================================================================== */
 @layer components {
+  /* Blur radius is a performance knob, not just a visual one: every one of these
+     surfaces re-blurs its backdrop each frame the aurora advances, and the cost
+     scales with the radius. 10px is where the frosting still reads as frosting;
+     the fill is nudged up a couple of points to hold text contrast now that less
+     of the backdrop is being smeared away. */
   .glass {
-    background-color: rgb(255 255 255 / 0.06);
+    background-color: rgb(255 255 255 / 0.08);
     border: 1px solid rgb(255 255 255 / 0.12);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
     /* Inset top highlight reads as the lit edge of a glass pane; the outer
        shadow lifts it off the backdrop. */
     box-shadow:
@@ -131,7 +136,7 @@ iframe {
 
   /* Light theme inverts the metaphor: frosted white rather than smoked. */
   :root.light .glass {
-    background-color: rgb(255 255 255 / 0.55);
+    background-color: rgb(255 255 255 / 0.62);
     border-color: rgb(255 255 255 / 0.7);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.9),
@@ -141,17 +146,17 @@ iframe {
   /* Heavier pane for the floating dock, which overlaps arbitrary content and
      needs to separate from it more firmly than an in-flow card does. */
   .glass-panel {
-    background-color: rgb(255 255 255 / 0.08);
+    background-color: rgb(255 255 255 / 0.11);
     border: 1px solid rgb(255 255 255 / 0.14);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.12),
       0 8px 32px rgb(0 0 0 / 0.3);
   }
 
   :root.light .glass-panel {
-    background-color: rgb(255 255 255 / 0.7);
+    background-color: rgb(255 255 255 / 0.76);
     border-color: rgb(255 255 255 / 0.8);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.9),

@@ -56,7 +56,7 @@ export const certifications: Certifications = Certifications.parse([
   {
     name: 'Microsoft Azure Fundamentals',
     issuer: 'Microsoft',
-    date: 'Feb, 2023',
+    date: 'Feb 2023',
     imageUrl: '/images/certs/azurecf.png',
     altText: 'Microsoft Azure Fundamentals badge',
     verifyUrl:
