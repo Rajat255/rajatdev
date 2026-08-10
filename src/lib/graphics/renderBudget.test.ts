@@ -15,16 +15,19 @@ import {
  */
 
 describe('pickQualityTier', () => {
-  it('drops to low on touch devices', () => {
+  it('drops to low on touch devices, whatever else they report', () => {
     expect(pickQualityTier({ coarsePointer: true, cores: 16 })).toBe('low');
   });
 
-  it('drops to low on small-memory devices', () => {
-    expect(pickQualityTier({ memoryGb: 4 })).toBe('low');
+  it('keeps a mid-range laptop at full quality', () => {
+    // 4 cores / 4GB used to be demoted. Those are ordinary laptops and the
+    // effect is meant to run at full quality on anything that is not a phone.
+    expect(pickQualityTier({ cores: 4, memoryGb: 4 })).toBe('high');
   });
 
-  it('uses medium on low core counts', () => {
-    expect(pickQualityTier({ cores: 4 })).toBe('medium');
+  it('holds back only genuinely tiny machines, and only to medium', () => {
+    expect(pickQualityTier({ cores: 2 })).toBe('medium');
+    expect(pickQualityTier({ memoryGb: 2 })).toBe('medium');
   });
 
   it('uses high on a capable desktop', () => {
@@ -48,12 +51,20 @@ describe('computeRenderSize', () => {
   });
 
   it('caps the device pixel ratio', () => {
-    // A 3x phone display must not be rendered at 3x.
+    // A 3x phone display renders at 2x, not 3x: past 2x this is supersampling a
+    // soft effect for no visible gain.
     const size = computeRenderSize(400, 400, 3, {
       resolutionScale: 1,
       maxPixels: 10_000_000,
     });
-    expect(size.width).toBe(600); // 400 * 1.5 (capped), not 1200
+    expect(size.width).toBe(800); // 400 * 2 (capped), not 1200
+  });
+
+  it('renders a Retina laptop at its native pixel density', () => {
+    // The case the 1.5x cap used to soften: a 1440x900 display at 2x should get
+    // a 1:1 backing store on the high tier rather than an upscale.
+    const size = computeRenderSize(1440, 900, 2, QUALITY.high);
+    expect(size).toEqual({ width: 2880, height: 1800 });
   });
 
   it('enforces the pixel ceiling', () => {

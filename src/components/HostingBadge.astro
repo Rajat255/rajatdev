@@ -1,0 +1,116 @@
+---
+import { profile } from '../content/profile';
+
+/**
+ * HostingBadge.astro — the "self-hosted" status pill.
+ *
+ * A small rounded pill with a glowing indicator dot. The dot is green because
+ * that is the universal "up" convention, and the claim is self-verifying: if you
+ * can read this, the box serving it is up. It is decorative markup all the same —
+ * nothing here polls the server — so the meaning lives entirely in the text and
+ * the dot is hidden from assistive tech.
+ *
+ * The green is declared locally rather than added to the palette in global.css.
+ * It is an indicator colour, not a brand one, and the site's tokens are a pink
+ * primary and an orange accent that a status light should not be borrowing.
+ */
+const { text, emphasis } = profile.hosting;
+---
+
+<span class="hb">
+  <span class="hb-dot" aria-hidden="true"></span>
+  <span class="hb-text">
+    {text} <strong class="hb-emphasis">{emphasis}</strong>
+  </span>
+</span>
+
+<style>
+  .hb {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5625rem;
+    padding: 0.4375rem 1rem 0.4375rem 0.8125rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    background: rgb(255 255 255 / 0.04);
+    font-size: 0.8125rem;
+    line-height: 1;
+    /* No backdrop-filter on purpose: this sits in the footer over the shader, and
+       one more blurred surface is real per-frame cost for a pill this small. */
+  }
+
+  :global(:root.light) .hb {
+    border-color: rgb(0 0 0 / 0.08);
+    background: rgb(0 0 0 / 0.03);
+  }
+
+  .hb-text {
+    color: rgb(var(--muted-foreground));
+  }
+
+  .hb-emphasis {
+    font-weight: 600;
+    color: rgb(var(--foreground));
+  }
+
+  /* The indicator. Two layers: a solid core, and a `::after` halo that pulses
+     outward. Keeping them separate means the core stays crisp while the halo
+     scales, rather than the whole dot softening as it animates. */
+  .hb-dot {
+    position: relative;
+    flex: none;
+    width: 0.5625rem;
+    height: 0.5625rem;
+    border-radius: 9999px;
+    background: rgb(52 211 153);
+    /* The glow itself, which stays put whether or not the halo animates. */
+    box-shadow:
+      0 0 0 3px rgb(52 211 153 / 0.14),
+      0 0 9px 1px rgb(52 211 153 / 0.75);
+  }
+
+  :global(:root.light) .hb-dot {
+    /* Darkened so the dot still reads as green against a white pill instead of
+       washing out to pale mint. */
+    background: rgb(5 150 105);
+    box-shadow:
+      0 0 0 3px rgb(5 150 105 / 0.12),
+      0 0 8px 1px rgb(5 150 105 / 0.55);
+  }
+
+  .hb-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: rgb(52 211 153 / 0.55);
+    animation: hb-pulse 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  :global(:root.light) .hb-dot::after {
+    background: rgb(5 150 105 / 0.45);
+  }
+
+  @keyframes hb-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    /* Holds at zero for the tail of the cycle, so the pulse breathes rather than
+       strobing continuously. */
+    70%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+
+  /* Reduced motion keeps the dot and its static glow, and drops only the pulse.
+     The indicator still reads as lit; it just stops moving. */
+  @media (prefers-reduced-motion: reduce) {
+    .hb-dot::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
+</style>

@@ -167,7 +167,14 @@ void mainImage(out vec4 outColor, in vec2 fragCoord) {
   mo = (mo == vec2(-0.5)) ? vec2(-0.1, 0.1) : mo;
   mo.x *= iResolution.x / iResolution.y;
   rd.yz *= mm2(mo.y);
-  rd.xz *= mm2(mo.x + sin(time * 0.05) * 0.2);
+  // The original added a slow automatic yaw here: sin(time * 0.05) * 0.2.
+  // It has been dropped because it rotated the star field a fraction of a pixel
+  // per frame, and a one-pixel star crossing a pixel boundary blinks — which
+  // looks like twinkling, but is aliasing. The aurora ribbons still animate on
+  // their own through triNoise2d, so the sky is not static; only the camera is.
+  // Pointer parallax below is unaffected, since that motion is user-driven and
+  // reads as parallax rather than as stars flickering by themselves.
+  rd.xz *= mm2(mo.x);
 
   vec3 col = vec3(0.0);
   vec3 brd = rd;

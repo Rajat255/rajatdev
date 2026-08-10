@@ -23,6 +23,19 @@ export const ExperienceEntry = z.object({
   location: z.string().min(1).optional(),
   /** Path to a logo in `public/`. Falls back to the company initial. */
   logoUrl: z.string().min(1).optional(),
+  /**
+   * How the logo sits in its circular frame.
+   *
+   * `contain` (the default) is for bare wordmarks and glyphs: the image is
+   * letterboxed inside a white circle with a little padding, so a coloured mark
+   * has a neutral field to sit on.
+   *
+   * `cover` is for logos that are already a filled tile or circle of their own.
+   * Those need no white backing and no padding — given one, they render as a
+   * shrunken disc floating inside a white ring. `cover` drops the backing and
+   * lets the artwork fill the frame edge to edge.
+   */
+  logoFit: z.enum(['contain', 'cover']).default('contain'),
   /** Achievement bullets shown when the entry is expanded. */
   highlights: z.array(z.string().min(1)).min(1),
   /** Technologies used in the role. */
@@ -41,7 +54,9 @@ export const experience: Experience = Experience.parse([
     end: 'Present',
     kind: 'Full-time',
     location: 'Pune, India',
+    // The amber mark is already a filled red circle, so it fills the frame.
     logoUrl: '/images/logos/amber.png',
+    logoFit: 'cover',
     highlights: [
       'Sole DevOps engineer for 8+ months, owning production AWS infrastructure for 50+ services and 50,000+ monthly active users across global environments.',
       'Led a company-wide cost programme that cut monthly AWS spend 45% (roughly $200K/year) through Graviton and Spot adoption, an Aurora and Redshift re-architecture, Savings Plans, and load balancer consolidation, with no hit to availability.',

@@ -77,9 +77,9 @@ export const timeline: Timeline = Timeline.parse([
     // TODO: confirm the year of the ride and move this entry if it needs to sit
     // elsewhere on the rail.
     date: '2024',
-    title: 'Bought my first motorbike, then rode it to Goa',
+    title: 'Bought my first motorbike, then rode it to all along the coast of Konkan',
     description:
-      'Took it down the entire Konkan coast to Goa and back, a little over 1,500 km of ghat sections, coastal highway, and questionable roadside food.',
+      'Took it down the entire Konkan coast to from Mumbai to Goa and back, a little over 1,500 km of ghat sections, coastal highways, and great food.',
     icon: 'pin',
     flair: 'Best infrastructure decision I have ever made without a Terraform plan.',
   },

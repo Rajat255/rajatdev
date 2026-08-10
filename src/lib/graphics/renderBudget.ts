@@ -24,28 +24,36 @@ export interface QualitySettings {
 /**
  * Settings per tier.
  *
- * GPU cost per second is roughly `pixels x steps x fps`, so all three knobs are
- * interchangeable for budget — but they are NOT interchangeable for looks, and
- * that asymmetry is what sets the numbers below.
+ * GPU cost per second is roughly `pixels x steps x fps`.
  *
- * - `resolutionScale` and `maxPixels` are the only knobs that affect sharpness.
- *   The aurora ribbons are a soft, low-frequency field that survives being
- *   upscaled, but the star field is single-pixel detail that does not: below
- *   roughly 0.8x of CSS resolution the stars visibly smear. They are kept high
- *   for that reason alone.
- * - `steps` and `maxFps` cost nothing visually here. The per-step contribution
- *   decays as `exp2(-i * 0.065)`, so steps past ~26 add light too faint to see,
- *   and the aurora drifts slowly enough (`triNoise2d` speed 0.06) that 24fps
- *   reads as smooth.
+ * These are deliberately set to run the effect at full quality on anything that
+ * is not a phone. Worth being clear about where that cost lands: it is paid by
+ * the visitor's GPU on every frame, not by the server delivering the page. A
+ * beefier host makes no difference to how smoothly this renders.
  *
- * So the budget is spent on pixels and saved on steps and frame rate. Against
- * the original high tier (0.7 / 1.3M / 48 / 30) this costs a little under half
- * as much while rendering *more* pixels, not fewer.
+ * The knobs are not equivalent for looks:
+ *
+ * - `resolutionScale` and `maxPixels` are the only ones affecting sharpness. The
+ *   aurora is a soft, low-frequency field that survives upscaling, but stars are
+ *   single-pixel detail that does not; below roughly 0.8x of CSS resolution they
+ *   smear, and at any sub-native scale they alias as the view moves.
+ * - `steps` and `maxFps` are close to free visually. Per-step contribution decays
+ *   as `exp2(-i * 0.065)`, so steps past ~26 add light that is hard to see.
+ *
+ * If a machine struggles, the knob to turn first is `maxFps` (60 to 30 halves the
+ * cost for very little perceived change), then `steps`. Drop `resolutionScale`
+ * last, because that is the one that makes the stars mushy.
  */
 export const QUALITY: Record<QualityTier, QualitySettings> = {
-  high: { resolutionScale: 0.75, maxPixels: 1_600_000, steps: 26, maxFps: 24 },
-  medium: { resolutionScale: 0.6, maxPixels: 1_000_000, steps: 22, maxFps: 24 },
-  low: { resolutionScale: 0.5, maxPixels: 600_000, steps: 18, maxFps: 20 },
+  // Native resolution, the original step count, and an uncapped frame rate.
+  // `maxPixels` is high enough that a 1440p or 1600p laptop renders 1:1 and only
+  // 4K-and-above panels get scaled back, where the shader's softness means the
+  // downscale is invisible anyway.
+  high: { resolutionScale: 1, maxPixels: 5_300_000, steps: 48, maxFps: 60 },
+  medium: { resolutionScale: 0.85, maxPixels: 3_000_000, steps: 40, maxFps: 60 },
+  // Touch devices only. Phones are thermally limited and on a battery, and this
+  // is decoration, so this tier stays conservative.
+  low: { resolutionScale: 0.6, maxPixels: 1_000_000, steps: 26, maxFps: 30 },
 };
 
 export interface DeviceProfile {
@@ -67,10 +75,16 @@ export interface DeviceProfile {
 export function pickQualityTier(profile: DeviceProfile = {}): QualityTier {
   const { cores, coarsePointer, memoryGb } = profile;
 
-  // Touch devices are treated as mobile GPUs on a battery budget.
+  // Touch devices are treated as mobile GPUs on a battery budget, and are the
+  // only class of device stepped down by default.
   if (coarsePointer) return 'low';
-  if (typeof memoryGb === 'number' && memoryGb > 0 && memoryGb <= 4) return 'low';
-  if (typeof cores === 'number' && cores > 0 && cores <= 4) return 'medium';
+
+  // Everything else runs at full quality. Only a genuinely tiny machine — one or
+  // two cores, or 2GB of RAM — gets held back, and only to `medium`. The earlier
+  // thresholds (4 cores, 4GB) demoted a lot of perfectly capable laptops.
+  if (typeof cores === 'number' && cores > 0 && cores <= 2) return 'medium';
+  if (typeof memoryGb === 'number' && memoryGb > 0 && memoryGb <= 2) return 'medium';
+
   return 'high';
 }
 
@@ -92,7 +106,10 @@ export function computeRenderSize(
   cssHeight: number,
   devicePixelRatio: number,
   settings: Pick<QualitySettings, 'resolutionScale' | 'maxPixels'>,
-  maxDpr = 1.5,
+  // 2x rather than 1.5x, so a Retina display renders the star field at its real
+  // pixel density instead of upscaling it. Anything beyond 2x is supersampling a
+  // soft effect, which is pure waste, and `maxPixels` remains the real ceiling.
+  maxDpr = 2,
 ): RenderSize {
   const safeCssWidth = Math.max(1, cssWidth);
   const safeCssHeight = Math.max(1, cssHeight);

@@ -23,6 +23,7 @@ export const about: About = AboutSchema.parse({
   ],
   currently: [
     'Running EKS, Karpenter, and KEDA in production at amber',
+    'Self-hosting this site on a homelab server I built and maintain',
     'Building AI agents that triage CI/CD failures on their own',
     'Writing about cloud and DevOps on my blog',
     'Learning French, currently hovering around B1',

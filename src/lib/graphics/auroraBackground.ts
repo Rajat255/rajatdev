@@ -85,17 +85,20 @@ export function createAuroraBackground(
   // --- Context -------------------------------------------------------------
 
   // `antialias` is off because there is no geometry to alias, and `depth`/
-  // `stencil` are off because nothing is ever depth-tested. `powerPreference` is
-  // an explicit `low-power` request: this is decoration, so on a dual-GPU laptop
-  // it should stay on the integrated chip rather than spinning up the discrete
-  // one (and the fans with it). It is a hint, not a guarantee.
+  // `stencil` are off because nothing is ever depth-tested.
+  //
+  // `powerPreference` is left at the browser default deliberately. `low-power`
+  // pins a dual-GPU laptop to the integrated chip, which throttles the effect on
+  // exactly the machines that could run it best; `high-performance` goes the
+  // other way and spins up the discrete GPU, and the fans, for decoration. The
+  // default lets the browser weigh charge state and thermals, which it can see
+  // and we cannot.
   const contextAttributes: WebGLContextAttributes = {
     alpha: false,
     antialias: false,
     depth: false,
     stencil: false,
     preserveDrawingBuffer: false,
-    powerPreference: 'low-power',
   };
 
   const gl = canvas.getContext('webgl2', contextAttributes);

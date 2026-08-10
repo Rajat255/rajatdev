@@ -54,6 +54,20 @@ export const ProfileSchema = z.object({
   phone: z.string().min(1).optional(),
   /** Path to the downloadable resume PDF in `public/`. */
   resumeUrl: z.string().min(1),
+  /**
+   * Where this site runs, shown as a status pill in the footer. For a DevOps
+   * portfolio the hosting is part of the pitch, so it is stated plainly rather
+   * than left for someone to guess from a DNS lookup.
+   *
+   * Split into two fields rather than one sentence so the badge can emphasise the
+   * last word without matching on substrings.
+   */
+  hosting: z.object({
+    /** Leading text, e.g. "Self-hosted on my". Kept short: it sits in a pill. */
+    text: z.string().min(1).max(60),
+    /** The accented tail word, e.g. "homelab". */
+    emphasis: z.string().min(1).max(30),
+  }),
   socials: z.array(SocialLink).min(1),
 });
 export type Profile = z.infer<typeof ProfileSchema>;
@@ -70,6 +84,10 @@ export const profile: Profile = ProfileSchema.parse({
   email: 'rajatkhirid@gmail.com',
   phone: '+91 9145672952',
   resumeUrl: '/resume/rajat-khirid-resume.pdf',
+  hosting: {
+    text: 'Self-hosted on my',
+    emphasis: 'homelab',
+  },
   socials: [
     {
       name: 'GitHub',

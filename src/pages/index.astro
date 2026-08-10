@@ -7,6 +7,7 @@ import Avatar from '../components/Avatar.astro';
 import Icon from '../components/Icon.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import HostingBadge from '../components/HostingBadge.astro';
 import AboutSection from '../components/AboutSection.astro';
 import SkillsSection from '../components/SkillsSection.astro';
 import ExperienceSection from '../components/ExperienceSection.astro';
@@ -217,6 +218,14 @@ const sectionClass = 'mx-auto max-w-3xl scroll-mt-24 px-4 py-10';
   <footer
     class="relative z-10 mx-auto max-w-3xl px-4 pb-28 pt-8 text-center text-xs text-muted-foreground md:pb-32"
   >
-    <p>© {new Date().getFullYear()} {profile.name}</p>
+    {/* Copyright and the hosting pill share one centered row. `flex-wrap` lets
+        them stack again on a narrow phone rather than forcing the pill to shrink
+        or the line to overflow. */}
+    <div
+      class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 text-[13px]"
+    >
+      <HostingBadge />
+      <p>© {new Date().getFullYear()} {profile.name}</p>
+    </div>
   </footer>
 </Layout>
