@@ -41,7 +41,7 @@ export const experience: Experience = Experience.parse([
     end: 'Present',
     kind: 'Full-time',
     location: 'Pune, India',
-    logoUrl: '/images/logos/amber.svg',
+    logoUrl: '/images/logos/amber.jpeg',
     highlights: [
       'Sole DevOps engineer for 8+ months, owning production AWS infrastructure for 50+ services and 50,000+ monthly active users across global environments.',
       'Led a company-wide cost programme that cut monthly AWS spend 45% (roughly $200K/year) through Graviton and Spot adoption, an Aurora and Redshift re-architecture, Savings Plans, and load balancer consolidation, with no hit to availability.',

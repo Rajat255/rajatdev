@@ -177,6 +177,7 @@ export function createAuroraBackground(
   const uResolution = gl.getUniformLocation(program, 'iResolution');
   const uTime = gl.getUniformLocation(program, 'iTime');
   const uMouse = gl.getUniformLocation(program, 'iMouse');
+  const uStarRes = gl.getUniformLocation(program, 'iStarRes');
 
   // --- State ---------------------------------------------------------------
 
@@ -204,6 +205,9 @@ export function createAuroraBackground(
 
   let renderWidth = 1;
   let renderHeight = 1;
+  // Display width in CSS pixels, tracked separately from the backing store so
+  // the star field can be sized in screen space. See `stars()` in the shader.
+  let cssWidth = 1;
 
   const resize = () => {
     const rect = canvas.getBoundingClientRect();
@@ -213,6 +217,8 @@ export function createAuroraBackground(
       window.devicePixelRatio || 1,
       settings,
     );
+
+    cssWidth = Math.max(1, rect.width);
 
     if (width === renderWidth && height === renderHeight) return;
 
@@ -247,6 +253,7 @@ export function createAuroraBackground(
 
     gl.uniform3f(uResolution, renderWidth, renderHeight, 1);
     gl.uniform1f(uTime, (nowMs - startMs) / 1000);
+    gl.uniform1f(uStarRes, cssWidth);
     if (pointerNorm) {
       // Remapped to a gentle parallax rather than the raw full-range pan.
       const mouse = computePointerUniform(

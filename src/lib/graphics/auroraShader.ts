@@ -56,6 +56,11 @@ uniform vec3 iResolution;
 uniform float iTime;
 uniform vec4 iMouse;
 
+// On-screen width in CSS pixels, which is NOT iResolution.x: the canvas renders
+// below its display size and is upscaled by CSS. Only the star field reads this;
+// see the note above stars().
+uniform float iStarRes;
+
 out vec4 fragColor;
 
 #define time iTime
@@ -118,9 +123,18 @@ vec3 nmzHash33(vec3 q) {
   return vec3(p ^ (p >> 16U)) * (1.0 / vec3(0xffffffffU));
 }
 
+// The star field is a hash grid whose cell size is derived from a resolution, so
+// whatever is fed in here decides how large a star is and how many are visible.
+//
+// The original used iResolution.x, the backing-store width, which ties the star
+// field to the render scale: halve the resolution and every star doubles in width
+// while three quarters of them vanish, reading as a blurry smear rather than a
+// sky. Feeding it the CSS width instead pins stars to screen space, so the
+// resolution scale becomes a pure quality knob and the sky looks the same on
+// every tier.
 vec3 stars(in vec3 p) {
   vec3 c = vec3(0.0);
-  float res = iResolution.x * 1.0;
+  float res = iStarRes;
   for (float i = 0.0; i < 4.0; i++) {
     vec3 q = fract(p * (0.15 * res)) - 0.5;
     vec3 id = floor(p * (0.15 * res));

@@ -8,6 +8,12 @@ import { experience } from '../content/experience';
  * the company, the role, the period, and an expandable set of achievement
  * bullets.
  *
+ * No glass pane here, matching the Certifications section: three stacked frosted
+ * cards was a lot of chrome for what is really a list, and each pane put a
+ * blurred surface between the copy and the background for no gain in legibility.
+ * Rows are separated by a hairline instead, and the logo does the work of
+ * anchoring each entry.
+ *
  * Each entry is a native `<details>`/`<summary>`, so expand/collapse is fully
  * keyboard accessible and works with zero JS. A progressive-enhancement script
  * animates the open/close height and is skipped under reduced motion, where the
@@ -17,11 +23,11 @@ const period = (start: string, end: string) => `${start} – ${end}`;
 ---
 
 <div class="mt-6">
-  <ol class="space-y-3" role="list">
+  <ol class="xp-list" role="list">
     {
       experience.map((job) => (
         <li>
-          <details class="xp-item group glass glass-hover rounded-xl px-4 py-3">
+          <details class="xp-item group py-4">
             <summary class="xp-summary flex cursor-pointer list-none items-center gap-4 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary">
               {/* Company logo — circular, with an initial fallback. */}
               <span
@@ -49,7 +55,7 @@ const period = (start: string, end: string) => `${start} – ${end}`;
 
               <span class="min-w-0 flex-grow">
                 <span class="flex items-baseline justify-between gap-x-3">
-                  <span class="inline-flex items-center text-sm font-semibold leading-tight text-foreground">
+                  <span class="xp-company inline-flex items-center text-sm font-semibold leading-tight text-foreground">
                     {job.company}
                     <span
                       class="xp-chevron ml-1 inline-block text-muted-foreground transition-transform duration-300 ease-out group-open:rotate-90 motion-reduce:transition-none"
@@ -107,6 +113,39 @@ const period = (start: string, end: string) => `${start} – ${end}`;
 </div>
 
 <style>
+  /* Hairline-separated rows, in place of the previous stack of glass cards. The
+     divider goes between entries only, so the list does not open or close with a
+     stray rule against the section heading or the section below. */
+  .xp-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .xp-list > li + li {
+    border-top: 1px solid rgb(255 255 255 / 0.07);
+  }
+
+  :global(:root.light) .xp-list > li + li {
+    border-top-color: rgb(0 0 0 / 0.08);
+  }
+
+  /* The pane used to signal "this row is interactive" on hover. With it gone the
+     company name carries that job instead. */
+  .xp-summary:hover .xp-company {
+    color: rgb(var(--primary));
+  }
+
+  .xp-company {
+    transition: color 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .xp-company {
+      transition: none;
+    }
+  }
+
   /* Company logo — circular avatar with a white backing so colored wordmarks sit
      centered and read well in both themes. */
   .xp-logo {

@@ -111,6 +111,7 @@ test.describe('aurora shader', () => {
           iResolution: gl.getUniformLocation(program, 'iResolution') !== null,
           iTime: gl.getUniformLocation(program, 'iTime') !== null,
           iMouse: gl.getUniformLocation(program, 'iMouse') !== null,
+          iStarRes: gl.getUniformLocation(program, 'iStarRes') !== null,
           aPosition: gl.getAttribLocation(program, 'aPosition'),
         };
       },
@@ -123,6 +124,7 @@ test.describe('aurora shader', () => {
     expect(uniforms.iResolution).toBe(true);
     expect(uniforms.iTime).toBe(true);
     expect(uniforms.iMouse).toBe(true);
+    expect(uniforms.iStarRes).toBe(true);
     expect(uniforms.aPosition).toBeGreaterThanOrEqual(0);
   });
 });

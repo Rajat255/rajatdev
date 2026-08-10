@@ -24,21 +24,28 @@ export interface QualitySettings {
 /**
  * Settings per tier.
  *
- * The shader's per-step contribution decays as `exp2(-i * 0.065)`, so the last
- * steps add very little light. Dropping from 50 to 32 steps is a large GPU saving
- * for a barely perceptible change in the trails.
+ * GPU cost per second is roughly `pixels x steps x fps`, so all three knobs are
+ * interchangeable for budget — but they are NOT interchangeable for looks, and
+ * that asymmetry is what sets the numbers below.
  *
- * The three knobs multiply, which is why they were all pulled down together: GPU
- * cost per second is roughly `pixels x steps x fps`. Against the original high
- * tier (0.7 / 48 / 30), the numbers below cost about a quarter as much — the
- * resolution drop alone is halved pixel count — and the aurora is a soft,
- * heavily-blurred field sitting behind frosted panels, so the upscale is far
- * less visible than the frame time is.
+ * - `resolutionScale` and `maxPixels` are the only knobs that affect sharpness.
+ *   The aurora ribbons are a soft, low-frequency field that survives being
+ *   upscaled, but the star field is single-pixel detail that does not: below
+ *   roughly 0.8x of CSS resolution the stars visibly smear. They are kept high
+ *   for that reason alone.
+ * - `steps` and `maxFps` cost nothing visually here. The per-step contribution
+ *   decays as `exp2(-i * 0.065)`, so steps past ~26 add light too faint to see,
+ *   and the aurora drifts slowly enough (`triNoise2d` speed 0.06) that 24fps
+ *   reads as smooth.
+ *
+ * So the budget is spent on pixels and saved on steps and frame rate. Against
+ * the original high tier (0.7 / 1.3M / 48 / 30) this costs a little under half
+ * as much while rendering *more* pixels, not fewer.
  */
 export const QUALITY: Record<QualityTier, QualitySettings> = {
-  high: { resolutionScale: 0.5, maxPixels: 900_000, steps: 32, maxFps: 24 },
-  medium: { resolutionScale: 0.42, maxPixels: 600_000, steps: 26, maxFps: 24 },
-  low: { resolutionScale: 0.35, maxPixels: 380_000, steps: 20, maxFps: 20 },
+  high: { resolutionScale: 0.75, maxPixels: 1_600_000, steps: 26, maxFps: 24 },
+  medium: { resolutionScale: 0.6, maxPixels: 1_000_000, steps: 22, maxFps: 24 },
+  low: { resolutionScale: 0.5, maxPixels: 600_000, steps: 18, maxFps: 20 },
 };
 
 export interface DeviceProfile {

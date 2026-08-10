@@ -1,39 +1,29 @@
 /**
  * StatCounters — animated headline numbers (React island).
  *
- * Counts each stat up from zero once the row scrolls into view. Hydrated with
- * `client:visible`, and the final values are also what render on the server, so
- * no-JS visitors and screen readers always get the real numbers rather than a
- * row of zeroes.
+ * Counts each stat up from zero the first time the row scrolls into view, then
+ * never again: the observer is disconnected on the first intersection, so
+ * scrolling back up leaves the final values alone rather than replaying.
+ *
+ * Hydrated with `client:visible`, and the final values are also what render on
+ * the server, so no-JS visitors and screen readers always get the real numbers
+ * rather than a row of zeroes.
  *
  * Under a reduced-motion preference the count-up is skipped entirely and the
  * final values are shown immediately.
  *
- * Values are derived from the content layer rather than hardcoded, so they stay
- * correct as projects/certifications are added.
+ * No glass pane: these are headline figures, so they sit directly on the
+ * background like the certification badges do.
  */
 import { useEffect, useRef, useState } from 'react';
 
-import { certifications } from '@content/certifications';
-import { projects } from '@content/projects';
-import { allSkills } from '@content/skills';
-
-interface Stat {
-  /** The number to count to. */
-  value: number;
-  label: string;
-  /** Appended to the value, e.g. "+". */
-  suffix?: string;
-}
-
-const STATS: Stat[] = [
-  { value: projects.length, label: 'Projects shipped' },
-  { value: certifications.length, label: 'Certifications' },
-  { value: allSkills.length, label: 'Tools & technologies' },
-];
+import { stats } from '@content/stats';
 
 /** Duration of the count-up animation. */
-const COUNT_DURATION_MS = 1100;
+const COUNT_DURATION_MS = 1400;
+
+/** Fraction of the row that must be visible before counting starts. */
+const REVEAL_THRESHOLD = 0.35;
 
 /** Ease-out cubic, so the count decelerates into its final value. */
 const easeOut = (t: number): number => 1 - Math.pow(1 - t, 3);
@@ -42,7 +32,7 @@ export default function StatCounters() {
   // Start at the final values so the very first render (and the SSR output)
   // already shows real numbers; the animation only ever rewinds and replays
   // them once we know motion is allowed.
-  const [values, setValues] = useState<number[]>(() => STATS.map((s) => s.value));
+  const [values, setValues] = useState<number[]>(() => stats.map((s) => s.value));
   const rootRef = useRef<HTMLDListElement | null>(null);
   const hasRunRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -66,17 +56,17 @@ export default function StatCounters() {
       const tick = (now: number) => {
         const t = Math.min(1, (now - start) / COUNT_DURATION_MS);
         const eased = easeOut(t);
-        setValues(STATS.map((s) => Math.round(s.value * eased)));
+        setValues(stats.map((s) => Math.round(s.value * eased)));
         if (t < 1) {
           rafRef.current = requestAnimationFrame(tick);
         } else {
           // Guarantee we land exactly on the real values.
-          setValues(STATS.map((s) => s.value));
+          setValues(stats.map((s) => s.value));
         }
       };
 
       // Rewind to zero, then animate up on the next frame.
-      setValues(STATS.map(() => 0));
+      setValues(stats.map(() => 0));
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -88,7 +78,7 @@ export default function StatCounters() {
           obs.unobserve(entry.target);
         }
       },
-      { threshold: 0.35 },
+      { threshold: REVEAL_THRESHOLD },
     );
     observer.observe(root);
 
@@ -99,21 +89,22 @@ export default function StatCounters() {
   }, []);
 
   return (
-    <dl
-      ref={rootRef}
-      className="glass mt-2 grid grid-cols-3 gap-3 rounded-xl p-4 sm:gap-6 sm:p-5"
-    >
-      {STATS.map((stat, index) => (
-        <div key={stat.label} className="text-center">
+    <dl className="mb-8 mt-2 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-4 sm:gap-x-4">
+      {stats.map((stat, index) => (
+        <div key={stat.label}>
+          {/* The label is the accessible name for the figure, so it is announced
+              before the number; the visible caption below repeats it and is
+              hidden from assistive tech to avoid reading it twice. */}
           <dt className="sr-only">{stat.label}</dt>
           <dd>
-            <span className="block text-2xl font-semibold tabular-nums text-primary sm:text-3xl">
+            <span className="block text-3xl font-bold tracking-tight tabular-nums text-primary sm:text-4xl">
+              {stat.prefix ?? ''}
               {values[index] ?? stat.value}
               {stat.suffix ?? ''}
             </span>
             <span
               aria-hidden="true"
-              className="mt-1 block text-[11px] leading-snug text-muted-foreground sm:text-xs"
+              className="mt-1.5 block text-xs leading-snug text-muted-foreground"
             >
               {stat.label}
             </span>

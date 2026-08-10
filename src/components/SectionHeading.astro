@@ -2,9 +2,13 @@
 /**
  * SectionHeading.astro — the shared `<h2>` for every page section.
  *
- * Centralizes the heading type scale, the small accent rule, and the optional
- * kicker/eyebrow line so sections stay visually consistent and there is one
- * place to retune the rhythm.
+ * Centralizes the heading type scale and the small accent rule so sections stay
+ * visually consistent and there is one place to retune the rhythm.
+ *
+ * There is deliberately no kicker/eyebrow line. Each one restated its heading in
+ * more words ("Where I've worked" above "Experience"), which is noise for both
+ * sighted readers and screen readers, and it pushed the real heading down the
+ * page. The heading carries the section on its own.
  *
  * The heading `id` is what each section's `aria-labelledby` points at, so it is
  * required rather than derived, keeping the association explicit at the call
@@ -13,24 +17,15 @@
 interface Props {
   /** Element id, referenced by the section's `aria-labelledby`. */
   id: string;
-  /** Small uppercase line above the heading. */
-  kicker?: string;
   /** Centers the heading block. */
   center?: boolean;
   class?: string;
 }
 
-const { id, kicker, center = false, class: className } = Astro.props;
+const { id, center = false, class: className } = Astro.props;
 ---
 
 <div class:list={['mb-6', center && 'text-center', className]}>
-  {
-    kicker && (
-      <p class="mb-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-        {kicker}
-      </p>
-    )
-  }
   <h2
     id={id}
     class="text-3xl font-semibold tracking-tight text-foreground md:text-4xl"

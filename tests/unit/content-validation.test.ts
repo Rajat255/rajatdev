@@ -8,6 +8,7 @@ import { projects, Projects, orderedProjects } from '@content/projects';
 import { certifications, Certifications } from '@content/certifications';
 import { achievements, Achievements } from '@content/achievements';
 import { timeline, Timeline } from '@content/timeline';
+import { stats, Stats } from '@content/stats';
 import { navTargets, NavTargets, allSectionIds } from '@content/navigation';
 
 /**
@@ -128,6 +129,21 @@ describe('achievements', () => {
 describe('timeline', () => {
   it('satisfies its schema', () => {
     expect(() => Timeline.parse(timeline)).not.toThrow();
+  });
+});
+
+describe('stats', () => {
+  it('satisfies its schema', () => {
+    expect(() => Stats.parse(stats)).not.toThrow();
+  });
+
+  it('gives every stat a countable value', () => {
+    // The counter animates `value` numerically, so a non-finite or negative
+    // figure would render as NaN mid-animation rather than failing loudly.
+    for (const stat of stats) {
+      expect(Number.isFinite(stat.value)).toBe(true);
+      expect(stat.value).toBeGreaterThanOrEqual(0);
+    }
   });
 });
 
