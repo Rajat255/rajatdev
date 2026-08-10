@@ -38,6 +38,8 @@ export default function StatCounters() {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Without a ref on the <dl> this is null and the counter silently never runs,
+    // which is exactly the bug this guard used to hide. See StatCounters.test.tsx.
     const root = rootRef.current;
     if (!root) return;
 
@@ -52,9 +54,16 @@ export default function StatCounters() {
       if (hasRunRef.current) return;
       hasRunRef.current = true;
 
-      const start = performance.now();
+      // The clock is taken from the first frame's own timestamp rather than a
+      // separate performance.now() call, so there is only ever one time base in
+      // play. Mixing the two risks a negative elapsed time, which the easing
+      // would happily turn into negative numbers on screen. `t` is clamped at
+      // both ends for the same reason.
+      let startTs: number | null = null;
+
       const tick = (now: number) => {
-        const t = Math.min(1, (now - start) / COUNT_DURATION_MS);
+        if (startTs === null) startTs = now;
+        const t = Math.min(1, Math.max(0, (now - startTs) / COUNT_DURATION_MS));
         const eased = easeOut(t);
         setValues(stats.map((s) => Math.round(s.value * eased)));
         if (t < 1) {
@@ -89,7 +98,10 @@ export default function StatCounters() {
   }, []);
 
   return (
-    <dl className="mb-8 mt-2 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-4 sm:gap-x-4">
+    <dl
+      ref={rootRef}
+      className="mb-8 mt-2 grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-4 sm:gap-x-4"
+    >
       {stats.map((stat, index) => (
         <div key={stat.label}>
           {/* The label is the accessible name for the figure, so it is announced
