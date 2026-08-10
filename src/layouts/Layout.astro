@@ -1,0 +1,144 @@
+---
+import '../styles/global.css';
+import { profile } from '../content/profile';
+import { allSkills } from '../content/skills';
+
+/**
+ * Document shell.
+ *
+ * Owns the <head> setup (meta, fonts, global CSS), SEO/Open Graph defaults, the
+ * no-flash theme script, and the JSON-LD Person block. Astro renders this to
+ * static HTML, so above-the-fold content paints without waiting on any island
+ * hydration.
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative URL of the social share image. */
+  ogImage?: string;
+}
+
+const {
+  title = `${profile.name} — ${profile.role}`,
+  description = profile.description,
+  ogImage = profile.avatarUrl,
+} = Astro.props;
+
+// Resolve canonical / OG URLs from the configured site origin when available.
+const canonicalURL = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).toString()
+  : Astro.url.pathname;
+const resolvedOgImage = Astro.site
+  ? new URL(ogImage, Astro.site).toString()
+  : ogImage;
+
+/** JSON-LD Person, built from the content layer so it never drifts from the page. */
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  description: profile.description,
+  image: resolvedOgImage,
+  email: `mailto:${profile.email}`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: profile.location,
+  },
+  knowsAbout: allSkills,
+  sameAs: profile.socials
+    .filter((s) => /^https?:\/\//.test(s.url))
+    .map((s) => s.url),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/*
+      No-flash theme init. Runs synchronously before any content paints, so the
+      correct `.dark`/`.light` class is on <html> for the very first frame. Reads
+      the persisted choice from localStorage ('theme'); when absent it falls back
+      to the OS `prefers-color-scheme`. Dark is the default on any failure.
+    */}
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          var root = document.documentElement;
+          root.classList.remove('light', 'dark');
+          root.classList.add(theme);
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Primary SEO meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#130b23" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff4081" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
+    <!-- Fonts: Inter served as a variable font, preconnected to cut round trips. -->
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+
+    <!-- Structured data. `is:inline` keeps Astro from treating this as a module
+         to bundle; it is data, not executable script. -->
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(personSchema)}
+    />
+  </head>
+  <body class="bg-background font-sans text-foreground antialiased">
+    <slot />
+
+    <script>
+      // Lazy-load below-the-fold, non-critical media. Any element opting in with
+      // `data-lazy` + `data-src`/`data-srcset` begins loading once it comes
+      // within one viewport height of the current scroll position. The hero
+      // avatar is critical/eager and is never marked `data-lazy`. If
+      // IntersectionObserver is unavailable or setup fails, the utility promotes
+      // all opt-in media immediately so nothing stays unloaded.
+      import { initLazyMedia } from '../lib/dom/lazyMedia';
+
+      if (typeof window !== 'undefined') {
+        initLazyMedia();
+      }
+    </script>
+  </body>
+</html>

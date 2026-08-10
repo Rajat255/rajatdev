@@ -1,0 +1,203 @@
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{fontawesome5}
+
+\input{glyphtounicode}
+
+% -------------------- FONT --------------------
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-1in} % Default was -.5in
+\addtolength{\textheight}{0.75in}
+
+% Breathing room at the top of EVERY page (fullpage's [empty] option zeroes headsep)
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{24pt}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-5pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-3pt}]
+
+% Subsection formatting
+\titleformat{\subsection}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{\hspace{-.15in}}{0em}{}[\color{black}\vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+% -------------------- CUSTOM COMMANDS --------------------
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+% Cleaner inline separator for contact line (replaces empty math-mode "$ $")
+\newcommand{\contactsep}{\hspace{5pt}\textbar\hspace{5pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\setlength{\footskip}{4.08003pt}
+
+% -------------------- START OF DOCUMENT --------------------
+\begin{document}
+
+% -------------------- HEADING --------------------
+\begin{center}
+    \textbf{\Huge \scshape Rajat Khirid} \\ \vspace{8pt}
+    \small
+    \faIcon{phone}\ \underline{9145672952}\contactsep
+    \faIcon{envelope}\ \href{mailto:rajatkhirid@gmail.com}{\underline{rajatkhirid@gmail.com}}\contactsep
+    \faIcon{linkedin}\ \href{https://linkedin.com/in/rajatkhirid}{\underline{linkedin.com/in/rajatkhirid}}\contactsep
+    \faIcon{globe}\ \href{https://rajat255.github.io/PortFolio/}{\underline{My Personal Website}}
+\end{center}
+
+% -------------------- SUMMARY --------------------
+\section{Summary}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small\item
+  AWS Certified Solutions Architect -- Professional and DevOps/Cloud Engineer with 3+ years of experience designing, automating, and scaling production workloads on AWS and Azure. Proven impact: \$54K/year in cloud cost savings, 70\% faster environment provisioning, 80\% reduction in infrastructure deployment time via Terraform IaC, and 35\% lower incident MTTR through SRE-driven observability. Hands-on across CI/CD (Jenkins, GitHub Actions, AWS CodePipeline), containers (Docker, Kubernetes, EKS), serverless (Lambda, API Gateway, Step Functions), and observability stacks (Grafana, Prometheus, DataDog, CloudWatch).
+\end{itemize}
+
+% -------------------- SKILLS --------------------
+\section{Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small\item
+    \textbf{Cloud Platforms}: AWS (EC2, ECS, Lambda, CloudFront, RDS, S3, IAM, VPC, API Gateway, Step Functions, CloudWatch, CodePipeline, EMR), Microsoft Azure, GCP \\
+    \textbf{Infrastructure as Code}: Terraform, AWS CloudFormation, Helm, EC2 User Data \\
+    \textbf{CI/CD \& Automation}: Jenkins, GitHub Actions, AWS CodePipeline, Git, GitHub \\
+    \textbf{Containers \& Orchestration}: Docker, Kubernetes, Amazon EKS, ECS, KubeEdge, Minikube \\
+    \textbf{Monitoring \& Observability}: Grafana, Prometheus, New Relic, AWS CloudWatch \\
+    \textbf{Programming \& Scripting}: Python, Bash, PowerShell, JavaScript, SQL, Java, HTML/CSS \\
+    \textbf{Operating Systems}: Linux (Ubuntu, Amazon Linux), Unix Shell \\
+    \textbf{Practices}: Site Reliability Engineering (SRE), Incident Management, Root Cause Analysis (RCA), High Availability, Auto-Scaling, Cost Optimization, Agile/Scrum, Prompt Engineering \\
+    \textbf{Spoken Languages}: English, French (B1), Hindi, Marathi
+\end{itemize}
+
+% -------------------- EXPERIENCE --------------------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Amber} $|$ \emph{DevOps Engineer}\vspace{8pt}}{[Mon YYYY] -- Present}
+      \resumeItemListStart
+        \resumeItem{Own and operate production AWS infrastructure supporting [N] services and [N]+ monthly active users, driving reliability, scalability, and cost efficiency across [N] environments.}
+        \resumeItem{Manage Kubernetes (EKS) workloads with Helm-based deployments, Horizontal Pod Autoscaling, and resource tuning, improving cluster utilization by [X]\% and reducing compute spend by \$[N]/month.}
+        \resumeItem{Built and maintain CI/CD pipelines in GitHub Actions covering build, test, and deploy stages, increasing deployment frequency to [N] releases/week and cutting lead time to production by [X]\%.}
+        \resumeItem{Codified infrastructure with Terraform across [N] AWS accounts, introducing reusable modules and remote state management to eliminate manual provisioning and reduce drift by [X]\%.}
+        \resumeItem{Strengthened observability with Grafana, Prometheus, and CloudWatch dashboards, SLO-based alerting, and on-call runbooks, lowering MTTR by [X]\% and sustaining [X]\% uptime.}
+        \resumeItem{Led incident response and blameless post-mortems for [N]+ production incidents, implementing preventative automation that reduced recurring alerts by [X]\%.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{IAMOPS} $|$ \emph{DevOps Engineer}\vspace{8pt}}{Sep 2023 -- [Mon YYYY]}
+      \resumeItemListStart
+        \resumeItem{Architected and executed end-to-end Azure-to-AWS migration POCs leveraging CloudFront, ECS, and RDS aligned with AWS Well-Architected best practices, delivering \$54K/year in cloud cost reduction across [N] workloads.}
+        \resumeItem{Owned weekly client engagements across [N] accounts, presenting migration roadmaps and solution designs that improved stakeholder alignment and lifted CSAT by [X]\%.}
+        \resumeItem{Designed and deployed multi-environment CI/CD pipelines using Jenkins, AWS CodePipeline, and EC2 User Data bootstrap scripts, cutting new environment setup time by 70\% (from [X] hours to [Y] hours).}
+        \resumeItem{Automated event-driven cloud workflows with AWS Lambda, API Gateway, and Step Functions, reducing recurring AWS spend by 25\% and eliminating [N]+ hours/week of manual ops toil.}
+        \resumeItem{Led SRE responsibilities including on-call rotations, end-to-end RCA, and runbook authoring; instrumented services with AWS CloudWatch, Grafana, and New Relic dashboards/alerts to drive a 35\% reduction in MTTR.}
+        \resumeItem{Authored modular Terraform IaC for [N]+ AWS resources with reusable modules and a remote state strategy, plus architecture diagrams and runbooks, reducing infrastructure provisioning time by over 80\%.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+% -------------------- PROJECTS --------------------
+\section{Projects}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{ECS to EKS Migration} $|$ \footnotesize\emph{AWS EKS, ECS, Kubernetes, Terraform, Helm, Docker, CI/CD}}{[Year]}
+      \resumeItemListStart
+        \resumeItem{Migrated 50 plus containerized and non-containerized services hosted AWS ECS and AWS EC2 instances to EKS, authoring Terraform modules for cluster provisioning, managed node groups, IRSA, and VPC CNI networking.}
+        \resumeItem{Packaged workloads as Helm charts with Horizontal Pod Autoscaling and resource requests/limits, improving compute utilization by [X]\% and cutting container spend by [Y]\%.}
+        \resumeItem{Executed a zero-downtime cutover using blue-green traffic shifting behind an ALB Ingress Controller, maintaining [X]\% uptime across the migration window.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{AWS Cost Optimization} $|$ \footnotesize\emph{AWS Cost Explorer, CloudWatch, Lambda, Compute Optimizer, Terraform}}{[Year]}
+      \resumeItemListStart
+        \resumeItem{Audited AWS spend across [N] accounts using Cost Explorer and Compute Optimizer, identifying rightsizing, idle-resource, and storage-tiering opportunities that cut monthly costs by \$[N] ([X]\%).}
+        \resumeItem{Automated shutdown of non-production EC2 and RDS resources via scheduled Lambda functions and tagging policies, eliminating [X]\% of off-hours compute waste.}
+        \resumeItem{Implemented Savings Plans and Reserved Instance coverage plus S3 lifecycle policies, improving commitment utilization to [X]\% and reducing storage spend by [Y]\%.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+% -------------------- CERTIFICATIONS --------------------
+\section{Certifications}
+  \resumeItemListStart
+    \resumeItem{\href{https://www.credly.com/badges/73e66e52-cf7f-433e-a47d-4284a4557dc4/public_url}{\underline{AWS Certified Solutions Architect -- Professional (SAP-C02)}} -- Amazon Web Services}
+    \resumeItem{Microsoft Azure  (AZ-900) -- Microsoft}
+  \resumeItemListEnd
+
+% -------------------- EDUCATION --------------------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Savitribai Phule Pune University}{9.33/10.0 CGPA}
+      {Bachelor of Engineering in Computer Science, Honors in Artificial Intelligence}{Jul 2020 -- Jun 2023}
+      \vspace{2.3pt}
+    \resumeSubheading
+      {Sinhgad Polytechnic}{90.46\%}
+      {Diploma in Computer Technology}{Jul 2017 -- Mar 2020}
+      \vspace{2.3pt}
+  \resumeSubHeadingListEnd
+
+\end{document}

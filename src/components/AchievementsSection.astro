@@ -1,0 +1,76 @@
+---
+import { achievements } from '../content/achievements';
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+
+/**
+ * AchievementsSection.astro — the Achievements section body.
+ *
+ * Renders awards, hackathons, talks, and publications as a compact card list.
+ * Entries with an `href` become links; the rest are static cards.
+ *
+ * The content layer's icon names are a deliberately small enum, mapped here onto
+ * the shared Icon component so an invalid icon can never reach the page.
+ */
+
+/** Maps the content-layer icon enum onto the shared icon set. */
+const ICON_MAP: Record<string, IconName> = {
+  award: 'award',
+  trophy: 'trophy',
+  star: 'star',
+  graduation: 'graduation',
+  mic: 'mic',
+  pen: 'pen',
+};
+---
+
+<div class="mt-6">
+  <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="list">
+    {
+      achievements.map((item) => {
+        const iconName = ICON_MAP[item.icon] ?? 'award';
+
+        // A shared inner body keeps the linked and unlinked variants identical.
+        const body = (
+          <>
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Icon name={iconName} size={18} />
+            </span>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold leading-snug text-card-foreground">
+                {item.title}
+              </span>
+              <span class="mt-0.5 block text-[11px] text-muted-foreground">
+                {item.issuer ? `${item.issuer} · ${item.date}` : item.date}
+              </span>
+              {item.description && (
+                <span class="mt-1.5 block text-xs leading-relaxed text-muted-foreground">
+                  {item.description}
+                </span>
+              )}
+            </span>
+          </>
+        );
+
+        return (
+          <li class="h-full">
+            {item.href ? (
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="glass glass-hover flex h-full items-start gap-3 rounded-xl p-4 focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {body}
+              </a>
+            ) : (
+              <div class="glass flex h-full items-start gap-3 rounded-xl p-4">
+                {body}
+              </div>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>

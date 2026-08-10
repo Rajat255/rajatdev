@@ -1,0 +1,42 @@
+---
+import { certifications } from '../content/certifications';
+import CertificationCard from './CertificationCard.tsx';
+
+/**
+ * CertificationsSection.astro — the Certifications section body.
+ *
+ * Renders every validated certification as a `CertificationCard` island. Each
+ * card carries exactly one image plus its alt text, and owns its own hover/focus
+ * transform and image-load-failure fallback; this component is a pure layout
+ * wrapper.
+ *
+ * The cards hydrate with `client:visible` so the interaction wiring only loads
+ * once this below-the-fold section scrolls into view, keeping first paint static.
+ *
+ * Layout: two columns on a phone, three from `sm` up. Capping at three (rather
+ * than four) keeps each badge large enough to read its own lettering, which is
+ * the point of showing badge artwork at all. The row gap is wider than the
+ * column gap so the captions group with their own badge now that there is no
+ * card outline to bind them.
+ */
+---
+
+<div class="mt-8">
+  <ul class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 sm:gap-x-8" role="list">
+    {
+      certifications.map((cert) => (
+        <li>
+          <CertificationCard
+            client:visible
+            name={cert.name}
+            issuer={cert.issuer}
+            date={cert.date}
+            imageUrl={cert.imageUrl}
+            altText={cert.altText}
+            verifyUrl={cert.verifyUrl}
+          />
+        </li>
+      ))
+    }
+  </ul>
+</div>

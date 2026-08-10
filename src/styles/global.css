@@ -1,0 +1,349 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Theme tokens
+
+   Values are space-separated RGB channels so Tailwind can compose them with an
+   alpha channel via `rgb(var(--token) / <alpha-value>)` (see
+   tailwind.config.mjs). A class strategy on <html> selects the active theme:
+   `.dark` (default) or `.light`. `:root` carries the dark defaults so the page
+   renders correctly even before the no-flash init script runs.
+
+   The palette preserves the original portfolio's identity: deep aubergine
+   purple surfaces with a hot-pink primary and an orange secondary accent.
+   ========================================================================== */
+:root,
+:root.dark {
+  color-scheme: dark;
+
+  --background: 19 11 35; /* #130b23 deep purple-black */
+  --foreground: 245 243 250; /* near-white */
+  --muted: 33 20 58; /* #211440 raised purple */
+  --muted-foreground: 176 167 196; /* desaturated lavender */
+  --card: 30 18 53; /* #1e1235 */
+  --card-foreground: 245 243 250;
+  --border: 55 38 88; /* #372658 */
+  --primary: 255 64 129; /* hot pink — the original brand accent */
+  --primary-foreground: 24 10 20;
+  --accent: 255 159 85; /* orange — secondary accent */
+  --accent-foreground: 32 16 8;
+
+  /* Fluid body typography: a linear ramp from 16px at a 360px viewport to
+     20px at 2560px. The 16px floor sits above the 14px accessibility
+     minimum, so computed body text is never smaller than 14px. */
+  --body-font-size: clamp(16px, 15.3455px + 0.1818vw, 20px);
+}
+
+/* Light theme — a warm near-white surface that keeps the pink accent readable. */
+:root.light {
+  color-scheme: light;
+
+  --background: 250 249 252;
+  --foreground: 28 20 43;
+  --muted: 242 239 248;
+  --muted-foreground: 91 80 112;
+  --card: 255 255 255;
+  --card-foreground: 28 20 43;
+  --border: 227 221 238;
+  --primary: 214 31 96; /* darkened pink for AA contrast on light */
+  --primary-foreground: 255 255 255;
+  --accent: 194 92 20; /* darkened orange for AA contrast on light */
+  --accent-foreground: 255 255 255;
+}
+
+/* ==========================================================================
+   Reduced motion — global safety net. Components layer their own
+   `motion-reduce:` Tailwind variants on top of this.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Reflow + overflow guards. Sections must render 360-2560px with no horizontal
+   scroll, no overlap, and no text truncation.
+   ========================================================================== */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: var(--body-font-size);
+  /* Long words / URLs wrap instead of forcing horizontal overflow. */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Replaced (embedded) content never exceeds its container width. */
+img,
+picture,
+video,
+canvas,
+svg,
+iframe {
+  max-width: 100%;
+}
+
+/* Consistent focus ring for every interactive element that does not define
+   its own. */
+:focus-visible {
+  outline: 2px solid rgb(var(--primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Glass surfaces
+
+   Every card, panel, and tile on the page uses these instead of an opaque
+   `--card` fill. They are deliberately COLOURLESS: white and black alphas only,
+   so all hue comes from whatever is behind them (the aurora backdrop). Painting
+   a tinted fill here is what previously made the cards read as solid slabs
+   floating on top of the background rather than panes set into it.
+
+   The blur is what makes the text legible, not the fill opacity. It diffuses the
+   bright aurora ribbons into a soft wash, so a very low alpha is still readable.
+   ========================================================================== */
+@layer components {
+  .glass {
+    background-color: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    /* Inset top highlight reads as the lit edge of a glass pane; the outer
+       shadow lifts it off the backdrop. */
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 8px 32px rgb(0 0 0 / 0.22);
+  }
+
+  /* Light theme inverts the metaphor: frosted white rather than smoked. */
+  :root.light .glass {
+    background-color: rgb(255 255 255 / 0.55);
+    border-color: rgb(255 255 255 / 0.7);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 8px 32px rgb(0 0 0 / 0.06);
+  }
+
+  /* Heavier pane for the floating dock, which overlaps arbitrary content and
+     needs to separate from it more firmly than an in-flow card does. */
+  .glass-panel {
+    background-color: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      0 8px 32px rgb(0 0 0 / 0.3);
+  }
+
+  :root.light .glass-panel {
+    background-color: rgb(255 255 255 / 0.7);
+    border-color: rgb(255 255 255 / 0.8);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 8px 32px rgb(0 0 0 / 0.1);
+  }
+
+  /* Interactive glass: brightens on hover/focus without introducing a hue. */
+  .glass-hover {
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      transform 200ms ease;
+  }
+
+  .glass-hover:hover,
+  .glass-hover:focus-visible,
+  .glass-hover:focus-within {
+    background-color: rgb(255 255 255 / 0.11);
+    border-color: rgb(255 255 255 / 0.22);
+  }
+
+  :root.light .glass-hover:hover,
+  :root.light .glass-hover:focus-visible,
+  :root.light .glass-hover:focus-within {
+    background-color: rgb(255 255 255 / 0.75);
+    border-color: rgb(255 255 255 / 0.95);
+  }
+
+  /* Small tiles (dock icons, badges). No backdrop-filter: they sit inside an
+     already-blurred panel, and stacking filters costs GPU time for no visible
+     gain at this size. */
+  .glass-tile {
+    background-color: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(255 255 255 / 0.09);
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .glass-tile:hover {
+    background-color: rgb(255 255 255 / 0.13);
+    border-color: rgb(255 255 255 / 0.18);
+  }
+
+  :root.light .glass-tile {
+    background-color: rgb(0 0 0 / 0.04);
+    border-color: rgb(0 0 0 / 0.06);
+  }
+
+  :root.light .glass-tile:hover {
+    background-color: rgb(0 0 0 / 0.08);
+    border-color: rgb(0 0 0 / 0.1);
+  }
+
+  /*
+   * No backdrop-filter support (older Firefox with the flag off, some embedded
+   * webviews): without the blur, a 6% fill would leave text sitting directly on
+   * bright aurora ribbons. Fall back to a near-opaque neutral fill so contrast
+   * is preserved. Checked for both the prefixed and unprefixed property.
+   */
+  @supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
+    .glass,
+    .glass-panel {
+      background-color: rgb(18 12 30 / 0.88);
+      border-color: rgb(255 255 255 / 0.14);
+    }
+
+    :root.light .glass,
+    :root.light .glass-panel {
+      background-color: rgb(252 252 254 / 0.94);
+      border-color: rgb(0 0 0 / 0.08);
+    }
+  }
+
+  /*
+   * Each glass surface re-samples its backdrop whenever the backdrop changes,
+   * and the aurora animates continuously. Under reduced motion the shader never
+   * starts, so the backdrop is static and this is free; while it is running,
+   * keeping the radius moderate (16-24px, not 40px+) is what keeps the cost flat.
+   */
+}
+
+/* ==========================================================================
+   Theme ripple
+
+   The theme toggle swaps `.dark`/`.light` inside a View Transition. The browser
+   snapshots the page either side of the swap; these rules replace the default
+   cross-fade with a circular wipe expanding from the toggle button.
+
+   How it works: the OLD snapshot is left completely unanimated, sitting beneath
+   the new one. The NEW snapshot is clipped to a circle that grows from zero at
+   the button to a radius covering the furthest viewport corner, so the incoming
+   theme is progressively uncovered.
+
+   `mix-blend-mode: normal` is required because the UA default is `plus-lighter`,
+   which is correct for a cross-fade but would wash the two themes together here.
+
+   Everything is scoped to `[data-theme-transition]`, set only for the duration of
+   a theme swap, so any other view transition keeps the browser default.
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  /* Prevent the snapshots from being clipped by the page's own overflow guards. */
+  overflow: clip;
+}
+
+:root[data-theme-transition]::view-transition-old(root),
+:root[data-theme-transition]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Outgoing theme: static, underneath, uncovered as the circle grows. */
+:root[data-theme-transition]::view-transition-old(root) {
+  z-index: 0;
+}
+
+/* Incoming theme: on top, revealed by the expanding circle. */
+:root[data-theme-transition]::view-transition-new(root) {
+  z-index: 1;
+  animation: theme-ripple 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes theme-ripple {
+  from {
+    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+  to {
+    /* The fallback covers any viewport if the JS-set radius is missing. */
+    clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+}
+
+/* Reduced motion: a full-viewport wipe is exactly the kind of large-area motion
+   this preference asks us to avoid. The toggle also skips the view transition
+   entirely in JS; this is the defensive half of that. */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme-transition]::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Decorative utilities
+   ========================================================================== */
+
+/* Subtle grain overlay used behind the hero for depth. */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Gradient text used for the hero name. */
+.text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    rgb(var(--primary)) 0%,
+    rgb(var(--accent)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* ==========================================================================
+   Scroll cue
+
+   The hero fills the viewport, so nothing below it hints that the page
+   continues. This is the hint: a slow, small vertical bob on the hero's
+   "scroll down" affordance. Amplitude stays under 5px and the cycle is long, so
+   it reads as an invitation rather than an attention grab, and the global
+   reduced-motion net above collapses it to a static glyph.
+   ========================================================================== */
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+.scroll-cue-bob {
+  animation: scroll-cue 2.6s ease-in-out infinite;
+}

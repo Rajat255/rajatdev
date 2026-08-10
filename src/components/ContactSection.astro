@@ -1,0 +1,62 @@
+---
+import { profile } from '../content/profile';
+import Icon from './Icon.astro';
+import SocialLinks from './SocialLinks.astro';
+
+/**
+ * ContactSection.astro — the closing contact section body.
+ *
+ * A centered invitation whose primary affordance is a `mailto:` link, followed by
+ * the concrete contact details and the shared social row.
+ *
+ * All three details are actionable where it makes sense: the email is a mailto
+ * link and the phone is a `tel:` link, so they work as taps on mobile.
+ */
+const { email, phone, location, resumeUrl } = profile;
+---
+
+<div class="mt-6 flex flex-col items-center gap-8 text-center">
+  <p class="max-w-xl text-base leading-relaxed text-muted-foreground">
+    Got a question, an opportunity, or just want to talk about cloud infrastructure?
+    <a
+      class="font-medium text-primary underline-offset-4 hover:underline focus-visible:underline"
+      href={`mailto:${email}`}
+    >
+      Send me an email
+    </a>
+    and I'll get back to you.
+  </p>
+
+  <ul class="flex flex-col items-center gap-3 sm:flex-row sm:gap-6" role="list">
+    <li class="flex items-center gap-2 text-sm text-muted-foreground">
+      <Icon name="mail" size={16} class="text-primary" />
+      <a class="hover:text-foreground" href={`mailto:${email}`}>{email}</a>
+    </li>
+    {
+      phone && (
+        <li class="flex items-center gap-2 text-sm text-muted-foreground">
+          <Icon name="phone" size={16} class="text-primary" />
+          <a class="hover:text-foreground" href={`tel:${phone.replace(/[^+\d]/g, '')}`}>
+            {phone}
+          </a>
+        </li>
+      )
+    }
+    <li class="flex items-center gap-2 text-sm text-muted-foreground">
+      <Icon name="pin" size={16} class="text-primary" />
+      <span>{location}</span>
+    </li>
+  </ul>
+
+  <div class="flex flex-wrap items-center justify-center gap-3">
+    <a
+      href={resumeUrl}
+      download
+      class="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+    >
+      <Icon name="download" size={16} />
+      Download resume
+    </a>
+    <SocialLinks />
+  </div>
+</div>

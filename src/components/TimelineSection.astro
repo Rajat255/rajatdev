@@ -1,0 +1,196 @@
+---
+import { timeline } from '../content/timeline';
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+
+/**
+ * TimelineSection.astro — the Timeline section body.
+ *
+ * A single chronological rail of notable moments. Built with CSS grid rather
+ * than absolutely-positioned pixel offsets, so it reflows cleanly from 360px to
+ * 2560px and survives browser zoom:
+ *
+ * - Mobile: one column with the rail pinned to the left.
+ * - >=768px: two columns with entries alternating left/right around a centered
+ *   rail.
+ *
+ * Each entry is scroll-revealed once per load through the shared AnimationEngine
+ * and renders in its final visible state by default, so nothing is hidden
+ * without JS.
+ */
+
+/** Maps the content-layer icon enum onto the shared icon set. */
+const ICON_MAP: Record<string, IconName> = {
+  award: 'award',
+  briefcase: 'briefcase',
+  graduation: 'graduation',
+  rocket: 'rocket',
+  code: 'code',
+  sparkle: 'sparkle',
+};
+---
+
+<div class="tl mt-6">
+  <ol class="tl-list" role="list">
+    {
+      timeline.map((entry) => (
+        <li class="tl-item" data-timeline-reveal>
+          <span class="tl-dot" aria-hidden="true" />
+          <article class="tl-card glass glass-hover">
+            <h3 class="tl-card-title">
+              <Icon name={ICON_MAP[entry.icon] ?? 'sparkle'} size={16} class="text-primary" />
+              <span>{entry.title}</span>
+            </h3>
+            <p class="tl-card-date">{entry.date}</p>
+            <p class="tl-card-body">{entry.description}</p>
+          </article>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .tl-list {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The vertical rail. Left-pinned on mobile. */
+  .tl-list::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--primary) / 0.8),
+      rgb(var(--accent) / 0.5)
+    );
+  }
+
+  .tl-item {
+    position: relative;
+    padding-left: 2rem;
+    min-width: 0;
+  }
+
+  .tl-dot {
+    position: absolute;
+    top: 1.1rem;
+    left: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background: rgb(var(--background));
+    border: 2px solid rgb(var(--primary));
+    z-index: 1;
+  }
+
+  /* Surface (fill, border, blur, shadow) comes from the shared `.glass` utility;
+     only geometry is set here. */
+  .tl-card {
+    border-radius: 0.75rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .tl-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: rgb(var(--card-foreground));
+  }
+
+  .tl-card-date {
+    margin-top: 0.125rem;
+    font-size: 0.6875rem;
+    color: rgb(var(--muted-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tl-card-body {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: rgb(var(--muted-foreground));
+  }
+
+  /* Alternating two-column layout on wider viewports. */
+  @media (min-width: 768px) {
+    .tl-list {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 0;
+    }
+
+    .tl-list::before {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tl-item {
+      padding-left: 0;
+    }
+
+    /* Odd entries sit in the left column, right-aligned toward the rail. */
+    .tl-item:nth-child(odd) {
+      grid-column: 1;
+      padding-right: 2rem;
+      text-align: right;
+    }
+    .tl-item:nth-child(odd) .tl-dot {
+      left: auto;
+      right: 0;
+      transform: translateX(50%);
+    }
+    /* Flip the title row so the glyph stays adjacent to the rail. */
+    .tl-item:nth-child(odd) .tl-card-title {
+      flex-direction: row-reverse;
+    }
+
+    /* Even entries sit in the right column, left-aligned toward the rail. */
+    .tl-item:nth-child(even) {
+      grid-column: 2;
+      padding-left: 2rem;
+      text-align: left;
+    }
+    .tl-item:nth-child(even) .tl-dot {
+      left: 0;
+      transform: translateX(-50%);
+    }
+  }
+</style>
+
+<script>
+  import { getAnimationEngine } from '../lib/animation/AnimationEngine';
+
+  const REVEAL_START_DELAY_MS = 50;
+  const REVEAL_DURATION_MS = 600;
+
+  if (typeof window !== 'undefined') {
+    const engine = getAnimationEngine();
+    document
+      .querySelectorAll<HTMLElement>('[data-timeline-reveal]')
+      .forEach((entry) => {
+        engine.reveal(entry, {
+          startDelayMs: REVEAL_START_DELAY_MS,
+          durationMs: REVEAL_DURATION_MS,
+          motion: {
+            kind: 'translate',
+            startDelayMs: REVEAL_START_DELAY_MS,
+            durationMs: REVEAL_DURATION_MS,
+          },
+        });
+      });
+  }
+</script>

@@ -1,0 +1,239 @@
+---
+import { experience } from '../content/experience';
+
+/**
+ * ExperienceSection.astro — the Experience section body.
+ *
+ * Renders each role as a narrative timeline entry rather than a table: a logo,
+ * the company, the role, the period, and an expandable set of achievement
+ * bullets.
+ *
+ * Each entry is a native `<details>`/`<summary>`, so expand/collapse is fully
+ * keyboard accessible and works with zero JS. A progressive-enhancement script
+ * animates the open/close height and is skipped under reduced motion, where the
+ * native instant toggle is left in place.
+ */
+const period = (start: string, end: string) => `${start} – ${end}`;
+---
+
+<div class="mt-6">
+  <ol class="space-y-3" role="list">
+    {
+      experience.map((job) => (
+        <li>
+          <details class="xp-item group glass glass-hover rounded-xl px-4 py-3">
+            <summary class="xp-summary flex cursor-pointer list-none items-center gap-4 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              {/* Company logo — circular, with an initial fallback. */}
+              <span
+                class="xp-logo"
+                data-image-fallback
+                data-errored={job.logoUrl ? undefined : 'true'}
+              >
+                <span
+                  class="xp-logo-initials"
+                  aria-hidden={job.logoUrl ? 'true' : undefined}
+                >
+                  {job.company.charAt(0)}
+                </span>
+                {job.logoUrl && (
+                  <img
+                    class="xp-logo-img"
+                    src={job.logoUrl}
+                    alt={`${job.company} logo`}
+                    loading="lazy"
+                    decoding="async"
+                    onerror="this.closest('[data-image-fallback]')?.setAttribute('data-errored','true')"
+                  />
+                )}
+              </span>
+
+              <span class="min-w-0 flex-grow">
+                <span class="flex items-baseline justify-between gap-x-3">
+                  <span class="inline-flex items-center text-sm font-semibold leading-tight text-foreground">
+                    {job.company}
+                    <span
+                      class="xp-chevron ml-1 inline-block text-muted-foreground transition-transform duration-300 ease-out group-open:rotate-90 motion-reduce:transition-none"
+                      aria-hidden="true"
+                    >
+                      &rsaquo;
+                    </span>
+                  </span>
+                  <span class="shrink-0 text-right text-[11px] tabular-nums text-muted-foreground sm:text-xs">
+                    {period(job.start, job.end)}
+                  </span>
+                </span>
+                <span class="mt-0.5 block text-xs text-muted-foreground">
+                  {job.role}
+                  {job.kind && <span class="text-muted-foreground/70"> · {job.kind}</span>}
+                  {job.location && (
+                    <span class="text-muted-foreground/70"> · {job.location}</span>
+                  )}
+                </span>
+              </span>
+            </summary>
+
+            <div class="xp-content">
+              <div class="xp-content-inner">
+                <ul class="mt-3 space-y-1.5 pl-[3.5rem]" role="list">
+                  {job.highlights.map((highlight) => (
+                    <li class="flex items-start gap-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                      <span
+                        aria-hidden="true"
+                        class="mt-[0.45rem] block h-1 w-1 shrink-0 rounded-full bg-accent"
+                      />
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {job.tags.length > 0 && (
+                  <ul class="mt-3 flex flex-wrap gap-1.5 pl-[3.5rem]" role="list">
+                    {job.tags.map((tag) => (
+                      <li>
+                        <span class="inline-flex items-center rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                          {tag}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </details>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  /* Company logo — circular avatar with a white backing so colored wordmarks sit
+     centered and read well in both themes. */
+  .xp-logo {
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    border: 1px solid rgb(var(--border));
+    background: #ffffff;
+  }
+  /* Padding kept tight (3px) so a wide wordmark uses as much of the circle's
+     width as it can; `object-fit: contain` still guarantees it never crops. */
+  .xp-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.1875rem;
+  }
+  /* Fallback state (no logo, or a broken image): a colourless glass circle with
+     the company initial, so it matches the card rather than introducing a tint.
+     The white backing above is kept only for real logos, which are usually
+     coloured wordmarks that need a neutral field to sit on. */
+  .xp-logo[data-errored='true'] {
+    background: rgb(255 255 255 / 0.08);
+    border-color: rgb(255 255 255 / 0.14);
+  }
+  .xp-logo[data-errored='true'] .xp-logo-img {
+    display: none;
+  }
+  .xp-logo-initials {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(var(--foreground));
+    text-transform: uppercase;
+  }
+  /* When an image is present, hide the initials behind it. */
+  .xp-logo:not([data-errored='true']) .xp-logo-initials {
+    position: absolute;
+    opacity: 0;
+  }
+
+  /* Hide the native disclosure marker; we render our own chevron. */
+  .xp-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Collapsible content uses the grid-template-rows 0fr <-> 1fr technique so it
+     can animate to and from its natural height. Open by default, so no-JS and
+     reduced-motion simply reveal it instantly when <details> is toggled; the
+     enhancement script drives the 0fr/1fr transition when motion is allowed. */
+  .xp-content {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 320ms ease;
+  }
+  .xp-content-inner {
+    overflow: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .xp-content {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Progressive enhancement: smoothly animate the <details> open/close. Native
+  // <details> already gives zero-JS, keyboard-accessible expand/collapse; this
+  // intercepts the toggle to animate the height. Under reduced motion the native
+  // instant toggle is left alone.
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReduced) {
+    // Keep in sync with the `.xp-content` transition duration.
+    const DURATION_MS = 320;
+    const items = document.querySelectorAll<HTMLDetailsElement>('details.xp-item');
+
+    items.forEach((detail) => {
+      const summary = detail.querySelector<HTMLElement>('summary');
+      const content = detail.querySelector<HTMLElement>('.xp-content');
+      if (!summary || !content) return;
+
+      let animating = false;
+
+      summary.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (animating) return;
+        animating = true;
+
+        if (detail.open) {
+          // Collapse: animate 1fr -> 0fr, then close.
+          content.style.gridTemplateRows = '1fr';
+          // Force a reflow so the starting value is committed; without this the
+          // browser may skip the transition entirely.
+          void content.offsetHeight;
+          requestAnimationFrame(() => {
+            content.style.gridTemplateRows = '0fr';
+          });
+          // A timeout guarantees the state is finalized and the flag reset even
+          // if `transitionend` never fires.
+          window.setTimeout(() => {
+            detail.open = false;
+            content.style.gridTemplateRows = '';
+            animating = false;
+          }, DURATION_MS);
+        } else {
+          // Expand: open first so the content is laid out, then animate up.
+          detail.open = true;
+          content.style.gridTemplateRows = '0fr';
+          void content.offsetHeight;
+          requestAnimationFrame(() => {
+            content.style.gridTemplateRows = '1fr';
+          });
+          window.setTimeout(() => {
+            content.style.gridTemplateRows = '';
+            animating = false;
+          }, DURATION_MS);
+        }
+      });
+    });
+  }
+</script>

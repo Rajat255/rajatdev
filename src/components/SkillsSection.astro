@@ -1,0 +1,216 @@
+---
+import { skillGroups } from '../content/skills';
+
+/**
+ * SkillsSection.astro — the Skills section body.
+ *
+ * Renders each validated skill group as a labelled badge cloud. Uniqueness of
+ * labels is enforced by Zod at build time, so the cloud can never show a
+ * duplicate.
+ *
+ * Layout — a borderless two-column table: category in a fixed left gutter, its
+ * badges filling the rest of the row. A `<dl>` rather than a `<table>`, because
+ * this is name-and-value data, not a grid of related cells; screen readers
+ * announce it as term/definition pairs and it collapses to a stack on a phone,
+ * which a real table cannot do cleanly.
+ *
+ * Alignment is done with one CSS grid per row against a fixed track width, so
+ * every category shares the same gutter and the badge columns line up down the
+ * page. `minmax(0, 1fr)` on the badge track is what lets a long label wrap
+ * inside the row instead of widening the track.
+ *
+ * Motion — a staggered blur-fade that plays on page load rather than on scroll.
+ * It is both no-JS-safe and reduced-motion-safe: the hidden pre-reveal state is
+ * applied ONLY by the inline script below, and only when motion is allowed. With
+ * no JS, or under `prefers-reduced-motion`, the badges simply render fully
+ * visible and static.
+ */
+---
+
+<dl class="skills-table mt-6">
+  {
+    skillGroups.map((group) => (
+      <div class="skill-row">
+        <dt class="skill-row__label">{group.category}</dt>
+        <dd class="skill-row__items">
+          <ul class="skills-cloud" role="list">
+            {group.items.map((skill) => (
+              <li>
+                <span class="skill-badge glass-tile rounded-full px-2.5 py-1 text-[0.8125rem] text-foreground">
+                  {skill}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+{/*
+  Inline (synchronous) pre-hide: runs the moment the markup above is parsed, so
+  there is never a flash of visible-then-hidden. It only hides the badges when
+  motion is allowed; under reduced motion (or with no JS) they stay visible.
+*/}
+<script is:inline>
+  (function () {
+    try {
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        return;
+      }
+      document
+        .querySelectorAll('.skills-cloud')
+        .forEach(function (cloud) {
+          cloud.classList.add('skills-cloud--pre');
+        });
+    } catch (e) {
+      /* If anything goes wrong, leave the badges visible. */
+    }
+  })();
+</script>
+
+<style>
+  /* -- Borderless table ---------------------------------------------------- */
+
+  .skills-table {
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* Phone: the label simply sits above its badges. */
+  .skill-row {
+    display: grid;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+
+  .skill-row__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    color: rgb(var(--muted-foreground));
+  }
+
+  .skill-row__items {
+    margin: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .skills-table {
+      gap: 0.875rem;
+    }
+
+    /* Two tracks: a fixed gutter for the category, the remainder for badges.
+       `align-items: start` keeps a wrapped label anchored to the top of its row
+       rather than centred against a two-line badge cloud. */
+    .skill-row {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      align-items: start;
+      column-gap: 1.25rem;
+      row-gap: 0;
+    }
+
+    /* Right-aligned so the labels and the badges meet at a single clean gutter,
+       which is what reads as a table without drawing any rules. The padding is
+       optical, aligning the label's cap height with the first badge's text
+       rather than with the badge's outer edge. */
+    .skill-row__label {
+      text-align: right;
+      padding-top: 0.4375rem;
+    }
+  }
+
+  /* A wrapping badge cloud. `flex-wrap` + `min-width: 0` keep long labels from
+     forcing horizontal overflow at 360px. */
+  .skills-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0;
+    margin-block: 0;
+    list-style: none;
+    min-width: 0;
+  }
+
+  .skills-cloud > li {
+    display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .skill-badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s ease,
+      filter 0.45s ease,
+      border-color 0.2s ease;
+  }
+
+  .skill-badge:hover {
+    border-color: rgb(var(--primary));
+  }
+
+  /* Pre-reveal (hidden) state — applied by the inline script ONLY when motion is
+     allowed, so no-JS / reduced-motion visitors never see a hidden cloud. */
+  .skills-cloud--pre .skill-badge {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+
+  /* Revealed state — added per badge on load with a stagger. Declared after the
+     pre-reveal rule so it wins at equal specificity. */
+  .skills-cloud--pre .skill-badge.is-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  /* Reduced motion: never transition, never hide (defensive, on top of the
+     inline script's guard). */
+  @media (prefers-reduced-motion: reduce) {
+    .skill-badge {
+      transition: none;
+    }
+    .skills-cloud--pre .skill-badge {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+</style>
+
+<script>
+  // Staggered blur-fade on load. Each badge is revealed with a small incremental
+  // delay so the cloud fills in progressively. Guarded for reduced motion: the
+  // inline script won't have hidden anything, so this simply no-ops.
+  const BASE_DELAY_MS = 60;
+  const STAGGER_STEP_MS = 22;
+
+  const reduce =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    const badges = document.querySelectorAll<HTMLElement>('.skills-cloud .skill-badge');
+    badges.forEach((badge, index) => {
+      window.setTimeout(
+        () => badge.classList.add('is-in'),
+        BASE_DELAY_MS + index * STAGGER_STEP_MS,
+      );
+    });
+  }
+</script>

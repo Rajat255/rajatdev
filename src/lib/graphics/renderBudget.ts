@@ -1,0 +1,131 @@
+/**
+ * Pure render-budget helpers for the WebGL aurora background.
+ *
+ * The aurora shader is expensive per pixel (roughly 250 noise evaluations per
+ * fragment per frame), so it is never rendered at native resolution or at the
+ * display's full refresh rate. These helpers own that arithmetic and are kept
+ * free of DOM and WebGL access so the budgeting rules are unit-testable.
+ */
+
+/** Quality tiers. Lower tiers trade visual density for GPU headroom. */
+export type QualityTier = 'high' | 'medium' | 'low';
+
+export interface QualitySettings {
+  /** Fraction of the CSS pixel size actually rendered, then upscaled by CSS. */
+  resolutionScale: number;
+  /** Hard ceiling on rendered pixels, so a 4K or 5K display cannot melt. */
+  maxPixels: number;
+  /** Raymarch step count compiled into the shader. */
+  steps: number;
+  /** Frame-rate cap. The aurora drifts slowly, so 30fps reads as smooth. */
+  maxFps: number;
+}
+
+/**
+ * Settings per tier.
+ *
+ * The shader's per-step contribution decays as `exp2(-i * 0.065)`, so the last
+ * steps add very little light. Dropping from 50 to 32 steps is a large GPU saving
+ * for a barely perceptible change in the trails.
+ */
+export const QUALITY: Record<QualityTier, QualitySettings> = {
+  high: { resolutionScale: 0.7, maxPixels: 1_300_000, steps: 48, maxFps: 30 },
+  medium: { resolutionScale: 0.55, maxPixels: 800_000, steps: 36, maxFps: 30 },
+  low: { resolutionScale: 0.45, maxPixels: 480_000, steps: 26, maxFps: 24 },
+};
+
+export interface DeviceProfile {
+  /** `navigator.hardwareConcurrency`, when available. */
+  cores?: number;
+  /** True when the primary pointer is coarse (touch), used as a phone proxy. */
+  coarsePointer?: boolean;
+  /** `navigator.deviceMemory`-style hint in GB, when available. */
+  memoryGb?: number;
+}
+
+/**
+ * Picks a quality tier from coarse device signals.
+ *
+ * There is no reliable way to measure GPU capability up front, so this leans on
+ * proxies and deliberately errs low: an unnecessarily soft background is a much
+ * better failure mode than a janky one.
+ */
+export function pickQualityTier(profile: DeviceProfile = {}): QualityTier {
+  const { cores, coarsePointer, memoryGb } = profile;
+
+  // Touch devices are treated as mobile GPUs on a battery budget.
+  if (coarsePointer) return 'low';
+  if (typeof memoryGb === 'number' && memoryGb > 0 && memoryGb <= 4) return 'low';
+  if (typeof cores === 'number' && cores > 0 && cores <= 4) return 'medium';
+  return 'high';
+}
+
+export interface RenderSize {
+  width: number;
+  height: number;
+}
+
+/**
+ * Computes the backing-store size for the canvas.
+ *
+ * Applies, in order: the device pixel ratio (capped, since supersampling this
+ * shader is pure waste), the tier's resolution scale, and finally the absolute
+ * pixel ceiling. Always returns at least 1x1 so a zero-sized canvas can never
+ * produce an invalid framebuffer.
+ */
+export function computeRenderSize(
+  cssWidth: number,
+  cssHeight: number,
+  devicePixelRatio: number,
+  settings: Pick<QualitySettings, 'resolutionScale' | 'maxPixels'>,
+  maxDpr = 1.5,
+): RenderSize {
+  const safeCssWidth = Math.max(1, cssWidth);
+  const safeCssHeight = Math.max(1, cssHeight);
+  const dpr = Math.min(Math.max(devicePixelRatio || 1, 1), maxDpr);
+
+  let width = safeCssWidth * dpr * settings.resolutionScale;
+  let height = safeCssHeight * dpr * settings.resolutionScale;
+
+  // Scale both axes by the same factor so the aspect ratio is preserved.
+  const pixels = width * height;
+  if (pixels > settings.maxPixels) {
+    const factor = Math.sqrt(settings.maxPixels / pixels);
+    width *= factor;
+    height *= factor;
+  }
+
+  return {
+    width: Math.max(1, Math.floor(width)),
+    height: Math.max(1, Math.floor(height)),
+  };
+}
+
+/**
+ * Creates a frame-rate gate.
+ *
+ * Returns a predicate that reports whether enough time has passed to render
+ * again, recording the timestamp when it allows a frame through. The first call
+ * always passes so there is no initial blank frame. A non-positive `maxFps`
+ * disables the gate entirely.
+ */
+export function createFrameGate(maxFps: number): (nowMs: number) => boolean {
+  if (!(maxFps > 0)) return () => true;
+
+  const minIntervalMs = 1000 / maxFps;
+  let lastMs: number | null = null;
+
+  return (nowMs: number): boolean => {
+    if (lastMs === null) {
+      lastMs = nowMs;
+      return true;
+    }
+    // A small tolerance stops a 30fps cap from dropping to 20 when frames land
+    // a fraction of a millisecond early on a 60Hz display.
+    if (nowMs - lastMs + 0.5 >= minIntervalMs) {
+      lastMs = nowMs;
+      return true;
+    }
+    return false;
+  };
+}

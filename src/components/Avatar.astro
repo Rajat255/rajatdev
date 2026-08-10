@@ -1,0 +1,84 @@
+---
+/**
+ * Avatar.astro — a circular avatar with a dependency-free initials fallback.
+ *
+ * The root reserves its `size x size` box up front, so a load failure (or a
+ * missing asset) causes NO layout shift. The swap is driven by an inline
+ * `onerror` handler that only toggles a data attribute, so it needs zero client
+ * JS and can never itself fail to run. The failing `<img>` is hidden rather than
+ * left in place, so the browser never paints a broken-image icon.
+ */
+interface Props {
+  /** Image URL. */
+  src: string;
+  /** Descriptive alternative text. */
+  alt: string;
+  /** Short fallback text shown when the image is missing or errors. */
+  initials: string;
+  /** Circular diameter in px. Reserves the box so there is no layout shift. */
+  size?: number;
+  /** Extra classes for the root element. */
+  class?: string;
+  /** Set for above-the-fold avatars so the browser fetches them eagerly. */
+  eager?: boolean;
+}
+
+const {
+  src,
+  alt,
+  initials,
+  size = 128,
+  class: className,
+  eager = false,
+} = Astro.props;
+
+const boxStyle = `width:${size}px;height:${size}px`;
+// Roughly 36% of the diameter — a comfortable monogram proportion.
+const initialsStyle = `font-size:${Math.round(size * 0.36)}px`;
+
+// With no image URL there is nothing to load: start errored so the initials show
+// immediately and no request is ever made.
+const hasSrc = typeof src === 'string' && src.length > 0;
+---
+
+<span
+  class:list={[
+    'avatar relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-primary/60 bg-white/[0.06] align-middle backdrop-blur-md',
+    className,
+  ]}
+  style={boxStyle}
+  data-image-fallback
+  data-errored={hasSrc ? undefined : 'true'}
+>
+  <span
+    class="avatar__initials select-none font-semibold uppercase leading-none tracking-wide text-foreground"
+    style={initialsStyle}
+    aria-hidden={hasSrc ? 'true' : undefined}
+  >
+    {initials}
+  </span>
+
+  {
+    hasSrc && (
+      <img
+        class="avatar__img absolute inset-0 h-full w-full object-cover"
+        src={src}
+        alt={alt}
+        width={size}
+        height={size}
+        decoding="async"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        onerror="this.closest('[data-image-fallback]')?.setAttribute('data-errored','true')"
+      />
+    )
+  }
+</span>
+
+<style>
+  /* On error the image is removed entirely so the browser can never paint a
+     broken-image icon; the initials underneath take over. */
+  .avatar[data-errored='true'] .avatar__img {
+    display: none;
+  }
+</style>
