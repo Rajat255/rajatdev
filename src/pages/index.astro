@@ -3,7 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import BackgroundFX from '../components/BackgroundFX.astro';
 import Navigation from '../components/Navigation.tsx';
 import StatCounters from '../components/StatCounters.tsx';
-import Avatar from '../components/Avatar.astro';
+// Avatar is intentionally not imported: the hero carries no photo (see the
+// commented block in the hero below). The component itself is left in the repo.
+// import Avatar from '../components/Avatar.astro';
 import Icon from '../components/Icon.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import SocialLinks from '../components/SocialLinks.astro';
@@ -121,15 +123,25 @@ const sectionClass = 'mx-auto max-w-3xl scroll-mt-24 px-4 py-10';
           </div>
         </div>
 
-        <div class="order-1 sm:order-2">
-          <Avatar
-            src={profile.avatarUrl}
-            alt={profile.name}
-            initials={profile.initials}
-            size={140}
-            eager
-          />
-        </div>
+        {/*
+          No hero photo, by choice: the hero reads better as pure type. Kept here
+          rather than deleted so the layout is one un-comment away if that ever
+          changes (the `Avatar` import at the top of this file goes with it).
+
+          Note that `profile.avatarUrl` is deliberately left in place either way:
+          Layout.astro uses it as the default Open Graph image, so removing it
+          from the content layer would strip the picture from link previews.
+
+          <div class="order-1 sm:order-2">
+            <Avatar
+              src={profile.avatarUrl}
+              alt={profile.name}
+              initials={profile.initials}
+              size={140}
+              eager
+            />
+          </div>
+        */}
       </div>
 
       {/*
