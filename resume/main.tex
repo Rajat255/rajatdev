@@ -117,13 +117,13 @@
     \small\item
     \textbf{Cloud Platforms}: AWS (EC2, ECS, EKS, Lambda, Aurora/RDS, Redshift, ElastiCache/Valkey, S3, EFS, SQS, Athena, API Gateway, Step Functions, IAM, Graviton, Spot, Savings Plans), Microsoft Azure, GCP \\
     \textbf{Infrastructure as Code}: Terraform, AWS CloudFormation, Helm, EC2 User Data \\
-    \textbf{CI/CD \& GitOps}: ArgoCD, Argo Workflows, Jenkins, GitHub Actions (self-hosted runners), AWS CodePipeline, Git, GitHub \\
+    \textbf{CI/CD \& GitOps}: ArgoCD, Argo Workflows, Jenkins, GitHub Actions (self-hosted runners), Git, GitHub \\
     \textbf{Containers \& Orchestration}: Docker, Kubernetes, Amazon EKS, ECS, Karpenter, KEDA, HPA, Helm \\
-    \textbf{Networking \& DNS}: Route 53, ACM/TLS certificate automation, Application Load Balancers, VPC, CloudFront \\
+    \textbf{Networking \& DNS}: Route 53, ACM/TLS certificate automation, Application Load Balancers, VPC, CloudFront, AWS PrivateLink, Transit Gateways \\
     \textbf{Monitoring \& Observability}: Grafana, Prometheus, New Relic, AWS CloudWatch \\
     \textbf{Programming \& Scripting}: Python, Bash, JavaScript, SQL, Linux (Ubuntu, Amazon Linux) \\
     \textbf{Practices}: Site Reliability Engineering (SRE), Incident Management, Root Cause Analysis (RCA), High Availability, Auto-Scaling, FinOps \& Cost Optimization, Capacity Planning, Mentoring, Agile/Scrum \\
-    \textbf{Spoken Languages}: English, French (B1), Hindi, Marathi
+    \textbf{Spoken Languages}: English, French (B1), Marathi, Hindi
 \end{itemize}
 
 % -------------------- EXPERIENCE --------------------
@@ -169,7 +169,7 @@
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{AWS Cost Optimization Program} $|$ \footnotesize\emph{Aurora, Redshift, Valkey, AWS Graviton, Spot, Savings Plans, ALB, SQS, EFS, Athena, Cost Explorer}}{2025}
+      {\textbf{AWS Cost Optimization Program} $|$ \footnotesize\emph{AWS Services, AWS Graviton, Spot, Savings Plans, Cost Explorer}}{2025}
       \resumeItemListStart
         \resumeItem{Drove an AWS cost reduction program over 2.5 months, cutting monthly spend from \$35--38K to \$19--21K (45\%, roughly \$200K/year annualized) across compute, database, storage, networking, and messaging.}
         \resumeItem{Re-architected the data tier by migrating Aurora Serverless to provisioned r7g Graviton instances with optimized storage, re-platforming Redis to Valkey on Graviton, and removing non-essential Multi-AZ replicas; secured Reserved Instance coverage once capacity became predictable.}
@@ -179,9 +179,9 @@
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{Agentic CI/CD Failure Triage \& Auto-Remediation} $|$ \footnotesize\emph{Python, LLM Agents, MCP, Jenkins, Argo Workflows}}{2026}
+      {\textbf{Agentic CI/CD Failure Triage \& Auto-Remediation} $|$ \footnotesize\emph{LLM Agents, MCP, Jenkins, Argo Workflows}}{2026}
       \resumeItemListStart
-        \resumeItem{Shipped a Kubernetes-native AI agent watching Jenkins and Argo Workflows across 30+ pipelines and 40 services, using an LLM layer to parse job logs and classify failures by root cause (dependency, config, infrastructure, transient).}
+        \resumeItem{Shipped a Kubernetes-native AI agent watching Jenkins and Argo Workflows across 30+ pipelines and 40 services, using an LLM layer to parse job logs and classify failures by root cause.}
         \resumeItem{Delivered Slack alerts carrying root-cause summaries and recommended fixes, cutting mean triage time by 70\% and saving 8+ hours/week of manual log investigation.}
         \resumeItem{Automated closed-loop remediation that opens targeted GitHub pull requests for code and config defects and retries transient failures via the Jenkins MCP server, resolving 40\% of failures without human intervention.}
         \resumeItem{Exposed a ChatOps interface over Jenkins MCP for natural-language build queries and job triggers, and packaged the agent as an RBAC-scoped Helm chart for least-privilege multi-environment deployment, cutting on-call escalations.}
