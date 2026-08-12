@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Rajat Khirid — Cloud & DevOps Engineer",
+    "short_name": "Rajat Khirid",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
+    "theme_color": "#130b23",
+    "background_color": "#130b23",
     "display": "standalone"
 }
