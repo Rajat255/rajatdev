@@ -1,0 +1,283 @@
+# Rajat Khirid — Cloud & DevOps Engineer (rajatdev.fun)
+
+> Rajat Khirid is a Cloud and DevOps engineer based in Pune, India, and an AWS Certified Solutions Architect – Professional (SAP-C02). At amber, where he spent more than eight months as the sole DevOps engineer for 50+ production services on AWS, he led a FinOps programme that cut monthly AWS spend by 45% (about $200K a year), migrated workloads from ECS to Amazon EKS with Karpenter and KEDA, and built MCP-based AI agents that triage and fix CI/CD failures on their own. He self-hosts this site on a bare-metal homelab.
+
+Source: https://rajatdev.fun/. Generated from the same data as the site at build time, 2026-11-02.
+
+## About
+
+Three years scaling AWS and Kubernetes for 50+ services, with the observability to catch problems before anyone files a ticket.
+
+- Location: Pune, India
+- Email: rajatkhirid@gmail.com
+- GitHub: https://github.com/Rajat255
+- LinkedIn: https://www.linkedin.com/in/rajatkhirid/
+- Blog: https://rajats.hashnode.dev/
+- Résumé: https://rajatdev.fun/resume/rajat-khirid-resume.pdf
+
+## Headline figures
+
+- 50+: production services owned
+- $200K+: a year saved on AWS
+- 45%: lower monthly cloud spend
+- SAP-C02: AWS Solutions Architect – Professional
+
+## Work
+
+### amber — DevOps Engineer, SDE1 (Dec 2024 – Present)
+
+- Sole DevOps engineer for 8+ months, owning production AWS infrastructure for 50+ services and 50,000+ monthly active users across global environments.
+- Run EKS workloads through Helm and ArgoCD with autoscaling and resource tuning, lifting cluster utilization by 24%.
+- Built CI/CD in Argo Workflows, Jenkins, and GitHub Actions, moving deployments from a few a week to several a day.
+- Codified infrastructure with Terraform across 4 AWS accounts using reusable modules and remote state, eliminating configuration drift.
+- Held production to 3–4 incidents, each detected and resolved inside 5 minutes, backed by SLO alerting in Grafana, Prometheus, and CloudWatch plus blameless post-mortems.
+
+Tools: AWS, EKS, Terraform, ArgoCD, Karpenter, Grafana, FinOps
+
+#### Case study: ECS to EKS migration (2026)
+
+Moving 50+ services from ECS and EC2 onto EKS, with just-in-time nodes and a zero-downtime cutover.
+
+Before:
+
+50+ containerized and non-containerized services were split between AWS ECS and hand-managed EC2. Scaling followed CPU and memory, which lagged behind the queue-driven load many of those services actually had.
+
+What changed:
+
+- Stood up EKS with managed node groups, IRSA-based pod identity, and VPC CNI networking.
+- Karpenter provisions On-Demand and Spot node pools just in time, with SQS-driven interruption handling.
+- KEDA scales event-driven workloads on queue depth where CPU/memory HPA fell short.
+- Cut over blue-green, shifting traffic behind the AWS Load Balancer Controller.
+
+Numbers:
+
+- 50+: services migrated to EKS
+- 0: minutes of customer-facing downtime
+
+Stack: Amazon EKS, ECS, Karpenter, KEDA, Terraform, Helm, Docker, AWS LB Controller
+
+#### Case study: AWS cost optimization (2025)
+
+A company-wide programme over two and a half months that cut monthly AWS spend by 45%, roughly $200K a year.
+
+Before:
+
+Monthly AWS spend sat at $35–38K. Aurora ran Serverless, Redshift dc2.large nodes tied 2 TB of storage to compute, Fargate ran everything On-Demand, 14 Application Load Balancers each fronted a handful of services, and SQS consumers short-polled empty queues.
+
+What changed:
+
+- Data tier: Aurora Serverless to provisioned r7g Graviton; Redis re-platformed to Valkey on Graviton; Redshift dc2.large to RA3, decoupling 2 TB of storage from compute; heavy Athena scans rerouted to a right-sized database.
+- Compute: ECS Fargate to EC2 Graviton, with Spot for fault-tolerant jobs, and self-hosted CI runners.
+- Networking: 14 ALBs consolidated to 4; SQS consumers moved to long-polling.
+- Commitments last: Compute Savings Plans layered on once capacity was predictable.
+
+Numbers:
+
+- −45%: monthly AWS spend
+- $200K/yr: saved ($35–38K → $19–21K a month)
+- 14 → 4: Application Load Balancers
+- −90%: SQS costs, via long-polling
+- 0: impact on availability
+
+Stack: Graviton, Spot, Savings Plans, Aurora, Redshift RA3, Valkey, Cost Explorer
+
+#### Case study: Agentic CI/CD failure triage (2026)
+
+A Kubernetes-native agent that reads failed builds, works out the root cause, and fixes or retries 40% of them on its own.
+
+Before:
+
+30+ pipelines across Jenkins and Argo Workflows served 40 services. Every red build meant a person opening the job, scrolling the log, and deciding whether it was real or just flaky.
+
+What changed:
+
+- An LLM layer parses job logs, classifies each failure by root cause, and posts a Slack summary with the recommended fix.
+- Closed-loop remediation opens targeted GitHub pull requests for code and config defects, and retries transient failures through a Jenkins MCP server.
+- The same agent reviews Terraform and Helm pull requests against Well-Architected, security, and cost guardrails, and runs scheduled drift and hygiene audits.
+- Alert-driven self-healing (rollbacks, restarts, scaling, cordon/drain) runs behind Slack approval gates for high-risk actions, with a full audit log, shipped as an RBAC-scoped Helm chart.
+
+Numbers:
+
+- 40%: of failures resolved hands-free
+- −70%: mean triage time
+- 8+ h/wk: of engineering time returned
+- 30+: pipelines watched
+
+Stack: Python, LLM Agents, MCP, Jenkins, Argo Workflows, Helm, Slack
+
+### IAMOPS — DevOps Engineer (Oct 2023 – Dec 2024)
+
+- Architected Azure-to-AWS migrations on CloudFront, ECS, and RDS against Well-Architected practices, delivering $54K/year in savings across client workloads.
+- Owned weekly engagements across 4 client accounts, presenting migration roadmaps and solution designs.
+- Shipped parallelized multi-environment CI/CD with Jenkins, CodePipeline, and EC2 user data, cutting environment setup from 2.5 hours to 40 minutes.
+- Automated event-driven workflows with Lambda, API Gateway, and Step Functions, trimming recurring spend 25% and removing 10+ hours a week of manual toil.
+- Covered SRE duties end to end: on-call rotations, RCA, runbooks, and instrumentation in CloudWatch, Grafana, and New Relic.
+
+Tools: AWS, Terraform, Jenkins, Lambda, ECS, New Relic
+
+### LTIMindtree — Cloud Intern (Jul 2023 – Sept 2023)
+
+- Cleared every milestone assessment in the cloud internship and training track.
+- Built hands-on labs across compute, storage, networking, and identity on AWS.
+
+Tools: AWS, Cloud Fundamentals
+
+## Side projects
+
+### GeekFixx (2023)
+
+A wellness application that looks after you while you use your computer. It uses machine learning to correct your posture and nudges you to look away from the screen, drink water, and take breaks.
+
+Tags: React, Machine Learning, Python
+Link: https://github.com/Rajat255/GeekFixx-ReactApp
+
+## Certifications
+
+- AWS Certified Solutions Architect – Professional, Amazon Web Services, Jul 2026. Verify: https://www.credly.com/badges/73e66e52-cf7f-433e-a47d-4284a4557dc4/public_url
+- AWS Certified Cloud Practitioner, Amazon Web Services, Aug 2023. Verify: https://www.credly.com/badges/7d6115f8-02b7-4810-91e4-ebcd40e182ef/public_url
+- Microsoft Azure Fundamentals, Microsoft, Feb 2023. Verify: https://www.credly.com/badges/0d7c495d-42dc-4aa4-a5a2-c4c09f1e2e2c/public_url
+
+## Skills
+
+- Cloud: AWS, Microsoft Azure, Google Cloud Platform
+- Containers & Orchestration: Docker, Kubernetes, Amazon EKS, ECS, Karpenter, KEDA, Helm
+- Infrastructure as Code: Terraform, AWS CloudFormation
+- CI/CD & GitOps: ArgoCD, Argo Workflows, Jenkins, GitHub Actions, AWS CodePipeline, Git
+- Compute & Serverless: EC2, AWS Lambda, Step Functions, API Gateway, Graviton, Spot
+- Data & Storage: Aurora, RDS, Redshift, Valkey, S3, EFS, SQS, Athena
+- Networking: Route 53, CloudFront, Application Load Balancers, VPC, ACM / TLS
+- Observability: Prometheus, Grafana, New Relic, AWS CloudWatch
+- Languages: Python, Bash, JavaScript, SQL, Linux
+- Practices: Site Reliability Engineering, Incident Management, Root Cause Analysis, FinOps & Cost Optimization, Capacity Planning
+
+## Books
+
+### Reading now
+
+- Trust, by Hernan Diaz (2022). Fiction · Capital & Narrative. Read in English.
+  Note: An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
+- L'Étranger (The Stranger), by Albert Camus (1942). Philosophy · Absurdism (B1 French). Read in Français.
+  Note: Reading Camus in the original French—deceptively simple sentences where the Algerian sun and quiet existential indifference do all the heavy lifting.
+
+### Finished
+
+- A Thousand Splendid Suns, by Khaled Hosseini (2007). Historical Fiction. Read in English.
+  Note: A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
+- Le Petit Prince, by Antoine de Saint-Exupéry (1943). Classic · Fable (FR). Read in Français.
+  Note: The rite of passage for anyone learning French, and still sharper about adult absurdity and bureaucracy than most books ten times its length.
+
+## Rabbit holes
+
+- French, at about B1: I read French books in the original, slowly, with a dictionary within reach. A few lines I’ve collected are below.
+- Two wheels: A bicycle most of the time, and a motorbike for the longer trips. The 1,500 km Konkan coast ride is on the timeline below.
+- Photography: Mostly taken on rides. The photo frames on the Konkan route are waiting for the good ones.
+- The homelab: The bare-metal box at home that serves this site, and the reason I learn something new about Linux every month.
+
+### French log
+
+- "Aujourd’hui, maman est morte. Ou peut-être hier, je ne sais pas." — Mother died today. Or maybe yesterday, I don’t know. (Albert Camus, L’Étranger (1942), the opening line)
+- "éblouir" — to dazzle, to blind with light. The sun in L’Étranger does a great deal of it. (From L’Étranger)
+- "On ne voit bien qu’avec le cœur. L’essentiel est invisible pour les yeux." — One sees clearly only with the heart. What is essential is invisible to the eye. (Antoine de Saint-Exupéry, Le Petit Prince (1943))
+- "les grandes personnes" — grown-ups. The Little Prince’s verdict: they never understand anything by themselves. (From Le Petit Prince)
+
+## Timeline
+
+- Jul 2026: AWS Solutions Architect – Professional. Cleared SAP-C02, the one I had been circling for a while. Three hours, 75 questions, and an unreasonable number of VPC diagrams.
+- 2026: Taught a robot to read build logs. Shipped an agent that watches 30+ pipelines, classifies failures by root cause, and opens the fix as a pull request. 40% of broken builds now sort themselves out before anyone notices.
+- 2025: Halved the AWS bill. Ran a company-wide cost programme that took monthly spend from $35–38K to $19–21K with no drop in availability. Fourteen load balancers became four. Nobody noticed, which was the whole point.
+- Dec 2024: Became amber’s DevOps team. Joined as SDE1 and spent eight months as the only DevOps engineer, owning production for 50+ services. One pager rotation, no co-pilot, a lot of respect for good runbooks.
+- 2024: Bought my first motorbike, then rode it to all along the coast of Konkan. Took it down the entire Konkan coast to from Mumbai to Goa and back, a little over 1,500 km of ghat sections, coastal highways, and great food. Best infrastructure decision I have ever made without a Terraform plan.
+- Oct 2023: Started at IAMOPS. Consulting across four client accounts on Azure-to-AWS migrations, Terraform, and SRE practice.
+- Aug 2023: First AWS certification. Earned the AWS Certified Cloud Practitioner credential. The gateway drug.
+- Jun 2023: Graduated with a 9.33 CGPA. Finished a Computer Science degree at Savitribai Phule Pune University with honors in Artificial Intelligence.
+- 2022: Switched to Linux full-time. Made Linux the daily driver and never went back, which is how most of this started. Reinstalled exactly once, and that time it was on purpose.
+
+## Notes
+
+### Notes from a Pune Homelab: Why I Traded My Portfolio Template for Newsprint
+
+Published 2026-10-26. Field Notes. 371 words. URL: https://rajatdev.fun/notes/notes-from-a-pune-homelab/
+
+> A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble.
+
+The previous version of this site was a single page of frosted-glass cards floating over an animated aurora. It was well built, and it looked like every other developer portfolio on the internet, mine included. It said "please hire me" very politely, and it didn't say much else.
+
+This version is a page of type on cream paper, and the change was mostly about what a page is allowed to contain.
+
+#### A portfolio is a pitch
+
+A portfolio has one job, so everything on it has to serve that job. A personal site doesn't. The engineering is still here, in full, on [the builds page](/builds/). But the front page is also allowed to mention a Camus novel and a motorbike ride down the Konkan coast, and there's a [whole page for books and rabbit holes](/threads/). Those things are true about me too, and the template had no place to put them.
+
+The nudge came from Jason's site at [fromjason.xyz](https://www.fromjason.xyz/), which reads like a person rather than a pitch deck. Next to it, my portfolio looked like what it was: a brochure.
+
+#### The box
+
+This site is served from a machine at home in Pune. A request for it goes through Cloudflare's edge, down an encrypted tunnel, over an ordinary residential fibre line, through a reverse proxy, and into a container on a bare-metal Linux host. What comes back is a folder of static HTML that Astro built ahead of time.
+
+There is no database and no server-side code, so the box barely notices visitors. You can see [its readings](/builds/#homelab) on the builds page. The uptime guarantee is simple: if you can read this, it is up.
+
+#### Why bother
+
+Hosting it myself is not the cheapest way to put a website online, and it's certainly not the easiest. But the address is mine, the hardware is mine, and nobody's algorithm decides who sees it. If the site breaks, it breaks because of something I did, which also means I can fix it.
+
+The independent web runs on people doing slightly impractical things with their own corner of it: blogs with strange layouts, digital gardens, sites that are just a list of the books someone liked. This is my corner.
+
+Thanks for reading.
+
+### How to Assassinate 10 Load Balancers and Cut an AWS Bill by 45% Without Anyone Noticing
+
+Published 2026-09-14. Infrastructure. 531 words. URL: https://rajatdev.fun/notes/assassinating-load-balancers/
+
+> Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly.
+
+The bill was somewhere between $35,000 and $38,000 a month. Two and a half months later it was between $19,000 and $21,000, which works out to roughly $200,000 a year. Availability didn't change, nobody shipped a feature differently, and nobody outside the team noticed anything, which was the point.
+
+Cost work gets a bad name because it is usually done loudly: a freeze on new resources, a spreadsheet of blame, a quarter of people arguing about tags. None of that was necessary. Most of the money was going to things nobody had looked at since they were created.
+
+#### Rule one: commitments go last
+
+The tempting first move is to buy Savings Plans, because it is one click and the discount is large. It is also the move that locks in whatever waste you already have, for one to three years. If you commit to the spend of an over-provisioned fleet, you have made the waste cheaper rather than removing it.
+
+So the order was: right-size, re-platform, consolidate, and only then commit, once capacity had settled into something predictable.
+
+#### The data tier
+
+The databases were the biggest line, and the most interesting.
+
+- **Aurora Serverless to provisioned Graviton.** Serverless is a good deal when load is spiky or unknown. Ours was neither. A steady workload on Serverless pays a premium for elasticity it never uses, so it moved to provisioned r7g instances.
+- **Redis to Valkey, on Graviton.** Same workload, same client libraries, cheaper hardware.
+- **Redshift dc2.large to RA3.** The dc2 family bundles storage with compute, so holding about 2 TB of data meant paying for compute just to have somewhere to keep it. RA3 separates the two.
+- **Heavy Athena scans, rerouted.** Athena bills by data scanned. A few queries scanned the same large datasets over and over; a right-sized database answers them for a fraction of the cost.
+
+#### Compute
+
+ECS Fargate is lovely until you read the invoice. The services moved to EC2 on Graviton, with Spot capacity for the jobs that can survive an interruption. CI runners moved to self-hosted machines as well, which turned a per-minute bill into a fixed one.
+
+#### The assassinations
+
+There were 14 Application Load Balancers. Each one carries an hourly charge whether it serves a million requests or none, and most of ours fronted a single small service.
+
+An ALB listener can route by host header and path to many target groups, so one load balancer can do the job of several. Fourteen became four.
+
+> Nobody files a ticket about a load balancer that no longer exists. That is the whole trick.
+
+#### The quiet one: SQS long-polling
+
+Short polling returns immediately, usually with nothing in it, and every empty receive is a billed request. Consumers that poll in a tight loop run up a surprising bill for doing nothing. Long-polling makes the request wait for a message instead:
+
+```hcl
+resource "aws_sqs_queue" "jobs" {
+  name                      = "jobs"
+  receive_wait_time_seconds = 20 # long-poll: far fewer empty, billed receives
+}
+```
+
+That one setting cut SQS costs by about 90%.
+
+---
+
+#### Then, and only then, the commitment
+
+With the fleet right-sized and the architecture settled, the remaining baseline was steady enough to commit to. Compute Savings Plans went on last, sized to what was actually left.
+
+The billing dashboard has not been the same since. Neither have the ten load balancers.

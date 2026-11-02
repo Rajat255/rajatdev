@@ -1,0 +1,30 @@
+# Rajat Khirid — Cloud & DevOps Engineer (rajatdev.fun)
+
+> Rajat Khirid is a Cloud and DevOps engineer based in Pune, India, and an AWS Certified Solutions Architect – Professional (SAP-C02). At amber, where he spent more than eight months as the sole DevOps engineer for 50+ production services on AWS, he led a FinOps programme that cut monthly AWS spend by 45% (about $200K a year), migrated workloads from ECS to Amazon EKS with Karpenter and KEDA, and built MCP-based AI agents that triage and fix CI/CD failures on their own. He self-hosts this site on a bare-metal homelab.
+
+This is the personal site of Rajat Khirid: things he has built, notes he has written, and books he has read. Every note is also available as raw Markdown by adding `.md` to its URL, and the whole site is available as one document at https://rajatdev.fun/llms-full.txt.
+
+## Pages
+
+- [Builds & work](https://rajatdev.fun/builds/): Cloud engineering at amber and IAMOPS, case studies (an ECS to EKS migration, a $200K/yr AWS cost programme, agentic CI/CD triage), side projects, certifications, and the homelab this site runs on.
+- [Threads & books](https://rajatdev.fun/threads/): Books he is reading and has read (in English and French), with a note on each, a French learning log, ongoing rabbit holes, and a timeline from 2022 on.
+- [Notes](https://rajatdev.fun/notes/): All essays, newest first.
+- [Colophon](https://rajatdev.fun/colophon/): How this site is built and hosted, and its feeds.
+
+## Notes
+
+- [Notes from a Pune Homelab: Why I Traded My Portfolio Template for Newsprint](https://rajatdev.fun/notes/notes-from-a-pune-homelab/): A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble. Published 2026-10-26. Markdown: https://rajatdev.fun/notes/notes-from-a-pune-homelab.md
+- [How to Assassinate 10 Load Balancers and Cut an AWS Bill by 45% Without Anyone Noticing](https://rajatdev.fun/notes/assassinating-load-balancers/): Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly. Published 2026-09-14. Markdown: https://rajatdev.fun/notes/assassinating-load-balancers.md
+
+## Feeds
+
+- [RSS](https://rajatdev.fun/rss.xml): Full text of every note.
+- [Sitemap](https://rajatdev.fun/sitemap-index.xml)
+
+## Optional
+
+- [Full text for LLMs](https://rajatdev.fun/llms-full.txt): The bio, work history, case studies, books, and every note in one Markdown file.
+- [Résumé (PDF)](https://rajatdev.fun/resume/rajat-khirid-resume.pdf)
+- [GitHub](https://github.com/Rajat255)
+- [LinkedIn](https://www.linkedin.com/in/rajatkhirid/)
+- Email: rajatkhirid@gmail.com

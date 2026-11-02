@@ -1,0 +1,52 @@
+# Search engines and AI crawlers are welcome here.
+# A plain-text guide to this site for LLMs: https://rajatdev.fun/llms.txt
+
+User-agent: *
+Allow: /
+Disallow: /showcase
+
+User-agent: GPTBot
+Allow: /
+Disallow: /showcase
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /showcase
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /showcase
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /showcase
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /showcase
+
+User-agent: Claude-User
+Allow: /
+Disallow: /showcase
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /showcase
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /showcase
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /showcase
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /showcase
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /showcase
+
+Sitemap: https://rajatdev.fun/sitemap-index.xml
