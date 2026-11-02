@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { profile, ProfileSchema } from '@content/profile';
-import { about, AboutSchema } from '@content/about';
-import { skillGroups, SkillGroups, allSkills } from '@content/skills';
-import { experience, Experience } from '@content/experience';
-import { projects, Projects, orderedProjects } from '@content/projects';
-import { certifications, Certifications } from '@content/certifications';
-import { achievements, Achievements } from '@content/achievements';
-import { timeline, Timeline } from '@content/timeline';
-import { stats, Stats } from '@content/stats';
-import { navTargets, NavTargets, allSectionIds } from '@content/navigation';
+import { profile, ProfileSchema } from '@data/profile';
+import { skillGroups, SkillGroups, allSkills } from '@data/skills';
+import { experience, Experience } from '@data/experience';
+import { projects, Projects, orderedProjects } from '@data/projects';
+import { certifications, Certifications } from '@data/certifications';
+import { achievements, Achievements } from '@data/achievements';
+import { timeline, Timeline } from '@data/timeline';
+import { stats, Stats } from '@data/stats';
+import { books, Books, booksByStatus } from '@data/books';
+import { showcaseItems, ShowcaseItems } from '@data/showcase';
+import { isCounted } from '@lib/stats';
+import { caseFiles, CaseFiles } from '@data/caseFiles';
 
 /**
  * Content validation.
@@ -37,12 +39,6 @@ describe('profile', () => {
 
   it('references a resume inside the public directory', () => {
     expect(profile.resumeUrl.startsWith('/')).toBe(true);
-  });
-});
-
-describe('about', () => {
-  it('satisfies its schema', () => {
-    expect(() => AboutSchema.parse(about)).not.toThrow();
   });
 });
 
@@ -137,32 +133,44 @@ describe('stats', () => {
     expect(() => Stats.parse(stats)).not.toThrow();
   });
 
-  it('gives every stat a countable value', () => {
+  it('gives every counted stat a countable value', () => {
     // The counter animates `value` numerically, so a non-finite or negative
     // figure would render as NaN mid-animation rather than failing loudly.
-    for (const stat of stats) {
+    const counted = stats.filter(isCounted);
+    expect(counted.length).toBeGreaterThan(0);
+    for (const stat of counted) {
       expect(Number.isFinite(stat.value)).toBe(true);
       expect(stat.value).toBeGreaterThanOrEqual(0);
     }
   });
 });
 
-describe('navigation', () => {
+describe('books', () => {
   it('satisfies its schema', () => {
-    expect(() => NavTargets.parse(navTargets)).not.toThrow();
+    expect(() => Books.parse(books)).not.toThrow();
   });
 
-  it('references only known section ids', () => {
-    for (const target of navTargets) {
-      expect(allSectionIds).toContain(target.sectionId);
+  it('has something on the nightstand and something finished', () => {
+    expect(booksByStatus('reading').length).toBeGreaterThan(0);
+    expect(booksByStatus('completed').length).toBeGreaterThan(0);
+  });
+});
+
+describe('showcase', () => {
+  it('satisfies its schema', () => {
+    expect(() => ShowcaseItems.parse(showcaseItems)).not.toThrow();
+  });
+});
+
+describe('case studies', () => {
+  it('satisfies its schema', () => {
+    expect(() => CaseFiles.parse(caseFiles)).not.toThrow();
+  });
+
+  it('belongs to a role listed in experience', () => {
+    const companies = new Set(experience.map((role) => role.company));
+    for (const file of caseFiles) {
+      expect(companies.has(file.company)).toBe(true);
     }
-  });
-
-  it('rejects duplicate section ids', () => {
-    const result = NavTargets.safeParse([
-      { sectionId: 'about', label: 'About' },
-      { sectionId: 'about', label: 'About again' },
-    ]);
-    expect(result.success).toBe(false);
   });
 });

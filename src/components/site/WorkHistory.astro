@@ -1,0 +1,93 @@
+---
+import { caseFilesFor } from '../../data/caseFiles';
+import { experience } from '../../data/experience';
+
+/**
+ * WorkHistory.astro — each role, most recent first, with its case studies
+ * nested beneath it as expandable <details>. Native disclosure, so opening a
+ * case study needs no JavaScript.
+ */
+const roles = experience.map((role) => ({ ...role, cases: caseFilesFor(role.company) }));
+---
+
+<div class="space-y-14">
+  {
+    roles.map((role) => (
+      <article aria-labelledby={`role-${role.company}`}>
+        <h3 id={`role-${role.company}`} class="text-[1.6rem] font-medium leading-tight text-ink">
+          {role.company}
+        </h3>
+        <p class="italic text-ink">
+          {role.role}
+          <span class="text-muted">
+            {' '}
+            · {role.start} – {role.end}
+          </span>
+        </p>
+
+        <ul class="mt-4 list-disc space-y-2 pl-5 marker:text-accent" role="list">
+          {role.highlights.map((highlight) => (
+            <li>{highlight}</li>
+          ))}
+        </ul>
+
+        {role.cases.length > 0 && (
+          <div class="mt-8">
+            <p class="smallcaps text-muted">Case studies</p>
+            <div class="mt-2 divide-y divide-rule border-y border-rule">
+              {role.cases.map((file) => (
+                <details class="group py-4">
+                  <summary class="cursor-pointer">
+                    <span class="flex items-baseline justify-between gap-4">
+                      <span class="font-medium text-ink group-hover:text-accent">{file.title}</span>
+                      <span class="shrink-0 text-muted">
+                        <span class="smallcaps">{file.year}</span>
+                        <span aria-hidden="true" class="ml-3 inline-block w-3 text-accent group-open:hidden">
+                          +
+                        </span>
+                        <span aria-hidden="true" class="ml-3 hidden w-3 text-accent group-open:inline-block">
+                          −
+                        </span>
+                      </span>
+                    </span>
+                    <span class="mt-1 block text-[1.0625rem] leading-snug text-muted">{file.summary}</span>
+                  </summary>
+
+                  <div class="fade-in mt-5 space-y-5">
+                    <div>
+                      <h4 class="smallcaps text-accent">Before</h4>
+                      <p class="mt-1">{file.before}</p>
+                    </div>
+                    <div>
+                      <h4 class="smallcaps text-accent">What changed</h4>
+                      <ul class="mt-1 list-disc space-y-1.5 pl-5 marker:text-muted" role="list">
+                        {file.changes.map((change) => (
+                          <li>{change}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 class="smallcaps text-accent">Numbers</h4>
+                      <dl class="mt-1 space-y-1">
+                        {file.metrics.map((metric) => (
+                          <div class="grid grid-cols-[6.5rem_1fr] gap-3">
+                            <dt class="font-medium tabular-nums text-ink">{metric.value}</dt>
+                            <dd class="text-muted">{metric.label}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                    <div>
+                      <h4 class="smallcaps text-accent">Stack</h4>
+                      <p class="mt-1 text-muted">{file.stack.join(', ')}</p>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </article>
+    ))
+  }
+</div>

@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+// The two Latin faces every page uses, imported as URLs so they can be
+// preloaded. Vite hashes them by content, so these are the same files the
+// stylesheet's @font-face rules point at, and nothing downloads twice.
+import garamondItalicUrl from '@fontsource-variable/eb-garamond/files/eb-garamond-latin-wght-italic.woff2?url';
+import garamondUrl from '@fontsource-variable/eb-garamond/files/eb-garamond-latin-wght-normal.woff2?url';
+import SEO from '../components/SEO.astro';
+import SiteFooter from '../components/site/SiteFooter.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import { SITE_CONFIG, absoluteUrl, showcaseIsPublic, type SectionKey } from '../config/site';
+import { profile } from '../data/profile';
+import type { JsonLdNode } from '../lib/seo/schema';
+
+/**
+ * BaseLayout.astro — the document shell shared by every page.
+ *
+ * One centred column for everything: the navigation, the page, and the footer.
+ * The front page uses the 600px column; inner pages use 620px.
+ *
+ * Owns the <head> (SEO.astro for meta, feeds and JSON-LD; favicons; font
+ * preloads; the no-flash theme script) and the skip link. Pages supply the
+ * content, their own single <h1>, and their JSON-LD nodes.
+ *
+ * `/showcase` is marked `noindex, nofollow` here while it is unlisted, so the
+ * rule lives next to the flag rather than in the page.
+ */
+interface Props {
+  section: SectionKey;
+  /** Page title. Omit on the front page to use the site title alone. */
+  title?: string;
+  description?: string;
+  /** Root-relative or absolute share image. */
+  ogImage?: string;
+  /** `narrow` (600px) for the front page, `default` (620px) everywhere else. */
+  width?: 'narrow' | 'default';
+  /** Open Graph type. Defaults to `article` when `article` is set. */
+  ogType?: 'website' | 'article' | 'profile';
+  /** Article metadata for note pages. */
+  article?: { publishedTime: Date; modifiedTime?: Date | undefined; tags?: readonly string[] };
+  /** Overrides the canonical URL, e.g. for a note first published elsewhere. */
+  canonical?: string | undefined;
+  alternates?: readonly { type: string; href: string; title: string }[];
+  jsonLd?: readonly JsonLdNode[];
+}
+
+const {
+  section,
+  title,
+  description = SITE_CONFIG.description,
+  ogImage = profile.avatarUrl,
+  width = 'default',
+  ogType,
+  article,
+  canonical,
+  alternates,
+  jsonLd,
+} = Astro.props;
+
+const documentTitle = title ? `${title} · ${SITE_CONFIG.title}` : `${SITE_CONFIG.title} · ${SITE_CONFIG.author}`;
+const noindex = section === 'showcase' && !showcaseIsPublic();
+const columnClass = width === 'narrow' ? 'max-w-column' : 'max-w-page';
+---
+
+<!doctype html>
+<html lang={SITE_CONFIG.language} class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* No-flash theme init: applies a stored choice before first paint. With
+        no stored choice the light theme stays, as the site's default. */}
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'dark' || stored === 'light') {
+            var root = document.documentElement;
+            root.classList.remove('light', 'dark');
+            root.classList.add(stored);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    {/* Start the font downloads with the HTML, instead of waiting until the
+        stylesheet has loaded and been parsed. `crossorigin` is required for
+        font preloads, even on the same origin, or the file is fetched twice. */}
+    <link rel="preload" href={garamondUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={garamondItalicUrl} as="font" type="font/woff2" crossorigin />
+
+    <SEO
+      title={documentTitle}
+      description={description}
+      canonical={canonical ?? absoluteUrl(Astro.url.pathname)}
+      image={absoluteUrl(ogImage)}
+      type={ogType ?? (article ? 'article' : 'website')}
+      noindex={noindex}
+      article={article}
+      alternates={alternates}
+      jsonLd={jsonLd}
+    />
+    <meta name="theme-color" content="#FAF7F2" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#9E2A2B" />
+  </head>
+  <body class="bg-paper font-serif text-[1.1875rem] leading-relaxed text-ink antialiased sm:text-xl">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-base focus:text-paper"
+    >
+      Skip to content
+    </a>
+
+    <div class:list={['mx-auto w-full px-6', columnClass]}>
+      <SiteHeader section={section} />
+      <main id="main" tabindex="-1" class="outline-none">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>

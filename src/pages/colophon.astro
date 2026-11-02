@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/site/PageTitle.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+import { formatLongDate, toIsoDate } from '../lib/format';
+import { getPublishedNotes, noteMarkdownHref } from '../lib/notes';
+import { webPageNode, websiteNode } from '../lib/seo/schema';
+
+/**
+ * Colophon: how the site is built and hosted, and every feed and
+ * machine-readable file it publishes.
+ */
+const description =
+  'How rajatdev.fun is built and self-hosted in Pune, and the feeds it publishes: RSS, a sitemap, llms.txt, and raw Markdown for every note.';
+const builtAt = new Date();
+const firstNote = (await getPublishedNotes())[0];
+
+const feeds = [
+  { label: 'RSS', href: '/rss.xml', note: 'every note, in full, for your feed reader.' },
+  { label: 'llms.txt', href: '/llms.txt', note: 'a short guide to the site for language models.' },
+  {
+    label: 'llms-full.txt',
+    href: '/llms-full.txt',
+    note: 'the whole site in one Markdown file: work, case studies, books, and every note.',
+  },
+  { label: 'Sitemap', href: '/sitemap-index.xml', note: 'every public page, for search engines.' },
+  { label: 'robots.txt', href: '/robots.txt', note: 'search engines and AI crawlers are welcome.' },
+];
+---
+
+<BaseLayout
+  section="colophon"
+  title="Colophon & Feeds"
+  description={description}
+  jsonLd={[websiteNode(), webPageNode({ path: '/colophon/', name: 'Colophon & Feeds', description, type: 'AboutPage' })]}
+>
+  <PageTitle title="Colophon" subtitle="how this site is made">
+    <p class="text-center text-muted">The small print: what it&rsquo;s made of, where it lives, and how to follow it.</p>
+  </PageTitle>
+
+  <section aria-labelledby="made-heading" class="mt-10">
+    <SectionHeading id="made-heading">How it&rsquo;s made</SectionHeading>
+    <div class="mt-8 space-y-4">
+      <p>
+        The site is built with <a href="https://astro.build" class="link">Astro</a> into plain, static HTML. A few small
+        parts that need to respond to you (the counting figures, the homelab readings, the triage agent, the book
+        filter, and the timeline extras) are React components that load on their own. Everything else is just HTML
+        and CSS.
+      </p>
+      <p>
+        The type is <a href="https://fonts.google.com/specimen/EB+Garamond" class="link">EB Garamond</a>, a revival of
+        Claude Garamont&rsquo;s sixteenth-century types, served from this site rather than a font CDN. The navigation is
+        set in your system&rsquo;s own sans-serif. Styles are written with Tailwind CSS.
+      </p>
+      <p>
+        The look borrows openly from <a href="https://www.fromjason.xyz/" class="link">fromjason.xyz</a>, which reads
+        like a person rather than a portfolio.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="hosted-heading" class="mt-16">
+    <SectionHeading id="hosted-heading">Where it lives</SectionHeading>
+    <div class="mt-8 space-y-4">
+      <p>
+        It&rsquo;s self-hosted on a bare-metal Linux box at home in Pune, behind Cloudflare. There is no database and no
+        server-side code. You can see the box&rsquo;s readings, and the path a request takes to reach it, on the
+        <a href="/builds/#homelab" class="link">builds page</a>.
+      </p>
+      <p>
+        The site itself sets no cookies and runs no analytics. If you switch to dark mode, that choice is kept in your
+        browser&rsquo;s local storage and goes nowhere else.
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="feeds-heading" class="mt-16">
+    <SectionHeading id="feeds-heading">Feeds &amp; machine-readable files</SectionHeading>
+    <ul class="mt-8 space-y-3" role="list">
+      {
+        feeds.map((feed) => (
+          <li>
+            <a href={feed.href} class="link font-semibold text-ink">
+              {feed.label}
+            </a>
+            <span class="text-muted"> — {feed.note}</span>
+          </li>
+        ))
+      }
+      <li>
+        <span class="font-semibold text-ink">Raw Markdown</span>
+        <span class="text-muted">
+          — add <code class="font-mono text-[0.85em]">.md</code> to any note&rsquo;s address for its source{
+            firstNote && (
+              <>
+                , like <a href={noteMarkdownHref(firstNote)} class="link">{noteMarkdownHref(firstNote)}</a>
+              </>
+            )
+          }.
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <p class="mt-16 text-center text-base text-muted">
+    Last built <time datetime={toIsoDate(builtAt)}>{formatLongDate(builtAt)}</time>.
+  </p>
+</BaseLayout>

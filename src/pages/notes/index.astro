@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteList from '../../components/site/NoteList.astro';
+import PageTitle from '../../components/site/PageTitle.astro';
+import { getPublishedNotes, groupNotesByYear } from '../../lib/notes';
+import { blogNode, personNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * Notes: every published essay, newest first, grouped by year.
+ */
+const notes = await getPublishedNotes();
+const years = groupNotesByYear(notes);
+const description =
+  'Notes and essays by Rajat Khirid on cloud infrastructure, cost work, self-hosting, and whatever rabbit hole came up that week.';
+---
+
+<BaseLayout
+  section="notes"
+  title="Notes"
+  description={description}
+  jsonLd={[websiteNode(), personNode(), blogNode(notes)]}
+>
+  <PageTitle title="Notes" subtitle="& essays">
+    <p class="text-center text-muted">
+      Writing about infrastructure, the homelab, and whatever came up that week. Also by
+      <a href="/rss.xml" class="link">RSS</a>.
+    </p>
+  </PageTitle>
+
+  <div class="mt-8 space-y-12">
+    {
+      years.length === 0 ? (
+        <p class="text-center italic text-muted">Nothing written yet. Check back soon.</p>
+      ) : (
+        years.map((group) => (
+          <section aria-labelledby={`year-${group.year}`}>
+            <h2 id={`year-${group.year}`} class="mb-5 text-center text-lg font-semibold tracking-[0.18em] text-accent">
+              {group.year}
+            </h2>
+            <NoteList notes={group.notes} />
+          </section>
+        ))
+      )
+    }
+  </div>
+</BaseLayout>

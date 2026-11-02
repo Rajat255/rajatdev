@@ -1,0 +1,23 @@
+---
+/**
+ * BirdDivider.astro — a swallow in flight between two short rules. A quiet
+ * break between sections. Decorative: hidden from assistive tech.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div aria-hidden="true" class:list={['flex items-center justify-center gap-4 text-ink', className]}>
+  <span class="h-px w-16 bg-ink/40"></span>
+  <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" focusable="false" class="h-[1.6rem] w-[3.2rem]">
+    <path
+      d="M30 13.5 C25 9 15 5.5 3 6.5 C11 9.5 19.5 13.5 25.5 17.5 L22.5 27 L28.6 20.6 L30 22.6 L31.4 20.6 L37.5 27 L34.5 17.5 C40.5 13.5 49 9.5 57 6.5 C45 5.5 35 9 30 13.5 Z"
+      fill="currentColor"></path>
+    <circle cx="30" cy="12.6" r="2.3" fill="currentColor"></circle>
+    <path d="M30 11.2 L30 8.6" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"></path>
+  </svg>
+  <span class="h-px w-16 bg-ink/40"></span>
+</div>

@@ -1,0 +1,53 @@
+---
+import { getNavItems, type SectionKey } from '../../config/site';
+
+/**
+ * SiteHeader.astro — the navigation across the top of every page, set in the
+ * system sans so it reads as wayfinding rather than text: "r · k" (home), then
+ * notes, builds, and threads, spread evenly across a 600px row. `/showcase`
+ * joins them only when `SITE_CONFIG.showShowcaseInNav` is true.
+ */
+interface Props {
+  section: SectionKey;
+}
+
+const { section } = Astro.props;
+const items = getNavItems();
+---
+
+<header>
+  <nav aria-label="Main" class="mx-auto max-w-[600px] py-8">
+    <ul
+      class="flex items-center justify-between font-sans text-sm font-medium lowercase tracking-normal"
+      role="list"
+    >
+      {
+        items.map((item) => {
+          const current = item.key === section;
+          return (
+            <li>
+              <a
+                href={item.href}
+                aria-current={current ? 'page' : undefined}
+                class:list={[
+                  'inline-flex min-h-[44px] items-center px-1 text-ink transition-colors hover:text-accent',
+                  current &&
+                    item.key !== 'home' &&
+                    'underline decoration-accent decoration-1 underline-offset-[0.4em]',
+                ]}
+              >
+                {item.key === 'home' ? (
+                  <span class="whitespace-nowrap">
+                    r<span class="text-accent"> · </span>k<span class="sr-only">, home</span>
+                  </span>
+                ) : (
+                  item.label
+                )}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</header>

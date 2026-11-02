@@ -12,9 +12,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@logic/*": ["src/lib/logic/*"],
-      "@animation/*": ["src/lib/animation/*"],
-      "@content/*": ["src/content/*"],
+      "@lib/*": ["src/lib/*"],
+      "@data/*": ["src/data/*"],
+      "@config/*": ["src/config/*"],
       "@components/*": ["src/components/*"]
     }
   },

@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BirdDivider from '../components/ornaments/BirdDivider.astro';
+import BookShelf from '../components/islands/BookShelf.tsx';
+import InteractiveTimeline from '../components/islands/InteractiveTimeline.tsx';
+import PageTitle from '../components/site/PageTitle.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+import { absoluteUrl } from '../config/site';
+import { LANGUAGE_NAMES, SHELF_TITLES, STATUS_TAGS, books } from '../data/books';
+import { certifications } from '../data/certifications';
+import { frenchLog, rabbitHoles } from '../data/threads';
+import { timeline } from '../data/timeline';
+import { bookListNode, personNode, webPageNode, websiteNode } from '../lib/seo/schema';
+
+/**
+ * Threads: the books I'm reading and have read, the rabbit holes I'm in, a
+ * French learning log, and a timeline of milestones since 2022.
+ */
+const description =
+  "Books Rajat Khirid is reading and has read, in English and French, with a note on each; a French learning log; ongoing rabbit holes; and a timeline since 2022.";
+const sapCert = certifications.find((cert) => cert.name.includes('Solutions Architect'));
+---
+
+<BaseLayout
+  section="threads"
+  title="Threads & Books"
+  description={description}
+  jsonLd={[
+    websiteNode(),
+    personNode(),
+    webPageNode({
+      path: '/threads/',
+      name: 'Threads & Books',
+      description,
+      type: 'CollectionPage',
+      mainEntity: { '@id': `${absoluteUrl('/threads/')}#books` },
+    }),
+    bookListNode(books, '/threads/'),
+  ]}
+>
+  <PageTitle title="Threads" subtitle="books I've read & rabbit holes">
+    <p class="text-center text-muted">
+      What I&rsquo;m reading, what I&rsquo;ve finished, and the other things I keep pulling at when I&rsquo;m away
+      from work.
+    </p>
+  </PageTitle>
+
+  <section aria-labelledby="reading-room" class="mt-10">
+    <SectionHeading id="reading-room">The reading room</SectionHeading>
+    <div class="mt-8">
+      <BookShelf
+        client:visible
+        books={books}
+        shelfTitles={SHELF_TITLES}
+        statusTags={STATUS_TAGS}
+        languageNames={LANGUAGE_NAMES}
+      />
+    </div>
+  </section>
+
+  <section aria-labelledby="rabbit-holes" class="mt-16">
+    <SectionHeading id="rabbit-holes">Rabbit holes</SectionHeading>
+    <ul class="mt-8 space-y-5" role="list">
+      {
+        rabbitHoles.map((hole) => (
+          <li>
+            <p class="font-semibold text-ink">{hole.title}</p>
+            <p class="text-ink">
+              {hole.note}
+              {hole.link && (
+                <>
+                  {' '}
+                  <a href={hole.link.href} class="link text-muted">
+                    See {hole.link.label}.
+                  </a>
+                </>
+              )}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="french-log" class="mt-16">
+    <SectionHeading id="french-log">French log</SectionHeading>
+    <p class="mt-8 text-muted">Lines and words I&rsquo;ve kept from my reading. Open one for the English.</p>
+    <ul class="mt-4 divide-y divide-rule border-y border-rule" role="list">
+      {
+        frenchLog.map((line) => (
+          <li>
+            <details class="group py-3">
+              <summary class="flex cursor-pointer items-baseline justify-between gap-4">
+                <span lang="fr" class:list={['text-ink', line.kind === 'Quotation' ? 'italic' : 'font-semibold']}>
+                  {line.kind === 'Quotation' ? `« ${line.french} »` : line.french}
+                </span>
+                <span aria-hidden="true" class="text-accent group-open:hidden">
+                  +
+                </span>
+                <span aria-hidden="true" class="hidden text-accent group-open:inline">
+                  −
+                </span>
+              </summary>
+              <p class="fade-in mt-2 text-ink">{line.english}</p>
+              <p class="text-base italic text-muted">{line.source}</p>
+            </details>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <BirdDivider class="my-16" />
+
+  <section aria-labelledby="timeline">
+    <SectionHeading id="timeline">Field threads &amp; milestones</SectionHeading>
+    <p class="mt-8 text-muted">
+      The years so far, in short. Some entries open up: the Konkan coast ride has its route, the Linux switch has a
+      terminal.
+    </p>
+    <div class="mt-8">
+      <InteractiveTimeline client:visible entries={timeline} examVerifyUrl={sapCert?.verifyUrl} />
+    </div>
+  </section>
+</BaseLayout>

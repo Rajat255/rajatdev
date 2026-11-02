@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 /**
  * Vitest configuration.
  *
- * Uses Astro's `getViteConfig` so the tsconfig path aliases (@content, @logic,
+ * Uses Astro's `getViteConfig` so the tsconfig path aliases (@data, @logic,
  * ...) resolve inside tests. Playwright specs under tests/e2e are excluded here
  * and run separately via `npm run test:e2e`.
  */

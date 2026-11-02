@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/site/PageTitle.astro';
+import { showcaseIsPublic } from '../config/site';
+import { showcaseItems } from '../data/showcase';
+import { webPageNode, websiteNode } from '../lib/seo/schema';
+
+/**
+ * Showcase: independent web projects.
+ *
+ * Always built, but while `SITE_CONFIG.showShowcaseInNav` is false it is left
+ * out of the navigation, footer, sitemap, and llms.txt, is disallowed in
+ * robots.txt, and carries `noindex, nofollow` (set in BaseLayout). Flip the
+ * flag in `src/config/site.ts` to publish it.
+ */
+const unlisted = !showcaseIsPublic();
+const description = 'Independent web projects and experiments by Rajat Khirid.';
+
+/** GeekFixx is the one project with a preview image in `public/`. */
+const PREVIEWS: Record<string, { src: string; width: number; height: number }> = {
+  GeekFixx: { src: '/images/projects/geekfixx.png', width: 302, height: 247 },
+};
+---
+
+<BaseLayout
+  section="showcase"
+  title="Showcase"
+  description={description}
+  jsonLd={[websiteNode(), webPageNode({ path: '/showcase/', name: 'Showcase', description })]}
+>
+  <PageTitle title="Showcase" subtitle="small things for the web">
+    <p class="text-center text-muted">
+      Sites and experiments I make on my own time.
+      {unlisted && <span class="block italic">This page isn&rsquo;t linked anywhere yet.</span>}
+    </p>
+  </PageTitle>
+
+  <ul class="mt-8 space-y-10" role="list">
+    {
+      showcaseItems.map((item) => {
+        const preview = PREVIEWS[item.title];
+        return (
+          <li>
+            {preview && (
+              <img
+                src={preview.src}
+                alt={`${item.title} preview`}
+                width={preview.width}
+                height={preview.height}
+                loading="lazy"
+                decoding="async"
+                class="float-right mb-2 ml-5 w-32 border border-rule bg-[#fffdf8] object-contain p-1.5 sm:w-40"
+              />
+            )}
+            <h2 class="flex flex-wrap items-baseline justify-between gap-x-4">
+              <span class="text-[1.35rem] font-semibold text-ink">{item.title}</span>
+              <span class="smallcaps font-normal text-muted">
+                {item.status.toLowerCase()} · {item.year}
+              </span>
+            </h2>
+            <p class="italic text-ink">{item.tagline}</p>
+            <p class="mt-2">{item.note}</p>
+            <p class="mt-1 text-base text-muted">{item.techStack.join(', ')}</p>
+            {item.url ? (
+              <a href={item.url} target="_blank" rel="noopener noreferrer" class="link mt-1 inline-block text-base">
+                {new URL(item.url).hostname.replace(/^www\./, '')}
+              </a>
+            ) : (
+              <p class="mt-1 text-base italic text-muted">Not public yet.</p>
+            )}
+            <div class="clear-both" />
+          </li>
+        );
+      })
+    }
+  </ul>
+</BaseLayout>

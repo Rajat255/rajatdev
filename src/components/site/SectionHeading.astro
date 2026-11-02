@@ -1,0 +1,24 @@
+---
+/**
+ * SectionHeading.astro — a section title set in spaced capitals between two
+ * thin rules, the same device as "Written by" on the front page.
+ */
+interface Props {
+  id?: string;
+  /** Heading level. Sections on a page are h2; nested groups can be h3. */
+  level?: 2 | 3;
+  class?: string;
+}
+
+const { id, level = 2, class: className } = Astro.props;
+const Tag = level === 2 ? 'h2' : 'h3';
+---
+
+<div class:list={['text-center', className]}>
+  <Tag
+    id={id}
+    class="inline-block scroll-mt-8 border-y border-ink/60 px-6 py-2 pl-[calc(1.5rem+0.15em)] text-sm uppercase tracking-[0.15em] text-ink sm:text-base"
+  >
+    <slot />
+  </Tag>
+</div>

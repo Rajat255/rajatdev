@@ -1,0 +1,59 @@
+---
+/**
+ * DropCap.astro — an ornamental initial: a capital set in a square, double-
+ * ruled box over fine diagonal hatching, with a leaf in each corner, like the
+ * woodcut initials in old printed books.
+ *
+ * Floats left so the paragraph wraps around it. It is decorative, so it is
+ * hidden from assistive tech; the paragraph must still contain the full first
+ * word for screen readers, e.g. `<span class="sr-only">H</span>ey, I'm Rajat`.
+ */
+interface Props {
+  /** The capital to set. One character. */
+  letter: string;
+}
+
+const { letter } = Astro.props;
+
+// One leaf, drawn for the top-left corner and rotated into the other three.
+const corners = [0, 90, 180, 270];
+---
+
+<svg
+  viewBox="0 0 100 100"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+  class="float-left mr-4 mt-1.5 h-[5.4rem] w-[5.4rem] text-ink sm:h-[5.8rem] sm:w-[5.8rem]"
+>
+  <defs>
+    <pattern id="dropcap-hatch" width="3.4" height="3.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="3.4" stroke="currentColor" stroke-width="0.6" opacity="0.55"></line>
+    </pattern>
+  </defs>
+
+  <rect x="1" y="1" width="98" height="98" class="fill-paper" stroke="currentColor" stroke-width="1.6"></rect>
+  <rect x="6" y="6" width="88" height="88" fill="url(#dropcap-hatch)" stroke="currentColor" stroke-width="0.7"></rect>
+
+  {
+    corners.map((angle) => (
+      <g transform={`rotate(${angle} 50 50)`}>
+        <path d="M6 24 C6 14 14 6 24 6" fill="none" stroke="currentColor" stroke-width="0.9" />
+        <path d="M10 22 Q11 12 22 10 Q19 19 10 22 Z" class="fill-paper" stroke="currentColor" stroke-width="0.8" />
+        <path d="M11 21 L20 12" stroke="currentColor" stroke-width="0.5" />
+      </g>
+    ))
+  }
+
+  <text
+    x="50"
+    y="72"
+    text-anchor="middle"
+    font-size="66"
+    font-weight="600"
+    class="fill-accent stroke-paper font-serif"
+    stroke-width="7"
+    paint-order="stroke"
+    stroke-linejoin="round">{letter}</text
+  >
+</svg>

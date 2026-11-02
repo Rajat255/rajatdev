@@ -1,0 +1,40 @@
+---
+import { noteHref, type Note } from '../../lib/notes';
+import { formatLongDate, formatMonthAbbr, toIsoDate } from '../../lib/format';
+
+/**
+ * NoteList.astro — a plain list of notes: the three-letter month in small
+ * capitals on the left, the underlined title and a one-line description on
+ * the right. Used on the front page and, grouped by year, on /notes.
+ */
+interface Props {
+  notes: readonly Note[];
+}
+
+const { notes } = Astro.props;
+---
+
+<ul class="space-y-5" role="list">
+  {
+    notes.map((note) => (
+      <li class="grid grid-cols-[3.25rem_1fr] gap-x-4">
+        <time
+          datetime={toIsoDate(note.data.pubDate)}
+          title={formatLongDate(note.data.pubDate)}
+          class="smallcaps pt-px text-muted"
+        >
+          {formatMonthAbbr(note.data.pubDate)}
+        </time>
+        <div>
+          <a href={noteHref(note)} class="link text-ink">
+            {note.data.title}
+          </a>
+          <p class="text-base leading-snug text-muted sm:text-[1.0625rem]">
+            {note.data.description}
+            {note.data.draft && <span class="smallcaps ml-1 text-accent">draft</span>}
+          </p>
+        </div>
+      </li>
+    ))
+  }
+</ul>

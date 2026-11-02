@@ -1,0 +1,42 @@
+---
+/**
+ * FinisBanner.astro — a small ribbon banner reading "Finis", the old printer's
+ * mark for the end of a book. Exposed to assistive tech as an image named by
+ * its text.
+ */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 200 48"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={text}
+  class="mx-auto h-auto w-[11.5rem] text-ink"
+>
+  {/* Tails, folded behind the band. */}
+  <path d="M6 15 H42 V41 H6 L15.5 28 Z" class="fill-paper" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"></path>
+  <path d="M194 15 H158 V41 H194 L184.5 28 Z" class="fill-paper" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"></path>
+  <path d="M34 35 L42 41 L42 35 Z" fill="currentColor"></path>
+  <path d="M166 35 L158 41 L158 35 Z" fill="currentColor"></path>
+  <circle cx="25" cy="28" r="1.2" fill="currentColor"></circle>
+  <circle cx="175" cy="28" r="1.2" fill="currentColor"></circle>
+
+  {/* The band. */}
+  <rect x="34" y="7" width="132" height="28" class="fill-paper" stroke="currentColor" stroke-width="1.1"></rect>
+  <rect x="37.5" y="10.5" width="125" height="21" fill="none" stroke="currentColor" stroke-width="0.5"></rect>
+
+  <text
+    x="100"
+    y="26"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="600"
+    letter-spacing="5"
+    class="fill-accent font-serif uppercase">{text}</text
+  >
+</svg>

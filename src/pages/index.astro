@@ -1,243 +1,130 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import BackgroundFX from '../components/BackgroundFX.astro';
-import Navigation from '../components/Navigation.tsx';
-import StatCounters from '../components/StatCounters.tsx';
-// Avatar is intentionally not imported: the hero carries no photo (see the
-// commented block in the hero below). The component itself is left in the repo.
-// import Avatar from '../components/Avatar.astro';
-import Icon from '../components/Icon.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import SocialLinks from '../components/SocialLinks.astro';
-import HostingBadge from '../components/HostingBadge.astro';
-import AboutSection from '../components/AboutSection.astro';
-import SkillsSection from '../components/SkillsSection.astro';
-import ExperienceSection from '../components/ExperienceSection.astro';
-import ProjectsSection from '../components/ProjectsSection.astro';
-import CertificationsSection from '../components/CertificationsSection.astro';
-// AchievementsSection is intentionally not imported: that section is hidden for
-// now (see the commented block below).
-import TimelineSection from '../components/TimelineSection.astro';
-import ContactSection from '../components/ContactSection.astro';
-import { profile } from '../content/profile';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BirdDivider from '../components/ornaments/BirdDivider.astro';
+import DropCap from '../components/ornaments/DropCap.astro';
+import Woodcut from '../components/ornaments/Woodcut.astro';
+import NoteList from '../components/site/NoteList.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+import { SITE_CONFIG } from '../config/site';
+import { getPublishedNotes } from '../lib/notes';
+import { personNode, profilePageNode, websiteNode } from '../lib/seo/schema';
 
 /**
- * Page composition — a single centered column of sections beneath a compact hero.
+ * The front page: one quiet column. An engraving, the title, a short hello,
+ * the latest notes, and links to where everything else lives.
  *
- * Above-the-fold content (name, role, tagline, nav targets) is server-rendered so
- * first paint never depends on island hydration.
- *
- * Section ownership: this page owns every `<section>` landmark and its `<h2>`
- * (via SectionHeading); the imported section components render body content only.
- * That keeps each landmark id and heading id appearing exactly once, and means
- * the nav targets in `content/navigation.ts` always resolve.
- *
- * Section order is deliberate: who I am, what I know, where I've worked, what
- * I've built, what I've earned, then the story and the way to reach me.
+ * Title colours use the `accent` and `ink` tokens rather than raw hex: in the
+ * light theme they are exactly #9E2A2B and #161514, and they stay legible
+ * when dark mode swaps the palette.
  */
-const sectionClass = 'mx-auto max-w-3xl scroll-mt-24 px-4 py-10';
+const latest = (await getPublishedNotes()).slice(0, 4);
+const { email } = SITE_CONFIG.contact;
+
+const elsewhere = [
+  {
+    label: 'Builds & Work',
+    href: '/builds/',
+    note: 'Cloud engineering at amber, FinOps case studies ($200K/yr saved), autonomous CI/CD agents, and live homelab telemetry.',
+  },
+  {
+    label: 'Threads & Books',
+    href: '/threads/',
+    // Authored HTML (not user input), so the book titles can be set in italics.
+    note: 'Reading notes (<cite>Trust</cite>, <cite lang="fr">L’Étranger</cite>, <cite>A Thousand Splendid Suns</cite>, <cite lang="fr">Le Petit Prince</cite>), photography, and ongoing rabbit holes.',
+  },
+  {
+    label: 'Colophon & Feeds',
+    href: '/colophon/',
+    note: 'How this site is built, self-hosted in Pune, the <a href="/rss.xml" class="link">RSS feed</a>, and the machine-readable <a href="/llms.txt" class="link">/llms.txt</a>.',
+  },
+];
 ---
 
-<Layout>
-  <a
-    href="#content"
-    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-foreground focus:px-4 focus:py-2 focus:font-semibold focus:text-background"
-  >
-    Skip to content
-  </a>
+<BaseLayout
+  section="home"
+  width="narrow"
+  ogType="profile"
+  jsonLd={[
+    websiteNode(),
+    personNode(),
+    profilePageNode('/', SITE_CONFIG.title, SITE_CONFIG.description),
+  ]}
+>
+  <div class="pt-4 text-center sm:pt-8">
+    <Woodcut class="mx-auto mb-6 h-32 w-32" />
 
-  {/* Fixed, interactive backdrop. Sits behind all content and does not scroll. */}
-  <BackgroundFX />
+    <h1 class="font-serif font-semibold uppercase leading-tight">
+      <span class="block pl-[0.16em] text-4xl font-bold tracking-[0.16em] text-accent sm:text-5xl">From Rajat</span>
+      <span class="mt-2 block pl-[0.2em] text-2xl font-semibold tracking-[0.2em] text-ink sm:text-3xl">
+        Builds &amp; Threads
+      </span>
+      <span class="mt-1.5 block pl-[0.2em] text-lg font-semibold tracking-[0.2em] text-ink sm:text-xl">
+        Things I&rsquo;ve Made
+      </span>
+      <span class="mt-1 block pl-[0.2em] text-base font-semibold tracking-[0.2em] text-ink sm:text-lg">
+        And Books I&rsquo;ve Read
+      </span>
+    </h1>
 
-  {/*
-    The Navigation island owns its own fixed positioning (a bottom-centered
-    floating dock), so the header is a `display: contents` landmark that adds no
-    box, never reserves an empty top bar, and cannot introduce horizontal scroll.
-
-    Hydrated with `client:idle` rather than `client:load` to keep the React
-    runtime off the critical path: the dock server-renders as real anchors with
-    real hrefs, so navigation works before (and without) hydration. Hydration
-    only adds the pointer magnification, the smooth-scroll behaviour, and the
-    theme toggle.
-  */}
-  <header class="contents">
-    <Navigation client:idle />
-  </header>
-
-  {/* `relative z-10` lifts all content above the fixed BackgroundFX layer.
-      Bottom padding keeps the last section clear of the fixed dock. */}
-  <main id="content" class="relative z-10 pb-32 md:pb-36">
-    {/* Hero — not a nav target. A compact intro: text block plus avatar, stacking
-        on mobile, with the social row beneath. */}
-    {/* The hero no longer carries its own gradient wash; BackgroundFX provides
-        the ambient light for the whole page. */}
-    {/* Fills one viewport (`svh`, so mobile browser chrome cannot clip it) with
-        its content vertically centered, so the greeting lands mid-screen on load
-        instead of hugging the top. Bottom padding exceeds top padding on purpose:
-        it lifts the block slightly above the geometric centre, which reads as
-        centred once the floating dock's visual weight at the bottom is accounted
-        for. `min-h` rather than `h`: on short or narrow viewports the hero grows
-        with its content instead of overlapping what follows. */}
-    <section
-      id="hero"
-      aria-labelledby="hero-heading"
-      class="relative mx-auto flex min-h-[100svh] max-w-3xl flex-col justify-center px-4 pb-32 pt-16"
+    <p
+      class="my-7 inline-block border-y border-ink/70 px-6 py-2 pl-[calc(1.5rem+0.18em)] text-xs font-semibold uppercase tracking-[0.18em] sm:text-sm"
     >
-      <div
-        class="flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10"
-      >
-        <div class="order-2 min-w-0 text-center sm:order-1 sm:text-left">
-          <h1
-            id="hero-heading"
-            class="text-4xl font-bold tracking-tight text-foreground md:text-5xl"
-          >
-            Hi, I'm <span class="text-gradient">Rajat</span>
-            <span aria-hidden="true">👋</span>
-          </h1>
-          <p class="mt-2 text-base font-medium text-primary md:text-lg">
-            {profile.role}
-          </p>
-          <p class="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            {profile.description}
-          </p>
+      Written by: Rajat Khirid
+    </p>
 
-          <div
-            class="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground sm:justify-start"
-          >
-            <span class="flex items-center gap-1.5">
-              <Icon name="pin" size={16} />
-              <span>{profile.location}</span>
-            </span>
-            <a
-              class="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              href={profile.resumeUrl}
-              download
-            >
-              <Icon name="download" size={16} />
-              <span>Resume</span>
-            </a>
-          </div>
+    <figure class="text-muted">
+      <p class="text-sm tracking-[0.3em] text-accent" role="img" aria-label="Five stars">⭑ ⭑ ⭑ ⭑ ⭑</p>
+      <blockquote class="mt-1 italic">&ldquo;Another infrastructure nerd trying to make production boring.&rdquo;</blockquote>
+    </figure>
+  </div>
 
-          <div class="mt-3 flex justify-center sm:justify-start">
-            <SocialLinks filterNavbar />
-          </div>
-        </div>
+  <div class="mx-auto mt-12 max-w-[580px]">
+    <p>
+      <DropCap letter="H" />
+      <span class="sr-only">H</span>ey, I&rsquo;m Rajat. Welcome to my corner of the web. By day, I&rsquo;m a Cloud and
+      DevOps engineer in Pune scaling production systems on AWS and Kubernetes—taking messy infrastructure and making it
+      reproducible, observable, and quiet. By night, I&rsquo;m usually reading, learning French, riding my motorbike
+      down the coast, or tinkering on the bare-metal homelab serving you this page.
+    </p>
+    <p class="mt-5">
+      Feel free to poke around the <a href="/builds/" class="link">things I&rsquo;ve built</a>, read through my
+      <a href="/notes/" class="link">notes &amp; essays</a>, browse the
+      <a href="/threads/" class="link">books &amp; threads</a> on my nightstand, or
+      <a href={`mailto:${email}`} class="link">send me an email</a>. I&rsquo;m glad you&rsquo;re here.
+    </p>
+  </div>
 
-        {/*
-          No hero photo, by choice: the hero reads better as pure type. Kept here
-          rather than deleted so the layout is one un-comment away if that ever
-          changes (the `Avatar` import at the top of this file goes with it).
+  <BirdDivider class="my-12" />
 
-          Note that `profile.avatarUrl` is deliberately left in place either way:
-          Layout.astro uses it as the default Open Graph image, so removing it
-          from the content layer would strip the picture from link previews.
-
-          <div class="order-1 sm:order-2">
-            <Avatar
-              src={profile.avatarUrl}
-              alt={profile.name}
-              initials={profile.initials}
-              size={140}
-              eager
-            />
-          </div>
-        */}
-      </div>
-
-      {/*
-        Scroll cue. A full-height hero hides the fact that the page continues,
-        so this is the affordance: a real anchor to the first section (works
-        without JS, keyboard reachable, and named for screen readers).
-
-        Absolutely positioned so it cannot shift the centred content above it,
-        and sat high enough to stay clear of the fixed dock at every breakpoint.
-        `hidden` under `sm` because on a phone the hero content plus the dock
-        already fill the screen and the flick-to-scroll instinct is a given.
-      */}
-      <a
-        href="#about"
-        aria-label="Scroll to the About section"
-        class="scroll-cue-bob absolute bottom-28 left-1/2 hidden -translate-x-1/2 rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground sm:block md:bottom-32"
-      >
-        <Icon name="chevron-down" size={22} />
-      </a>
-    </section>
-
-    <section id="about" aria-labelledby="about-heading" class={sectionClass}>
-      <SectionHeading id="about-heading">About</SectionHeading>
-      <AboutSection />
-    </section>
-
-    <section id="skills" aria-labelledby="skills-heading" class={sectionClass}>
-      <SectionHeading id="skills-heading">Skills</SectionHeading>
-      <SkillsSection />
-    </section>
-
-    {/* Experience leads with the animated stat counters. They hydrate on scroll
-        (client:visible), and the final values are server-rendered so no-JS
-        visitors and screen readers get the real numbers. */}
-    <section id="experience" aria-labelledby="experience-heading" class={sectionClass}>
-      <SectionHeading id="experience-heading">Experience</SectionHeading>
-      <StatCounters client:visible />
-      <ExperienceSection />
-    </section>
-
-    <section id="projects" aria-labelledby="projects-heading" class={sectionClass}>
-      <SectionHeading id="projects-heading">Projects</SectionHeading>
-      <ProjectsSection />
-    </section>
-
-    <section
-      id="certifications"
-      aria-labelledby="certifications-heading"
-      class={sectionClass}
-    >
-      <SectionHeading id="certifications-heading">Certifications</SectionHeading>
-      <CertificationsSection />
-    </section>
-
-    {/*
-      Achievements is hidden for now. Content (`content/achievements.ts`) and the
-      section component both remain; to bring it back, un-comment this block and
-      restore 'achievements' in the `SectionId` enum in `content/navigation.ts`,
-      which is what the section-presence tests read.
-
-      <section id="achievements" aria-labelledby="achievements-heading" class={sectionClass}>
-        <SectionHeading id="achievements-heading">Achievements</SectionHeading>
-        <AchievementsSection />
-      </section>
-    */}
-
-    <section id="timeline" aria-labelledby="timeline-heading" class={sectionClass}>
-      <SectionHeading id="timeline-heading">Timeline</SectionHeading>
-      <TimelineSection />
-    </section>
-
-    {/* Extra top margin sets contact apart as the closing section. */}
-    <section
-      id="contact"
-      aria-labelledby="contact-heading"
-      class="mx-auto mt-16 max-w-3xl scroll-mt-24 px-4 pb-10 pt-10 md:mt-24"
-    >
-      <SectionHeading id="contact-heading" center>Get in Touch</SectionHeading>
-      <ContactSection />
-    </section>
-  </main>
-
-  {/* Footer. Also carries the background shader's required attribution: the
-      "Auroras" fragment shader is CC BY-NC-SA 3.0 by nimitz, which obliges us to
-      credit the author and name the licence wherever the work is used. */}
-  <footer
-    class="relative z-10 mx-auto max-w-3xl px-4 pb-28 pt-8 text-center text-xs text-muted-foreground md:pb-32"
-  >
-    {/* Copyright and the hosting pill share one centered row. `flex-wrap` lets
-        them stack again on a narrow phone rather than forcing the pill to shrink
-        or the line to overflow. */}
-    <div
-      class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 text-[13px]"
-    >
-      <HostingBadge />
-      <p>© {new Date().getFullYear()} {profile.name}</p>
+  <section aria-labelledby="latest-heading">
+    <SectionHeading id="latest-heading">Latest notes</SectionHeading>
+    <div class="mt-8">
+      {
+        latest.length > 0 ? (
+          <NoteList notes={latest} />
+        ) : (
+          <p class="text-center italic text-muted">Nothing written yet. Check back soon.</p>
+        )
+      }
     </div>
-  </footer>
-</Layout>
+    <p class="mt-6 text-center text-base">
+      <a href="/notes/" class="link text-muted">All notes →</a>
+    </p>
+  </section>
+
+  <section aria-labelledby="elsewhere-heading" class="mt-16">
+    <SectionHeading id="elsewhere-heading">Elsewhere on this site</SectionHeading>
+    <ul class="mt-8 space-y-4" role="list">
+      {
+        elsewhere.map((item) => (
+          <li>
+            <a href={item.href} class="link font-semibold text-ink">{item.label}</a>
+            <span class="text-muted">
+              — <Fragment set:html={item.note} />
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

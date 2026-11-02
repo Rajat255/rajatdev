@@ -1,0 +1,105 @@
+---
+/**
+ * Woodcut.astro — the engraving at the top of the front page: a lighthouse on
+ * the Konkan coast, in a round vignette.
+ *
+ * Drawn in the manner of a wood engraving: the sky is ruled with fine
+ * horizontal lines, and the lamp's two beams are left as bare paper cut out of
+ * that ruling. Everything paints in `currentColor` (ink) and the paper token,
+ * so it follows the theme. The lamp is the one spot of crimson.
+ *
+ * Decorative: hidden from assistive tech.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 140 140"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+  class:list={['text-ink', className]}
+>
+  <defs>
+    <clipPath id="woodcut-vignette">
+      <circle cx="70" cy="70" r="60"></circle>
+    </clipPath>
+    <pattern id="woodcut-sky" width="6" height="3.2" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="1.6" x2="6" y2="1.6" stroke="currentColor" stroke-width="0.55" opacity="0.75"></line>
+    </pattern>
+  </defs>
+
+  <g clip-path="url(#woodcut-vignette)">
+    {/* Ruled sky, down to the horizon. */}
+    <rect x="0" y="0" width="140" height="101" fill="url(#woodcut-sky)"></rect>
+
+    {/* The beams: bare paper cut out of the ruling. */}
+    <path d="M66 39 L0 20 L0 52 Z" class="fill-paper"></path>
+    <path d="M74 39 L140 20 L140 52 Z" class="fill-paper"></path>
+    <circle cx="70" cy="39" r="9" class="fill-paper"></circle>
+
+    {/* Gulls in the beams. */}
+    <path d="M22 37 q2.5 -2.6 5 0 q2.5 -2.6 5 0" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"></path>
+    <path d="M104 33 q2 -2.1 4 0 q2 -2.1 4 0" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"></path>
+
+    {/* The sea: rows of waves, tighter toward the horizon. */}
+    <rect x="0" y="101" width="140" height="40" class="fill-paper"></rect>
+    {
+      [104, 108, 112.5, 117.5, 123, 129, 135.5].map((y, i) => (
+        <path
+          d={`M${-6 + (i % 2) * 5} ${y} ${'q2.5 -1.6 5 0 t5 0 '.repeat(16)}`}
+          fill="none"
+          stroke="currentColor"
+          stroke-width={0.55 + i * 0.08}
+        />
+      ))
+    }
+
+    {/* Rocks under the tower. */}
+    <path
+      d="M30 108 Q34 99 42 101 Q47 95 55 99 L85 99 Q90 94 98 99 Q106 98 111 108 Z"
+      class="fill-paper"
+      stroke="currentColor"
+      stroke-width="1.1"
+      stroke-linejoin="round"></path>
+    <path
+      d="M36 106 l4 -4 M41 107 l5 -5 M47 106 l4 -4 M89 106 l5 -5 M95 107 l5 -5 M101 106 l4 -4 M44 101 l3 -2 M93 101 l3 -2"
+      stroke="currentColor"
+      stroke-width="0.7"
+      stroke-linecap="round"></path>
+
+    {/* The tower. */}
+    <path d="M63.5 47 L76.5 47 L81.5 100 L58.5 100 Z" class="fill-paper" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path>
+    {/* Bands. */}
+    <path d="M62.4 58 L77.6 58 L78.4 66.5 L61.6 66.5 Z" fill="currentColor"></path>
+    <path d="M60.6 77 L79.4 77 L80.3 86 L59.7 86 Z" fill="currentColor"></path>
+    {/* Shading down the right-hand side of the tower. */}
+    <path
+      d="M73 48 L75.6 99 M75 48 L78.2 99 M71.3 67 L72.4 76.5 M71.6 87 L72.7 99"
+      stroke="currentColor"
+      stroke-width="0.55"></path>
+    {/* Window and door. */}
+    <rect x="68.6" y="70" width="2.8" height="4" fill="currentColor"></rect>
+    <path d="M67 100 V93.5 Q70 90.5 73 93.5 V100 Z" fill="currentColor"></path>
+
+    {/* Gallery and railing. */}
+    <rect x="60" y="44.5" width="20" height="2.8" class="fill-paper" stroke="currentColor" stroke-width="1"></rect>
+    <path d="M61 44.5 V41.5 H79 V44.5 M64.5 41.5 V44.5 M68 41.5 V44.5 M72 41.5 V44.5 M75.5 41.5 V44.5" fill="none" stroke="currentColor" stroke-width="0.6"></path>
+
+    {/* Lantern room, lamp, and cap. */}
+    <rect x="64.5" y="33.5" width="11" height="8" class="fill-paper" stroke="currentColor" stroke-width="1"></rect>
+    <circle cx="70" cy="37.6" r="2.4" class="fill-accent"></circle>
+    <path d="M67.3 33.5 V41.5 M72.7 33.5 V41.5" stroke="currentColor" stroke-width="0.5"></path>
+    <path d="M63.5 33.5 Q70 25.5 76.5 33.5 Z" fill="currentColor"></path>
+    <path d="M70 27.6 V23.4" stroke="currentColor" stroke-width="1" stroke-linecap="round"></path>
+    <circle cx="70" cy="22.6" r="1" fill="currentColor"></circle>
+  </g>
+
+  {/* The vignette frame: a heavy rule and a hairline. */}
+  <circle cx="70" cy="70" r="60" fill="none" stroke="currentColor" stroke-width="0.8"></circle>
+  <circle cx="70" cy="70" r="64" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+</svg>

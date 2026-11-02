@@ -1,0 +1,70 @@
+---
+import { SITE_CONFIG } from '../config/site';
+import { graph, type JsonLdNode } from '../lib/seo/schema';
+
+/**
+ * SEO.astro — everything in <head> that search engines, social cards, feed
+ * readers, and LLM crawlers read: title, description, canonical URL, robots,
+ * Open Graph, Twitter card, the RSS alternate link, any extra alternates (such
+ * as a note's raw Markdown), and the page's JSON-LD graph.
+ *
+ * Rendered once per page by BaseLayout.astro.
+ */
+interface Props {
+  /** The full document title. */
+  title: string;
+  description: string;
+  /** Absolute canonical URL. */
+  canonical: string;
+  /** Absolute share image URL. */
+  image: string;
+  type: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  article?: { publishedTime: Date; modifiedTime?: Date | undefined; tags?: readonly string[] };
+  /** Extra `<link rel="alternate">`s, e.g. the raw Markdown of a note. */
+  alternates?: readonly { type: string; href: string; title: string }[];
+  /** JSON-LD nodes for this page, emitted as one `@graph`. */
+  jsonLd?: readonly JsonLdNode[];
+}
+
+const { title, description, canonical, image, type, noindex = false, article, alternates = [], jsonLd = [] } =
+  Astro.props;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="author" content={SITE_CONFIG.author} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<link rel="alternate" type="application/rss+xml" title={`${SITE_CONFIG.title} · Notes`} href="/rss.xml" />
+{alternates.map((alt) => <link rel="alternate" type={alt.type} title={alt.title} href={alt.href} />)}
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_CONFIG.title} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:alt" content={`${SITE_CONFIG.author}`} />
+<meta property="og:locale" content={SITE_CONFIG.language.replace('-', '_')} />
+{article && <meta property="article:published_time" content={article.publishedTime.toISOString()} />}
+{article?.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime.toISOString()} />}
+{article && <meta property="article:author" content={SITE_CONFIG.author} />}
+{article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+{
+  jsonLd.length > 0 && (
+    // `<` is escaped so no string in the data can close the script element.
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(graph(jsonLd)).replace(/</g, '\\u003c')}
+    />
+  )
+}

@@ -1,3 +1,92 @@
+/* ==========================================================================
+   Fonts
+
+   Self-hosted through Fontsource, so there is no request to a third-party font
+   CDN. EB Garamond (variable weight, roman and italic) sets the whole site;
+   Geist Mono is kept for code blocks and the terminal on the threads page.
+   ========================================================================== */
+@import '@fontsource-variable/eb-garamond/index.css';
+@import '@fontsource-variable/eb-garamond/wght-italic.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+/* ==========================================================================
+   Metric-matched fallbacks for EB Garamond
+
+   Until EB Garamond arrives, text is drawn in a system serif. Georgia, the
+   usual one, is noticeably larger, so the swap used to make text jump in size
+   and re-wrap. These faces wrap the local system serif and resize it to
+   EB Garamond's proportions, so a late swap changes letter shapes but not
+   line lengths or line heights.
+
+   One family per system font, because overrides are per face. The font stack
+   in tailwind.config.mjs lists them in order, so the browser uses the first
+   that is installed: Georgia (macOS, Windows), Times New Roman, Noto Serif
+   (Android, most Linux).
+
+   Values come from Capsize's published metrics (@capsizecss/metrics):
+   `size-adjust` matches average character width, the overrides match the
+   ascent and descent. Regenerate with `createFontStack` if the font changes.
+   ========================================================================== */
+@font-face {
+  font-family: 'EB Garamond Fallback Georgia';
+  src: local('Georgia');
+  font-style: normal;
+  ascent-override: 116.603%;
+  descent-override: 34.5061%;
+  line-gap-override: 0%;
+  size-adjust: 86.3614%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback Georgia';
+  src: local('Georgia Italic'), local('Georgia-Italic');
+  font-style: italic;
+  ascent-override: 116.603%;
+  descent-override: 34.5061%;
+  line-gap-override: 0%;
+  size-adjust: 86.3614%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback Times';
+  src: local('Times New Roman'), local('TimesNewRomanPSMT');
+  font-style: normal;
+  ascent-override: 106.2581%;
+  descent-override: 31.4448%;
+  line-gap-override: 0%;
+  size-adjust: 94.7692%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback Times';
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT');
+  font-style: italic;
+  ascent-override: 106.2581%;
+  descent-override: 31.4448%;
+  line-gap-override: 0%;
+  size-adjust: 94.7692%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback Noto';
+  src: local('Noto Serif Regular'), local('NotoSerif-Regular');
+  font-style: normal;
+  ascent-override: 125.8096%;
+  descent-override: 37.2306%;
+  line-gap-override: 0%;
+  size-adjust: 80.0416%;
+}
+
+@font-face {
+  font-family: 'EB Garamond Fallback Noto';
+  src: local('Noto Serif Italic'), local('NotoSerif-Italic');
+  font-style: italic;
+  ascent-override: 125.8096%;
+  descent-override: 37.2306%;
+  line-gap-override: 0%;
+  size-adjust: 80.0416%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,272 +94,220 @@
 /* ==========================================================================
    Theme tokens
 
-   Values are space-separated RGB channels so Tailwind can compose them with an
-   alpha channel via `rgb(var(--token) / <alpha-value>)` (see
-   tailwind.config.mjs). A class strategy on <html> selects the active theme:
-   `.dark` (default) or `.light`. `:root` carries the dark defaults so the page
-   renders correctly even before the no-flash init script runs.
+   Space-separated RGB channels, so Tailwind can add an alpha with
+   `rgb(var(--token) / <alpha-value>)` (see tailwind.config.mjs).
 
-   The palette preserves the original portfolio's identity: deep aubergine
-   purple surfaces with a hot-pink primary and an orange secondary accent.
+   Light (cream paper) is the default and lives on `:root`, so the page is right
+   before the no-flash script runs. `.dark` switches to the dark palette.
+
+   One accent: crimson. It marks the title, the drop cap, the current page in
+   the navigation, and links on hover. Nothing else introduces a hue.
    ========================================================================== */
 :root,
-:root.dark {
-  color-scheme: dark;
-
-  --background: 19 11 35; /* #130b23 deep purple-black */
-  --foreground: 245 243 250; /* near-white */
-  --muted: 33 20 58; /* #211440 raised purple */
-  --muted-foreground: 176 167 196; /* desaturated lavender */
-  --card: 30 18 53; /* #1e1235 */
-  --card-foreground: 245 243 250;
-  --border: 55 38 88; /* #372658 */
-  --primary: 255 64 129; /* hot pink — the original brand accent */
-  --primary-foreground: 24 10 20;
-  --accent: 255 159 85; /* orange — secondary accent */
-  --accent-foreground: 32 16 8;
-
-  /* Fluid body typography: a linear ramp from 16px at a 360px viewport to
-     20px at 2560px. The 16px floor sits above the 14px accessibility
-     minimum, so computed body text is never smaller than 14px. */
-  --body-font-size: clamp(16px, 15.3455px + 0.1818vw, 20px);
-}
-
-/* Light theme — a warm near-white surface that keeps the pink accent readable. */
 :root.light {
   color-scheme: light;
 
-  --background: 250 249 252;
-  --foreground: 28 20 43;
-  --muted: 242 239 248;
-  --muted-foreground: 91 80 112;
-  --card: 255 255 255;
-  --card-foreground: 28 20 43;
-  --border: 227 221 238;
-  --primary: 214 31 96; /* darkened pink for AA contrast on light */
-  --primary-foreground: 255 255 255;
-  --accent: 194 92 20; /* darkened orange for AA contrast on light */
-  --accent-foreground: 255 255 255;
+  --paper: 250 247 242; /* #FAF7F2 cream */
+  --surface: 239 233 220; /* #EFE9DC */
+  --ink: 22 21 20; /* #161514 */
+  --muted: 90 85 76; /* #5A554C */
+  --accent: 158 42 43; /* #9E2A2B crimson */
+  --rule: 213 203 184; /* #D5CBB8 */
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --paper: 20 19 17; /* #141311 */
+  --surface: 29 27 24; /* #1D1B18 */
+  --ink: 234 228 215; /* #EAE4D7 */
+  --muted: 154 146 132; /* #9A9284 */
+  --accent: 217 83 79; /* #D9534F */
+  --rule: 56 52 45; /* #38342D */
 }
 
 /* ==========================================================================
-   Reduced motion — global safety net. Components layer their own
-   `motion-reduce:` Tailwind variants on top of this.
+   Base
    ========================================================================== */
+@layer base {
+  html {
+    background-color: rgb(var(--paper));
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures;
+    text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.2);
+    color: rgb(var(--ink));
+  }
+
+  img,
+  svg {
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Native <details> markers are replaced by the +/− glyph in WorkHistory. */
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
 /* ==========================================================================
-   Reflow + overflow guards. Sections must render 360-2560px with no horizontal
-   scroll, no overlap, and no text truncation.
-   ========================================================================== */
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
-  font-size: var(--body-font-size);
-  /* Long words / URLs wrap instead of forcing horizontal overflow. */
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-/* Replaced (embedded) content never exceeds its container width. */
-img,
-picture,
-video,
-canvas,
-svg,
-iframe {
-  max-width: 100%;
-}
-
-/* Consistent focus ring for every interactive element that does not define
-   its own. */
-:focus-visible {
-  outline: 2px solid rgb(var(--primary));
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* ==========================================================================
-   Glass surfaces
-
-   Every card, panel, and tile on the page uses these instead of an opaque
-   `--card` fill. They are deliberately COLOURLESS: white and black alphas only,
-   so all hue comes from whatever is behind them (the aurora backdrop). Painting
-   a tinted fill here is what previously made the cards read as solid slabs
-   floating on top of the background rather than panes set into it.
-
-   The blur is what makes the text legible, not the fill opacity. It diffuses the
-   bright aurora ribbons into a soft wash, so a very low alpha is still readable.
+   Components
    ========================================================================== */
 @layer components {
-  /* Blur radius is a performance knob as well as a visual one: every one of these
-     surfaces re-blurs its backdrop on each frame the aurora advances, and the
-     cost scales with the radius. The full 16px is kept because the effect is
-     meant to run at full quality; if the page ever needs reclaiming, dropping to
-     10px here and 14px on the panel is a large saving for a small visual change,
-     but nudge the fills up a couple of points to hold text contrast if you do. */
-  .glass {
-    background-color: rgb(255 255 255 / 0.06);
-    border: 1px solid rgb(255 255 255 / 0.12);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    backdrop-filter: blur(16px) saturate(140%);
-    /* Inset top highlight reads as the lit edge of a glass pane; the outer
-       shadow lifts it off the backdrop. */
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.08),
-      0 8px 32px rgb(0 0 0 / 0.22);
-  }
-
-  /* Light theme inverts the metaphor: frosted white rather than smoked. */
-  /* Light theme inverts the metaphor: frosted white rather than smoked. The edge
-     is a faint cool grey rather than white — at this fill opacity a white border
-     on a near-white card over a pale backdrop disappears, leaving the panes
-     looking edgeless. The inset highlight keeps the lit-glass read. */
-  :root.light .glass {
-    background-color: rgb(255 255 255 / 0.55);
-    border-color: rgb(110 95 140 / 0.16);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.9),
-      0 8px 32px rgb(0 0 0 / 0.08);
-  }
-
-  /* Heavier pane for the floating dock, which overlaps arbitrary content and
-     needs to separate from it more firmly than an in-flow card does. */
-  .glass-panel {
-    background-color: rgb(255 255 255 / 0.08);
-    border: 1px solid rgb(255 255 255 / 0.14);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    backdrop-filter: blur(24px) saturate(160%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.12),
-      0 8px 32px rgb(0 0 0 / 0.3);
-  }
-
-  :root.light .glass-panel {
-    background-color: rgb(255 255 255 / 0.7);
-    border-color: rgb(110 95 140 / 0.18);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.9),
-      0 8px 32px rgb(0 0 0 / 0.1);
-  }
-
-  /* Interactive glass: brightens on hover/focus without introducing a hue. */
-  .glass-hover {
+  /* Underlined text link: a quiet ink underline that turns crimson. */
+  .link {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: rgb(var(--ink) / 0.4);
     transition:
-      background-color 200ms ease,
-      border-color 200ms ease,
-      box-shadow 200ms ease,
-      transform 200ms ease;
+      color 150ms ease,
+      text-decoration-color 150ms ease;
   }
 
-  .glass-hover:hover,
-  .glass-hover:focus-visible,
-  .glass-hover:focus-within {
-    background-color: rgb(255 255 255 / 0.11);
-    border-color: rgb(255 255 255 / 0.22);
+  .link:hover {
+    color: rgb(var(--accent));
+    text-decoration-color: rgb(var(--accent));
   }
 
-  /* Hover has to strengthen the edge, not erase it: the previous white hover
-     border read as the card losing its outline on light. */
-  :root.light .glass-hover:hover,
-  :root.light .glass-hover:focus-visible,
-  :root.light .glass-hover:focus-within {
-    background-color: rgb(255 255 255 / 0.8);
-    border-color: rgb(110 95 140 / 0.28);
+  /* Small capitals for dates and labels. Falls back to synthesized small caps
+     where the font has none. */
+  .smallcaps {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.06em;
   }
 
-  /* Small tiles (dock icons, badges). No backdrop-filter: they sit inside an
-     already-blurred panel, and stacking filters costs GPU time for no visible
-     gain at this size. */
-  .glass-tile {
-    background-color: rgb(255 255 255 / 0.07);
-    border: 1px solid rgb(255 255 255 / 0.09);
-    transition:
-      background-color 200ms ease,
-      border-color 200ms ease,
-      color 200ms ease;
+  /* A drop cap on the first paragraph of an essay. */
+  .drop-cap > p:first-of-type::first-letter {
+    float: left;
+    margin: 0.04em 0.12em 0 0;
+    font-size: 3.6em;
+    font-weight: 500;
+    line-height: 0.85;
+    color: rgb(var(--accent));
   }
 
-  .glass-tile:hover {
-    background-color: rgb(255 255 255 / 0.13);
-    border-color: rgb(255 255 255 / 0.18);
+  /* An empty photo slot, hatched like a frame waiting for its picture. */
+  .photo-empty {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgb(var(--rule) / 0.7) 0,
+      rgb(var(--rule) / 0.7) 1px,
+      transparent 1px,
+      transparent 7px
+    );
   }
+}
 
-  :root.light .glass-tile {
-    background-color: rgb(0 0 0 / 0.04);
-    border-color: rgb(0 0 0 / 0.06);
+/* ==========================================================================
+   Motion: a gentle fade for panels that unfold, and the terminal cursor.
+   ========================================================================== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
   }
-
-  :root.light .glass-tile:hover {
-    background-color: rgb(0 0 0 / 0.08);
-    border-color: rgb(0 0 0 / 0.1);
+  to {
+    opacity: 1;
+    transform: none;
   }
+}
 
-  /*
-   * No backdrop-filter support (older Firefox with the flag off, some embedded
-   * webviews): without the blur, a 6% fill would leave text sitting directly on
-   * bright aurora ribbons. Fall back to a near-opaque neutral fill so contrast
-   * is preserved. Checked for both the prefixed and unprefixed property.
-   */
-  @supports not (
-    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
-  ) {
-    .glass,
-    .glass-panel {
-      background-color: rgb(18 12 30 / 0.88);
-      border-color: rgb(255 255 255 / 0.14);
-    }
+.fade-in {
+  animation: fade-in 320ms ease-out both;
+}
 
-    :root.light .glass,
-    :root.light .glass-panel {
-      background-color: rgb(252 252 254 / 0.94);
-      border-color: rgb(0 0 0 / 0.08);
-    }
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
   }
+}
 
-  /*
-   * Each glass surface re-samples its backdrop whenever the backdrop changes,
-   * and the aurora animates continuously. Under reduced motion the shader never
-   * starts, so the backdrop is static and this is free; while it is running,
-   * keeping the radius moderate (16-24px, not 40px+) is what keeps the cost flat.
-   */
+.cursor-blink {
+  animation: cursor-blink 1s steps(1) infinite;
+}
+
+/* ==========================================================================
+   Syntax highlighting
+
+   Shiki's `css-variables` theme (astro.config.mjs) emits these custom
+   properties instead of fixed colours, so code blocks follow the theme.
+   ========================================================================== */
+:root {
+  --astro-code-foreground: rgb(var(--ink));
+  --astro-code-background: rgb(var(--surface));
+  --astro-code-token-comment: rgb(var(--muted));
+  --astro-code-token-keyword: rgb(var(--accent));
+  --astro-code-token-string: #4a5a2c;
+  --astro-code-token-string-expression: #4a5a2c;
+  --astro-code-token-constant: #6a4a1c;
+  --astro-code-token-function: rgb(var(--ink));
+  --astro-code-token-parameter: rgb(var(--ink));
+  --astro-code-token-punctuation: rgb(var(--muted));
+  --astro-code-token-link: rgb(var(--accent));
+}
+
+:root.dark {
+  --astro-code-token-string: #a9b97c;
+  --astro-code-token-string-expression: #a9b97c;
+  --astro-code-token-constant: #d6b17a;
 }
 
 /* ==========================================================================
    Theme ripple
 
-   The theme toggle swaps `.dark`/`.light` inside a View Transition. The browser
-   snapshots the page either side of the swap; these rules replace the default
-   cross-fade with a circular wipe expanding from the toggle button.
-
-   How it works: the OLD snapshot is left completely unanimated, sitting beneath
-   the new one. The NEW snapshot is clipped to a circle that grows from zero at
-   the button to a radius covering the furthest viewport corner, so the incoming
-   theme is progressively uncovered.
-
-   `mix-blend-mode: normal` is required because the UA default is `plus-lighter`,
-   which is correct for a cross-fade but would wash the two themes together here.
-
-   Everything is scoped to `[data-theme-transition]`, set only for the duration of
-   a theme swap, so any other view transition keeps the browser default.
+   The theme toggle swaps `.dark`/`.light` inside a View Transition. The new
+   snapshot is clipped to a circle that grows from the toggle, and the old one
+   sits beneath, unanimated. Scoped to `[data-theme-transition]`, which is only
+   set during a swap. See src/lib/dom/themeRipple.ts.
    ========================================================================== */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  /* Prevent the snapshots from being clipped by the page's own overflow guards. */
   overflow: clip;
 }
 
@@ -280,12 +317,10 @@ iframe {
   mix-blend-mode: normal;
 }
 
-/* Outgoing theme: static, underneath, uncovered as the circle grows. */
 :root[data-theme-transition]::view-transition-old(root) {
   z-index: 0;
 }
 
-/* Incoming theme: on top, revealed by the expanding circle. */
 :root[data-theme-transition]::view-transition-new(root) {
   z-index: 1;
   animation: theme-ripple 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -296,66 +331,12 @@ iframe {
     clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
   }
   to {
-    /* The fallback covers any viewport if the JS-set radius is missing. */
     clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
   }
 }
 
-/* Reduced motion: a full-viewport wipe is exactly the kind of large-area motion
-   this preference asks us to avoid. The toggle also skips the view transition
-   entirely in JS; this is the defensive half of that. */
 @media (prefers-reduced-motion: reduce) {
   :root[data-theme-transition]::view-transition-new(root) {
     animation: none;
   }
-}
-
-/* ==========================================================================
-   Decorative utilities
-   ========================================================================== */
-
-/* Subtle grain overlay used behind the hero for depth. */
-.grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* Gradient text used for the hero name. */
-.text-gradient {
-  background-image: linear-gradient(
-    100deg,
-    rgb(var(--primary)) 0%,
-    rgb(var(--accent)) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-/* ==========================================================================
-   Scroll cue
-
-   The hero fills the viewport, so nothing below it hints that the page
-   continues. This is the hint: a slow, small vertical bob on the hero's
-   "scroll down" affordance. Amplitude stays under 5px and the cycle is long, so
-   it reads as an invitation rather than an attention grab, and the global
-   reduced-motion net above collapses it to a static glyph.
-   ========================================================================== */
-@keyframes scroll-cue {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translateY(4px);
-    opacity: 1;
-  }
-}
-
-.scroll-cue-bob {
-  animation: scroll-cue 2.6s ease-in-out infinite;
 }

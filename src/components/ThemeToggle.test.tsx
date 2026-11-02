@@ -6,19 +6,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ThemeToggle from './ThemeToggle';
 
 /**
- * Tests for the theme toggle.
+ * Tests for the dark mode toggle.
  *
- * The ref-forwarding test exists because of a real bug: the dock magnifies
- * whatever it holds a ref to, and the toggle originally exposed none, so it was
- * silently excluded from the effect while every icon beside it lifted.
+ * The light theme (`.light`) is the default, and the button is a toggle named
+ * "dark mode" that is pressed while the dark theme is on.
  *
- * jsdom implements no `startViewTransition`, so these exercise the instant-swap
- * fallback path, which is also what unsupported browsers get.
+ * jsdom implements no `startViewTransition`, so most of these exercise the
+ * instant-swap fallback path, which is also what unsupported browsers get.
  */
+
+const NAME = 'dark mode';
 
 beforeEach(() => {
   document.documentElement.classList.remove('light', 'dark');
-  document.documentElement.classList.add('dark');
+  document.documentElement.classList.add('light');
   localStorage.clear();
 });
 
@@ -28,47 +29,48 @@ afterEach(() => {
 
 describe('ThemeToggle', () => {
   it('forwards its ref to the underlying button', () => {
-    // The dock needs this node to include the toggle in pointer magnification.
     const ref = createRef<HTMLButtonElement>();
     render(<ThemeToggle ref={ref} />);
 
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('BUTTON');
-    expect(ref.current).toBe(screen.getByRole('button', { name: 'Toggle theme' }));
+    expect(ref.current).toBe(screen.getByRole('button', { name: NAME }));
   });
 
   it('supports a callback ref as well as an object ref', () => {
     let captured: HTMLButtonElement | null = null;
-    render(<ThemeToggle ref={(node) => { captured = node; }} />);
+    render(
+      <ThemeToggle
+        ref={(node) => {
+          captured = node;
+        }}
+      />,
+    );
 
     expect(captured).not.toBeNull();
-    expect(captured).toBe(screen.getByRole('button', { name: 'Toggle theme' }));
+    expect(captured).toBe(screen.getByRole('button', { name: NAME }));
   });
 
-  it('is sized so the dock can drive width and height directly', () => {
-    // Magnification writes width/height; if only min-width were set the element
-    // could never grow, which is what kept the toggle static.
+  it('keeps a 44px-tall touch target', () => {
     render(<ThemeToggle />);
-    const button = screen.getByRole('button', { name: 'Toggle theme' });
-
-    expect(button.style.width).toBe('44px');
-    expect(button.style.height).toBe('44px');
-    // The minimums keep the touch target legal before the first frame runs.
-    expect(button.style.minWidth).toBe('44px');
-    expect(button.style.minHeight).toBe('44px');
+    expect(screen.getByRole('button', { name: NAME }).style.minHeight).toBe('44px');
   });
 
-  it('adopts the theme already on the document', async () => {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
+  it('is not pressed in the light theme', async () => {
+    render(<ThemeToggle />);
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: NAME })).toHaveAttribute('aria-pressed', 'false');
+    });
+  });
+
+  it('adopts the dark theme already on the document', async () => {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
 
     render(<ThemeToggle />);
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Toggle theme' })).toHaveAttribute(
-        'aria-pressed',
-        'true',
-      );
+      expect(screen.getByRole('button', { name: NAME })).toHaveAttribute('aria-pressed', 'true');
     });
   });
 
@@ -76,39 +78,36 @@ describe('ThemeToggle', () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    await user.click(screen.getByRole('button', { name: 'Toggle theme' }));
+    await user.click(screen.getByRole('button', { name: NAME }));
 
     await waitFor(() => {
-      expect(document.documentElement.classList.contains('light')).toBe(true);
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
-    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.classList.contains('light')).toBe(false);
   });
 
   it('persists the choice', async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
 
-    await user.click(screen.getByRole('button', { name: 'Toggle theme' }));
+    await user.click(screen.getByRole('button', { name: NAME }));
 
     await waitFor(() => {
-      expect(localStorage.getItem('theme')).toBe('light');
+      expect(localStorage.getItem('theme')).toBe('dark');
     });
   });
 
   it('toggles back on a second activation', async () => {
     const user = userEvent.setup();
     render(<ThemeToggle />);
-    const button = screen.getByRole('button', { name: 'Toggle theme' });
+    const button = screen.getByRole('button', { name: NAME });
 
     await user.click(button);
-    await waitFor(() =>
-      expect(document.documentElement.classList.contains('light')).toBe(true),
-    );
+    await waitFor(() => expect(document.documentElement.classList.contains('dark')).toBe(true));
 
     await user.click(button);
-    await waitFor(() =>
-      expect(document.documentElement.classList.contains('dark')).toBe(true),
-    );
+    await waitFor(() => expect(document.documentElement.classList.contains('light')).toBe(true));
+    expect(button).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('uses a view transition when the browser supports one', async () => {
@@ -126,10 +125,10 @@ describe('ThemeToggle', () => {
 
     const user = userEvent.setup();
     render(<ThemeToggle />);
-    await user.click(screen.getByRole('button', { name: 'Toggle theme' }));
+    await user.click(screen.getByRole('button', { name: NAME }));
 
     await waitFor(() => expect(startViewTransition).toHaveBeenCalledTimes(1));
-    expect(document.documentElement.classList.contains('light')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
 
     // Legal without a cast: the API is declared optional in src/types.
     delete document.startViewTransition;
@@ -137,18 +136,16 @@ describe('ThemeToggle', () => {
 
   it('still switches theme when localStorage throws', async () => {
     // Private-mode Safari historically threw on setItem; the toggle must survive.
-    const setItem = vi
-      .spyOn(Storage.prototype, 'setItem')
-      .mockImplementation(() => {
-        throw new Error('quota exceeded');
-      });
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota exceeded');
+    });
 
     const user = userEvent.setup();
     render(<ThemeToggle />);
-    await user.click(screen.getByRole('button', { name: 'Toggle theme' }));
+    await user.click(screen.getByRole('button', { name: NAME }));
 
     await waitFor(() => {
-      expect(document.documentElement.classList.contains('light')).toBe(true);
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
 
     setItem.mockRestore();
