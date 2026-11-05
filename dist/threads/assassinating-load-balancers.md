@@ -5,8 +5,8 @@ author: "Rajat Khirid"
 published: 2026-09-14
 category: "Infrastructure"
 tags: ["AWS", "FinOps", "Graviton", "Load Balancers", "SQS", "Savings Plans"]
-url: "https://rajatdev.fun/notes/assassinating-load-balancers/"
-canonical: "https://rajatdev.fun/notes/assassinating-load-balancers/"
+url: "https://rajatdev.fun/threads/assassinating-load-balancers/"
+canonical: "https://rajatdev.fun/threads/assassinating-load-balancers/"
 word_count: 531
 reading_time_minutes: 2
 ---

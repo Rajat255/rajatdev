@@ -2,7 +2,7 @@
 
 > Rajat Khirid is a Cloud and DevOps engineer based in Pune, India, and an AWS Certified Solutions Architect – Professional (SAP-C02). At amber, where he spent more than eight months as the sole DevOps engineer for 50+ production services on AWS, he led a FinOps programme that cut monthly AWS spend by 45% (about $200K a year), migrated workloads from ECS to Amazon EKS with Karpenter and KEDA, and built MCP-based AI agents that triage and fix CI/CD failures on their own. He self-hosts this site on a bare-metal homelab.
 
-Source: https://rajatdev.fun/. Generated from the same data as the site at build time, 2026-11-02.
+Source: https://rajatdev.fun/. Generated from the same data as the site at build time, 2026-11-05.
 
 ## About
 
@@ -124,6 +124,10 @@ Tools: AWS, Cloud Fundamentals
 
 ## Side projects
 
+### plot-it.fun (2026 · in progress)
+
+A new app I’m building now. Still in progress; more here when it’s ready to show.
+
 ### GeekFixx (2023)
 
 A wellness application that looks after you while you use your computer. It uses machine learning to correct your posture and nudges you to look away from the screen, drink water, and take breaks.
@@ -154,49 +158,44 @@ Link: https://github.com/Rajat255/GeekFixx-ReactApp
 
 ### Reading now
 
-- Trust, by Hernan Diaz (2022). Fiction · Capital & Narrative. Read in English.
-  Note: An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
-- L'Étranger (The Stranger), by Albert Camus (1942). Philosophy · Absurdism (B1 French). Read in Français.
-  Note: Reading Camus in the original French—deceptively simple sentences where the Algerian sun and quiet existential indifference do all the heavy lifting.
+#### L'Étranger (The Stranger), by Albert Camus (1942)
+
+Philosophy · Absurdism (B1 French). Read in Français. Page: https://rajatdev.fun/reads/l-etranger/
+
+> Reading Camus in the original French—deceptively simple sentences where the Algerian sun and quiet existential indifference do all the heavy lifting.
+
+#### Trust, by Hernan Diaz (2022)
+
+Fiction · Capital & Narrative. Read in English. Page: https://rajatdev.fun/reads/trust/
+
+> An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
 
 ### Finished
 
-- A Thousand Splendid Suns, by Khaled Hosseini (2007). Historical Fiction. Read in English.
-  Note: A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
-- Le Petit Prince, by Antoine de Saint-Exupéry (1943). Classic · Fable (FR). Read in Français.
-  Note: The rite of passage for anyone learning French, and still sharper about adult absurdity and bureaucracy than most books ten times its length.
+#### A Thousand Splendid Suns, by Khaled Hosseini (2007)
+
+Historical Fiction. Read in English. Page: https://rajatdev.fun/reads/a-thousand-splendid-suns/
+
+> A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
+
+#### Le Petit Prince, by Antoine de Saint-Exupéry (1943)
+
+Classic · Fable (FR). Read in Français. Page: https://rajatdev.fun/reads/le-petit-prince/
+
+> The rite of passage for anyone learning French, and still sharper about adult absurdity and bureaucracy than most books ten times its length.
 
 ## Rabbit holes
 
-- French, at about B1: I read French books in the original, slowly, with a dictionary within reach. A few lines I’ve collected are below.
-- Two wheels: A bicycle most of the time, and a motorbike for the longer trips. The 1,500 km Konkan coast ride is on the timeline below.
-- Photography: Mostly taken on rides. The photo frames on the Konkan route are waiting for the good ones.
+- French, at about B1: I read French books in the original, slowly, with a dictionary within reach.
+- Two wheels: A bicycle most of the time, and a motorbike for the longer trips, like the 1,500 km ride down the Konkan coast from Mumbai to Goa and back.
+- Photography: Mostly taken on rides.
 - The homelab: The bare-metal box at home that serves this site, and the reason I learn something new about Linux every month.
 
-### French log
-
-- "Aujourd’hui, maman est morte. Ou peut-être hier, je ne sais pas." — Mother died today. Or maybe yesterday, I don’t know. (Albert Camus, L’Étranger (1942), the opening line)
-- "éblouir" — to dazzle, to blind with light. The sun in L’Étranger does a great deal of it. (From L’Étranger)
-- "On ne voit bien qu’avec le cœur. L’essentiel est invisible pour les yeux." — One sees clearly only with the heart. What is essential is invisible to the eye. (Antoine de Saint-Exupéry, Le Petit Prince (1943))
-- "les grandes personnes" — grown-ups. The Little Prince’s verdict: they never understand anything by themselves. (From Le Petit Prince)
-
-## Timeline
-
-- Jul 2026: AWS Solutions Architect – Professional. Cleared SAP-C02, the one I had been circling for a while. Three hours, 75 questions, and an unreasonable number of VPC diagrams.
-- 2026: Taught a robot to read build logs. Shipped an agent that watches 30+ pipelines, classifies failures by root cause, and opens the fix as a pull request. 40% of broken builds now sort themselves out before anyone notices.
-- 2025: Halved the AWS bill. Ran a company-wide cost programme that took monthly spend from $35–38K to $19–21K with no drop in availability. Fourteen load balancers became four. Nobody noticed, which was the whole point.
-- Dec 2024: Became amber’s DevOps team. Joined as SDE1 and spent eight months as the only DevOps engineer, owning production for 50+ services. One pager rotation, no co-pilot, a lot of respect for good runbooks.
-- 2024: Bought my first motorbike, then rode it to all along the coast of Konkan. Took it down the entire Konkan coast to from Mumbai to Goa and back, a little over 1,500 km of ghat sections, coastal highways, and great food. Best infrastructure decision I have ever made without a Terraform plan.
-- Oct 2023: Started at IAMOPS. Consulting across four client accounts on Azure-to-AWS migrations, Terraform, and SRE practice.
-- Aug 2023: First AWS certification. Earned the AWS Certified Cloud Practitioner credential. The gateway drug.
-- Jun 2023: Graduated with a 9.33 CGPA. Finished a Computer Science degree at Savitribai Phule Pune University with honors in Artificial Intelligence.
-- 2022: Switched to Linux full-time. Made Linux the daily driver and never went back, which is how most of this started. Reinstalled exactly once, and that time it was on purpose.
-
-## Notes
+## Posts
 
 ### Notes from a Pune Homelab: Why I Traded My Portfolio Template for Newsprint
 
-Published 2026-10-26. Field Notes. 371 words. URL: https://rajatdev.fun/notes/notes-from-a-pune-homelab/
+Published 2026-10-26. Field Notes. 371 words. URL: https://rajatdev.fun/threads/notes-from-a-pune-homelab/
 
 > A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble.
 
@@ -226,7 +225,7 @@ Thanks for reading.
 
 ### How to Assassinate 10 Load Balancers and Cut an AWS Bill by 45% Without Anyone Noticing
 
-Published 2026-09-14. Infrastructure. 531 words. URL: https://rajatdev.fun/notes/assassinating-load-balancers/
+Published 2026-09-14. Infrastructure. 531 words. URL: https://rajatdev.fun/threads/assassinating-load-balancers/
 
 > Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly.
 

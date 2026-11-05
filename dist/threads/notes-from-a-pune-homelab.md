@@ -5,8 +5,8 @@ author: "Rajat Khirid"
 published: 2026-10-26
 category: "Field Notes"
 tags: ["Homelab", "Self-hosting", "Astro", "Independent Web"]
-url: "https://rajatdev.fun/notes/notes-from-a-pune-homelab/"
-canonical: "https://rajatdev.fun/notes/notes-from-a-pune-homelab/"
+url: "https://rajatdev.fun/threads/notes-from-a-pune-homelab/"
+canonical: "https://rajatdev.fun/threads/notes-from-a-pune-homelab/"
 word_count: 371
 reading_time_minutes: 2
 ---
