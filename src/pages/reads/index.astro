@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookShelf from '../../components/islands/BookShelf.tsx';
+import PageTitle from '../../components/site/PageTitle.astro';
+import { absoluteUrl } from '../../config/site';
+import { LANGUAGE_NAMES, SHELF_ORDER, SHELF_TITLES, STATUS_TAGS, getBooks, toShelfBook } from '../../lib/books';
+import { bookListNode, personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * Reads: books I've read and am reading, each with a short note and a link to
+ * its own page. To add a book, add a Markdown file to `src/content/books/`.
+ */
+const books = await getBooks();
+const description =
+  'Books Rajat Khirid is reading and has read, in English and French, with a short note on each and a page of his own writing about them.';
+---
+
+<BaseLayout
+  section="reads"
+  title="Reads"
+  description={description}
+  jsonLd={[
+    websiteNode(),
+    personNode(),
+    webPageNode({
+      path: '/reads/',
+      name: 'Reads',
+      description,
+      type: 'CollectionPage',
+      mainEntity: { '@id': `${absoluteUrl('/reads/')}#books` },
+    }),
+    bookListNode(books, '/reads/'),
+  ]}
+>
+  <PageTitle title="Reads" subtitle="books I've read">
+    <p class="text-center text-muted">
+      What I&rsquo;m reading and what I&rsquo;ve finished, with a note on each. The French ones are read in the
+      original, slowly, at about a B1 level. What&rsquo;s on the nightstand this month is also on the
+      <a href="/now/" class="link">now page</a>.
+    </p>
+  </PageTitle>
+
+  <div class="mt-10">
+    <BookShelf
+      client:visible
+      books={books.map(toShelfBook)}
+      shelfOrder={SHELF_ORDER}
+      shelfTitles={SHELF_TITLES}
+      statusTags={STATUS_TAGS}
+      languageNames={LANGUAGE_NAMES}
+    />
+  </div>
+</BaseLayout>

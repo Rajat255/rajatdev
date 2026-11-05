@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AgeCounter from '../components/islands/AgeCounter.tsx';
+import PageTitle from '../components/site/PageTitle.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+import { SITE_CONFIG } from '../config/site';
+import { profile } from '../data/profile';
+import { personNode, profilePageNode, websiteNode } from '../lib/seo/schema';
+
+/**
+ * About: a longer introduction, with a photo.
+ *
+ * EDIT THIS PAGE to add your own words. For the photo, put the file in
+ * `public/images/` and set `photo` below; until then a plain frame shows.
+ */
+// TODO: Rajat, set to e.g. { src: '/images/rajat.jpg', alt: 'Rajat on the Konkan coast' }.
+// The cast keeps the type open: a bare `null` constant would narrow to `never`.
+const photo = null as { src: string; alt: string } | null;
+
+const { contact } = SITE_CONFIG;
+
+/** "4 August 2001, 16:16", read on the clock where I was born (IST). */
+const bornLabel = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZone: 'Asia/Kolkata',
+}).format(new Date(profile.bornAt));
+const description = `A longer introduction to ${profile.name}: what he works on, what he builds, and what he does away from work.`;
+---
+
+<BaseLayout
+  section="about"
+  title="About"
+  description={description}
+  ogType="profile"
+  jsonLd={[websiteNode(), personNode(), profilePageNode('/about/', 'About', description)]}
+>
+  <PageTitle title="About" subtitle="the longer version" />
+
+  <figure class="mx-auto mt-6 w-48">
+    {
+      photo ? (
+        <img
+          src={photo.src}
+          alt={photo.alt}
+          width="384"
+          height="480"
+          class="aspect-[4/5] w-full border border-rule object-cover"
+        />
+      ) : (
+        <div
+          class="grid aspect-[4/5] w-full place-items-center border border-dashed border-ink/40 bg-surface"
+          aria-hidden="true"
+        >
+          <span class="text-base italic text-muted">photo to come</span>
+        </div>
+      )
+    }
+  </figure>
+
+  <div class="mt-8">
+    {/* Live, to the second, once the island loads. The line below it is the
+        static version, for screen readers and anyone without JavaScript. */}
+    <AgeCounter client:load bornAt={profile.bornAt} />
+    <p class="text-center text-base text-muted">
+      Born <time datetime={profile.bornAt}>{bornLabel}</time>.
+    </p>
+  </div>
+
+  {/* TODO: Rajat, replace these paragraphs with your own. They are drafted
+      only from facts already on the site. */}
+  <div class="mt-10 space-y-5">
+    <p>
+      I&rsquo;m Rajat, a Cloud and DevOps engineer. At amber I look after production infrastructure on AWS and
+      Kubernetes, and before that I spent a year at IAMOPS helping clients move to AWS. The parts of the work I like
+      best are the quiet ones: making systems reproducible, making them cheaper, and making sure nobody gets paged at
+      3 a.m.
+    </p>
+    <p>
+      Away from work I read (some of it in French, slowly), ride a bicycle most weekends and a motorbike when the trip is
+      longer, take photos, and keep a small homelab running at home. This site is served from it.
+    </p>
+  </div>
+
+  <section aria-labelledby="more-heading" class="mt-16">
+    <SectionHeading id="more-heading">More of me</SectionHeading>
+    <ul class="mt-8 space-y-3" role="list">
+      <li><a href="/builds/" class="link font-semibold">Builds</a><span class="text-muted"> — my work, case studies, and side projects.</span></li>
+      <li><a href="/threads/" class="link font-semibold">Threads</a><span class="text-muted"> — what I&rsquo;ve written and the rabbit holes I&rsquo;m in.</span></li>
+      <li><a href="/reads/" class="link font-semibold">Reads</a><span class="text-muted"> — books, with a note on each.</span></li>
+      <li><a href="/now/" class="link font-semibold">Now</a><span class="text-muted"> — what I&rsquo;m focused on this month.</span></li>
+    </ul>
+    <p class="mt-8">
+      You can reach me by <a href={`mailto:${contact.email}`} class="link">email</a>, or find me on
+      <a href={contact.github} class="link">GitHub</a> and <a href={contact.linkedin} class="link">LinkedIn</a>.
+    </p>
+  </section>
+</BaseLayout>

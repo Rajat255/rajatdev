@@ -1,34 +1,67 @@
 ---
-import ThemeToggle from '../ThemeToggle.tsx';
-import FinisBanner from '../ornaments/FinisBanner.astro';
-import { SITE_CONFIG, showcaseIsPublic } from '../../config/site';
+import { SITE_CONFIG, getSecondaryItems, type SectionKey } from '../../config/site';
 
 /**
- * SiteFooter.astro — the end of every page: the Finis banner, where the site
- * is hosted, the copyright line, a row of links, and the dark mode switch.
- * `/showcase` is linked only when `SITE_CONFIG.showShowcaseInNav` is true.
+ * SiteFooter.astro — the end of every page: "Self-hosted on my homelab" (with
+ * a link to the homelab page), the copyright line, then two rows of links:
+ *
+ *  - Elsewhere: every page that isn't in the top navigation (about, now,
+ *    homelab, triage agent, colophon, and showcase once public), so all of
+ *    them point at each other from every page;
+ *  - contact and feeds.
  */
-const { colophon, contact } = SITE_CONFIG;
+interface Props {
+  section: SectionKey;
+}
 
-const links = [
+const { section } = Astro.props;
+const { colophon, contact } = SITE_CONFIG;
+const elsewhere = getSecondaryItems();
+
+const contactLinks = [
   { label: 'email', href: `mailto:${contact.email}`, external: false },
   { label: 'github', href: contact.github, external: true },
   { label: 'linkedin', href: contact.linkedin, external: true },
   { label: 'résumé', href: contact.resume, external: false },
   { label: 'rss', href: '/rss.xml', external: false },
-  { label: 'colophon', href: '/colophon/', external: false },
-  ...(showcaseIsPublic() ? [{ label: 'showcase', href: '/showcase/', external: false }] : []),
 ];
 ---
 
-<footer class="mt-24 pb-14 text-center">
-  <FinisBanner text={colophon.finis} />
-  <p class="mt-4 italic text-ink">{colophon.hosting}</p>
+<footer class="mt-24 border-t border-rule pb-14 pt-10 text-center">
+  <p class="italic text-ink">
+    {colophon.hosting}
+    <a
+      href={colophon.hostingLink.href}
+      aria-current={section === 'homelab' ? 'page' : undefined}
+      class="link">{colophon.hostingLink.text}</a
+    >
+  </p>
   <p class="mt-1 text-base text-muted">{colophon.copyright}</p>
 
-  <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-5 text-base" role="list">
+  <nav aria-label="Elsewhere on this site" class="mt-6">
+    <ul class="flex flex-wrap items-center justify-center gap-x-5 text-base" role="list">
+      {
+        elsewhere.map((item) => {
+          const current = item.key === section;
+          return (
+            <li>
+              <a
+                href={item.href}
+                aria-current={current ? 'page' : undefined}
+                class:list={['link inline-block py-2', current ? 'text-accent' : 'text-ink']}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <ul class="flex flex-wrap items-center justify-center gap-x-5 text-base" role="list">
     {
-      links.map((link) => (
+      contactLinks.map((link) => (
         <li>
           <a
             href={link.href}
@@ -40,8 +73,5 @@ const links = [
         </li>
       ))
     }
-    <li class="text-base">
-      <ThemeToggle client:idle />
-    </li>
   </ul>
 </footer>

@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BirdDivider from '../../components/ornaments/BirdDivider.astro';
+import { absoluteUrl } from '../../config/site';
+import {
+  LANGUAGE_NAMES,
+  STATUS_TAGS,
+  bookHref,
+  getBooks,
+  hasWriting,
+  type BookEntry,
+} from '../../lib/books';
+import { formatLongDate, toIsoDate } from '../../lib/format';
+import { bookNode, personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * A book's own page: its details, the short note from /reads, and whatever I
+ * write about it (the Markdown body of `src/content/books/<slug>.md`). Until
+ * there is writing, the page says the notes are still to come.
+ */
+export async function getStaticPaths() {
+  const books = await getBooks();
+  return books.map((book, index) => ({
+    params: { slug: book.slug },
+    props: { book, previous: books[index - 1] ?? null, next: books[index + 1] ?? null },
+  }));
+}
+
+interface Props {
+  book: BookEntry;
+  previous: BookEntry | null;
+  next: BookEntry | null;
+}
+
+const { book, previous, next } = Astro.props;
+const { Content } = await book.render();
+const { title, translatedTitle, author, year, status, language, category, notes, started, finished } = book.data;
+const written = hasWriting(book);
+const isFrench = language === 'FR';
+const pageTitle = `${title}, by ${author}`;
+const description = `Rajat Khirid on ${title}${translatedTitle ? ` (${translatedTitle})` : ''} by ${author}: ${notes}`;
+---
+
+<BaseLayout
+  section="reads"
+  title={pageTitle}
+  description={description}
+  jsonLd={[
+    websiteNode(),
+    personNode(),
+    webPageNode({
+      path: bookHref(book),
+      name: pageTitle,
+      description,
+      mainEntity: { '@id': `${absoluteUrl(bookHref(book))}#book` },
+    }),
+    bookNode(book),
+  ]}
+>
+  <article class="pt-14 sm:pt-20">
+    <header class="text-center">
+      <p class="smallcaps text-accent">
+        {STATUS_TAGS[status]} · {LANGUAGE_NAMES[language]}
+      </p>
+      <h1 class="mt-3 text-[2rem] font-semibold leading-[1.15] text-ink sm:text-[2.5rem]">
+        <cite class="not-italic" lang={isFrench ? 'fr' : undefined}>{title}</cite>
+      </h1>
+      {translatedTitle && <p class="mt-1 italic text-muted">{translatedTitle}</p>}
+      <p class="mt-4 text-ink">
+        {author}, {year}
+      </p>
+      <p class="mt-1 text-base text-muted">
+        {category}
+        {
+          started && (
+            <>
+              <span aria-hidden="true"> · </span>started <time datetime={toIsoDate(started)}>{formatLongDate(started)}</time>
+            </>
+          )
+        }
+        {
+          finished && (
+            <>
+              <span aria-hidden="true"> · </span>finished <time datetime={toIsoDate(finished)}>{formatLongDate(finished)}</time>
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <p class="mx-auto mt-8 max-w-[34rem] border-l-2 border-accent/60 pl-4 italic text-ink">{notes}</p>
+
+    <BirdDivider class="my-10" />
+
+    {
+      written ? (
+        <div class="prose prose-lg prose-stone drop-cap max-w-none font-serif sm:prose-xl">
+          <Content />
+        </div>
+      ) : (
+        <p class="text-center italic text-muted">My notes on this one are still to come.</p>
+      )
+    }
+  </article>
+
+  <nav aria-label="More books" class="mt-16 border-t border-rule pt-6">
+    <ul class="grid gap-6 sm:grid-cols-2" role="list">
+      <li>
+        {
+          previous && (
+            <>
+              <span class="smallcaps block text-muted">Previous</span>
+              <a href={bookHref(previous)} class="link leading-snug">
+                <cite class="not-italic">{previous.data.title}</cite>
+              </a>
+            </>
+          )
+        }
+      </li>
+      <li class="sm:text-right">
+        {
+          next && (
+            <>
+              <span class="smallcaps block text-muted">Next</span>
+              <a href={bookHref(next)} class="link leading-snug">
+                <cite class="not-italic">{next.data.title}</cite>
+              </a>
+            </>
+          )
+        }
+      </li>
+    </ul>
+    <p class="mt-8 text-center">
+      <a href="/reads/" class="link text-muted">← Back to all reads</a>
+    </p>
+  </nav>
+</BaseLayout>

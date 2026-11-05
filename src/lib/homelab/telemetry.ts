@@ -61,7 +61,7 @@ export interface HomelabStatusPayload {
 /** What the box usually looks like. Also the server-rendered snapshot. */
 // TODO: tune these to the real box once the status feed is wired up.
 export const BASELINE: HomelabTelemetry = {
-  node: 'Pune, IN · Bare Metal',
+  node: 'Bare metal, at home',
   status: 'online',
   uptimePct: 99.94,
   cpuTempC: 44,

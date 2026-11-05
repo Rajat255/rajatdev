@@ -24,7 +24,7 @@ const HOPS: readonly Hop[] = [
   { label: 'Your browser', note: 'asking for rajatdev.fun over HTTPS.' },
   { label: 'Cloudflare DNS and edge', note: 'resolves the name and terminates TLS.' },
   { label: 'An encrypted tunnel', note: 'WireGuard / Cloudflare Tunnel, dialled out from the home side.' },
-  { label: 'Home fibre in Pune', note: 'an ordinary residential line.' },
+  { label: 'Home fibre', note: 'an ordinary residential line.' },
   { label: 'A reverse proxy', note: 'routes the hostname to the right container.' },
   { label: 'Docker on a bare-metal Linux host', note: 'the actual box, at home.' },
   { label: 'A static Astro build', note: 'plain HTML files, with no database and no server-side code.' },

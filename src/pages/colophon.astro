@@ -11,17 +11,17 @@ import { webPageNode, websiteNode } from '../lib/seo/schema';
  * machine-readable file it publishes.
  */
 const description =
-  'How rajatdev.fun is built and self-hosted in Pune, and the feeds it publishes: RSS, a sitemap, llms.txt, and raw Markdown for every note.';
+  'How rajatdev.fun is built and self-hosted, and the feeds it publishes: RSS, a sitemap, llms.txt, and raw Markdown for every post.';
 const builtAt = new Date();
 const firstNote = (await getPublishedNotes())[0];
 
 const feeds = [
-  { label: 'RSS', href: '/rss.xml', note: 'every note, in full, for your feed reader.' },
+  { label: 'RSS', href: '/rss.xml', note: 'every post, in full, for your feed reader.' },
   { label: 'llms.txt', href: '/llms.txt', note: 'a short guide to the site for language models.' },
   {
     label: 'llms-full.txt',
     href: '/llms-full.txt',
-    note: 'the whole site in one Markdown file: work, case studies, books, and every note.',
+    note: 'the whole site in one Markdown file: work, case studies, books, and every post.',
   },
   { label: 'Sitemap', href: '/sitemap-index.xml', note: 'every public page, for search engines.' },
   { label: 'robots.txt', href: '/robots.txt', note: 'search engines and AI crawlers are welcome.' },
@@ -43,8 +43,8 @@ const feeds = [
     <div class="mt-8 space-y-4">
       <p>
         The site is built with <a href="https://astro.build" class="link">Astro</a> into plain, static HTML. A few small
-        parts that need to respond to you (the counting figures, the homelab readings, the triage agent, the book
-        filter, and the timeline extras) are React components that load on their own. Everything else is just HTML
+        parts that need to respond to you (the counting figures, the homelab readings, the triage agent, and the
+        book filter) are React components that load on their own. Everything else is just HTML
         and CSS.
       </p>
       <p>
@@ -63,13 +63,12 @@ const feeds = [
     <SectionHeading id="hosted-heading">Where it lives</SectionHeading>
     <div class="mt-8 space-y-4">
       <p>
-        It&rsquo;s self-hosted on a bare-metal Linux box at home in Pune, behind Cloudflare. There is no database and no
+        It&rsquo;s self-hosted on a bare-metal Linux box at home, behind Cloudflare. There is no database and no
         server-side code. You can see the box&rsquo;s readings, and the path a request takes to reach it, on the
-        <a href="/builds/#homelab" class="link">builds page</a>.
+        <a href="/builds/homelab/" class="link">homelab page</a>.
       </p>
       <p>
-        The site itself sets no cookies and runs no analytics. If you switch to dark mode, that choice is kept in your
-        browser&rsquo;s local storage and goes nowhere else.
+        The site itself sets no cookies and runs no analytics.
       </p>
     </div>
   </section>
@@ -90,7 +89,7 @@ const feeds = [
       <li>
         <span class="font-semibold text-ink">Raw Markdown</span>
         <span class="text-muted">
-          — add <code class="font-mono text-[0.85em]">.md</code> to any note&rsquo;s address for its source{
+          — add <code class="font-mono text-[0.85em]">.md</code> to any post&rsquo;s address for its source{
             firstNote && (
               <>
                 , like <a href={noteMarkdownHref(firstNote)} class="link">{noteMarkdownHref(firstNote)}</a>

@@ -2,13 +2,13 @@
  * Site configuration and feature flags.
  *
  * The single source of truth for the site's name, its address, its contact
- * details, and which pages appear in the navigation. `src/data/profile.ts`
- * reads its contact fields from here, so changing an email or a URL here
- * changes it everywhere: pages, JSON-LD, RSS, and llms.txt.
+ * details, and how its pages link to each other. `src/data/profile.ts` reads
+ * its contact fields from here, so changing an email or a URL here changes it
+ * everywhere: pages, JSON-LD, RSS, and llms.txt.
  *
  * EDIT THIS FILE to:
  *  - publish `/showcase` (`showShowcaseInNav: true`): it then appears in the
- *    navigation, footer, sitemap, and llms.txt, and loses its noindex;
+ *    footer's "Elsewhere" row, the sitemap, and llms.txt, and loses its noindex;
  *  - point the homelab readings at a real status feed.
  *
  * Plain data with no dependencies, so React islands and astro.config.mjs can
@@ -29,40 +29,50 @@ export interface SiteContact {
 export interface SiteConfig {
   /** Canonical origin, no trailing slash. Must match `site` in astro.config.mjs. */
   readonly url: string;
-  /** Document title on the front page, and the suffix on every other page. */
+  /**
+   * The browser-tab title: the whole tab title on the front page, and the
+   * suffix on every other page ("Threads · r · k").
+   */
   readonly title: string;
+  /**
+   * The site's name where a monogram would mean nothing to a stranger: social
+   * cards (og:site_name, og:title), the RSS feed, and JSON-LD.
+   */
+  readonly name: string;
   /** Default meta description. */
   readonly description: string;
   readonly author: string;
   /** BCP 47 language tag for <html lang>, RSS, and JSON-LD. */
   readonly language: string;
   /**
-   * When `false`, `/showcase` is left out of the navigation, footer, sitemap,
-   * and llms.txt, is disallowed in robots.txt, and carries `noindex, nofollow`.
-   * The page itself is always built.
+   * When `false`, `/showcase` is left out of the footer, sitemap, and llms.txt,
+   * is disallowed in robots.txt, and carries `noindex, nofollow`. The page
+   * itself is always built. (It is never in the top navigation, which stays at
+   * four items.)
    */
   readonly showShowcaseInNav: boolean;
   /**
-   * Same-origin JSON feed for the homelab readings on `/builds/#homelab`, or
-   * `null` to skip the request. When the request fails or returns something
+   * Same-origin JSON feed for the readings on `/builds/homelab/`, or `null` to
+   * skip the request. When the request fails or returns something
    * off-contract, the readings fall back to a simulation and say so. The shape
    * is documented on `HomelabStatusPayload` in `src/lib/homelab/telemetry.ts`.
    */
   readonly homelabStatusEndpoint: string | null;
   readonly contact: SiteContact;
-  /** The footer colophon. */
+  /** The footer colophon. `hostingLink` is the linked part of `hosting`. */
   readonly colophon: {
-    readonly finis: string;
     readonly hosting: string;
+    readonly hostingLink: { readonly text: string; readonly href: string };
     readonly copyright: string;
   };
 }
 
 export const SITE_CONFIG: SiteConfig = {
   url: 'https://rajatdev.fun',
-  title: 'From Rajat',
+  title: 'r · k',
+  name: 'Rajat Khirid',
   description:
-    'Rajat Khirid is a Cloud and DevOps engineer in Pune. Things he has built, notes he has written, and books he has read, served from a homelab.',
+    'Rajat Khirid is a Cloud and DevOps engineer in Pune. Things he has built, things he has written, and books he has read, served from a homelab.',
   author: 'Rajat Khirid',
   language: 'en-IN',
   showShowcaseInNav: false,
@@ -77,14 +87,24 @@ export const SITE_CONFIG: SiteConfig = {
     resume: '/resume/rajat-khirid-resume.pdf',
   },
   colophon: {
-    finis: 'Finis',
-    hosting: 'Self-hosted on bare metal in Pune',
+    hosting: 'Self-hosted on my',
+    hostingLink: { text: 'homelab', href: '/builds/homelab/' },
     copyright: "2086© (so I don't forget to change the year) · Rajat Khirid",
   },
 };
 
-/** Stable identifiers for the site's pages, used to mark the current nav item. */
-export type SectionKey = 'home' | 'notes' | 'builds' | 'threads' | 'colophon' | 'showcase';
+/** Stable identifiers for the site's pages, used to mark the current page in links. */
+export type SectionKey =
+  | 'home'
+  | 'builds'
+  | 'homelab'
+  | 'agent'
+  | 'threads'
+  | 'reads'
+  | 'now'
+  | 'about'
+  | 'colophon'
+  | 'showcase';
 
 export interface NavItem {
   readonly key: SectionKey;
@@ -93,15 +113,28 @@ export interface NavItem {
 }
 
 /**
- * The top navigation, in order. The home item's label is drawn by SiteHeader
- * as "r · k" with a crimson middle dot; `label` is its accessible name.
- * `/colophon` is linked from the front page and footer rather than the nav.
+ * The top navigation: always these four. The home item's label is drawn by
+ * SiteHeader as "r · k" with a crimson middle dot; `label` is its accessible
+ * name. The order follows the title: builds (things I've made), threads
+ * (things I've written), reads (books I've read).
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { key: 'home', label: 'Home', href: '/' },
-  { key: 'notes', label: 'notes', href: '/notes/' },
   { key: 'builds', label: 'builds', href: '/builds/' },
   { key: 'threads', label: 'threads', href: '/threads/' },
+  { key: 'reads', label: 'reads', href: '/reads/' },
+];
+
+/**
+ * Every other page, linked from the footer's "Elsewhere" row on every page so
+ * they all point at each other. `/showcase` is added only when public.
+ */
+export const SECONDARY_ITEMS: readonly NavItem[] = [
+  { key: 'about', label: 'about', href: '/about/' },
+  { key: 'now', label: 'now', href: '/now/' },
+  { key: 'homelab', label: 'homelab', href: '/builds/homelab/' },
+  { key: 'agent', label: 'triage agent', href: '/builds/triage-agent/' },
+  { key: 'colophon', label: 'colophon', href: '/colophon/' },
   { key: 'showcase', label: 'showcase', href: '/showcase/' },
 ];
 
@@ -110,9 +143,14 @@ export function showcaseIsPublic(config: SiteConfig = SITE_CONFIG): boolean {
   return config.showShowcaseInNav;
 }
 
-/** Navigation items, with `/showcase` gated by its flag. */
-export function getNavItems(config: SiteConfig = SITE_CONFIG): readonly NavItem[] {
-  return NAV_ITEMS.filter((item) => item.key !== 'showcase' || showcaseIsPublic(config));
+/** The top navigation. */
+export function getNavItems(): readonly NavItem[] {
+  return NAV_ITEMS;
+}
+
+/** The footer's "Elsewhere" links, with `/showcase` gated by its flag. */
+export function getSecondaryItems(config: SiteConfig = SITE_CONFIG): readonly NavItem[] {
+  return SECONDARY_ITEMS.filter((item) => item.key !== 'showcase' || showcaseIsPublic(config));
 }
 
 /** An absolute URL on this site, for feeds, JSON-LD, and llms.txt. */

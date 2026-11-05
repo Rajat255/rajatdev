@@ -4,37 +4,43 @@ inclusion: always
 
 # Editorial layout & SEO rules for rajatdev.fun
 
-This site is a small personal "chapbook" in the spirit of fromjason.xyz. Every change must keep it that way.
+This site is a small personal "chapbook": one quiet column of type on cream paper. Every change must keep it that way, and it should read as Rajat's own site, not a copy of anyone else's.
 
 ## Layout
 
 - One column, centred. The front page uses `max-w-[600px]` (`max-w-column`); inner pages use `max-w-[620px]` (`max-w-page`), both with `mx-auto px-6`. No sidebars, no multi-column grids for content, no newspaper mastheads.
+- Light theme only; there is no dark mode.
 - Whitespace is the design. At least 60% of a desktop viewport should be bare cream paper (`#FAF7F2`). Do not add boxes, cards, or panels to fill space.
 - Shared shell: `src/layouts/BaseLayout.astro` (head, nav, footer). Pages provide content and exactly one `<h1>`.
 
 ## Type & colour
 
-- Serif: EB Garamond for everything readable. Sans (system UI stack) only for the top navigation. Geist Mono only inside real code and the terminal easter egg.
+- Serif: EB Garamond for everything readable. Sans (system UI stack) only for the top navigation. Geist Mono only inside real code.
 - Title hierarchy is bold, stacked, spaced capitals: crimson `#9E2A2B` first line, ink `#161514` lines beneath, `font-semibold`/`font-bold`.
 - One accent colour (crimson). Colours come from the tokens in `src/styles/global.css` (`paper`, `surface`, `ink`, `muted`, `accent`, `rule`); never hard-code a new hue.
-- Voice is plain and first-person. No fake headlines, no newspaper gimmicks ("Bureau", "STOP"), no invented reviews.
+- Voice is plain and first-person. No fake headlines, no newspaper gimmicks, no invented reviews or ratings. Don't keep repeating the city; location belongs in contact data and the now page, not in taglines.
 
 ## Semantic HTML
 
 - Landmarks: `<header>` + `<nav aria-label="Main">`, one `<main id="main">`, `<footer>`.
-- Essays are `<article>` with their own `<header>`. Every date is `<time datetime="YYYY-MM-DD">`.
+- Posts are `<article>` with their own `<header>`. Every date is `<time datetime="YYYY-MM-DD">`.
 - Headings descend without skipping levels. Lists of things are `<ul>`/`<ol>`; term–value pairs are `<dl>`.
 - Interactive disclosure uses native `<details>`/`<summary>` where possible; React islands only where state is genuinely needed.
 
-## Routes
+## Routes & linking
 
-- `/` home · `/notes` essays · `/builds` work, case studies, homelab · `/threads` books and rabbit holes · `/colophon` how the site is built.
-- `/showcase` is built but hidden until `SITE_CONFIG.showShowcaseInNav` is `true` in `src/config/site.ts`. While hidden it must carry `noindex, nofollow`, stay out of nav, footer, sitemap, `llms.txt`, and be disallowed in `robots.txt`.
+- Top nav is exactly four items: `r · k` (home) · `builds` · `threads` · `reads`. Never add a fifth.
+- `/builds` work, certifications, case studies, side projects · `/builds/homelab` · `/builds/triage-agent` · `/threads` posts and rabbit holes · `/threads/<slug>` a post · `/reads` books only · `/reads/<slug>` a book and my writing on it · `/now` (nownownow.com style) · `/about` · `/colophon`.
+- Every page not in the nav is linked from the footer's "Elsewhere" row (`SECONDARY_ITEMS` in `src/config/site.ts`), so all pages point at each other. Add new pages there, and link related pages to each other in their copy.
+- `/notes/*` are redirects to `/threads/*` for links from before the move; keep them, and keep them out of the sitemap.
+- `/showcase` is built but hidden until `SITE_CONFIG.showShowcaseInNav` is `true`. While hidden it must carry `noindex, nofollow`, stay out of the footer, sitemap, and `llms.txt`, and be disallowed in `robots.txt`.
 
 ## SEO & machine-readable coverage (keep all of these in sync when adding content)
 
-- Essays live in `src/content/notes/*.md`. Each one automatically gets: an HTML page, a raw Markdown mirror at `/notes/<slug>.md`, an RSS item in `/rss.xml`, entries in `/llms.txt` and `/llms-full.txt`, a sitemap entry, and `BlogPosting` JSON-LD.
-- Every page goes through `src/components/SEO.astro`: title, description, canonical URL, Open Graph, Twitter card, RSS alternate link, and JSON-LD for that page type (`Person`/`ProfilePage`/`WebSite` on `/` and `/builds`, `BlogPosting` on essays, `ItemList` of `Book` + `Review` on `/threads`).
+- Posts live in `src/content/notes/*.md`. Each one automatically gets: an HTML page at `/threads/<slug>/`, a raw Markdown mirror at `/threads/<slug>.md`, an RSS item in `/rss.xml`, entries in `/llms.txt` and `/llms-full.txt`, a sitemap entry, and `BlogPosting` JSON-LD.
+- Books live in `src/content/books/*.md`: frontmatter is the book's details, the body is my writing (empty until written). Each gets a page at `/reads/<slug>/`, a `Book` + `Review` JSON-LD node, and entries in `/llms.txt` and `/llms-full.txt`; `status: reading` books also show on `/now`.
+- Every page goes through `src/components/SEO.astro`: title (tab shows `r · k`; social cards show "Rajat Khirid"), description, canonical URL, Open Graph, Twitter card, RSS alternate link, and JSON-LD for that page type.
+- The share image is `public/og-card.png`, a text card generated by `npm run og-card`. No photos as share images.
 - JSON-LD and `llms*.txt` are generated from the same data modules in `src/data/` as the pages, never hand-copied, so they cannot drift.
-- `/robots.txt` (generated by `src/pages/robots.txt.ts` so its `/showcase` rule follows the flag; don't add a `public/robots.txt`, it would conflict) welcomes search and AI crawlers and points at `/sitemap-index.xml`.
+- `/robots.txt` is generated by `src/pages/robots.txt.ts` so its `/showcase` rule follows the flag; don't add a `public/robots.txt`.
 - `npx astro check` and `npm run build` must finish with zero errors.

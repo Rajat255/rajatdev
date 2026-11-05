@@ -13,29 +13,43 @@ import { personNode, profilePageNode, websiteNode } from '../lib/seo/schema';
  * The front page: one quiet column. An engraving, the title, a short hello,
  * the latest notes, and links to where everything else lives.
  *
- * Title colours use the `accent` and `ink` tokens rather than raw hex: in the
- * light theme they are exactly #9E2A2B and #161514, and they stay legible
- * when dark mode swaps the palette.
+ * Title colours use the `accent` and `ink` tokens (#9E2A2B and #161514), so
+ * they follow the palette in global.css.
  */
 const latest = (await getPublishedNotes()).slice(0, 4);
 const { email } = SITE_CONFIG.contact;
 
 const elsewhere = [
   {
-    label: 'Builds & Work',
+    label: 'Builds',
     href: '/builds/',
-    note: 'Cloud engineering at amber, FinOps case studies ($200K/yr saved), autonomous CI/CD agents, and live homelab telemetry.',
+    note: 'Cloud engineering at amber, FinOps case studies ($200K/yr saved), side projects like plot-it.fun, an <a href="/builds/triage-agent/" class="link">autonomous CI/CD agent</a> to try, and <a href="/builds/homelab/" class="link">live homelab telemetry</a>.',
   },
   {
-    label: 'Threads & Books',
+    label: 'Threads',
     href: '/threads/',
+    note: 'Everything I’ve written, plus the rabbit holes I’m in and a French learning log.',
+  },
+  {
+    label: 'Reads',
+    href: '/reads/',
     // Authored HTML (not user input), so the book titles can be set in italics.
-    note: 'Reading notes (<cite>Trust</cite>, <cite lang="fr">L’Étranger</cite>, <cite>A Thousand Splendid Suns</cite>, <cite lang="fr">Le Petit Prince</cite>), photography, and ongoing rabbit holes.',
+    note: 'Books with a note on each (<cite>Trust</cite>, <cite lang="fr">L’Étranger</cite>, <cite>A Thousand Splendid Suns</cite>, <cite lang="fr">Le Petit Prince</cite>).',
+  },
+  {
+    label: 'Now',
+    href: '/now/',
+    note: 'What I’m focused on this month.',
+  },
+  {
+    label: 'About',
+    href: '/about/',
+    note: 'The longer version of who I am.',
   },
   {
     label: 'Colophon & Feeds',
     href: '/colophon/',
-    note: 'How this site is built, self-hosted in Pune, the <a href="/rss.xml" class="link">RSS feed</a>, and the machine-readable <a href="/llms.txt" class="link">/llms.txt</a>.',
+    note: 'How this site is built and self-hosted, the <a href="/rss.xml" class="link">RSS feed</a>, and the machine-readable <a href="/llms.txt" class="link">/llms.txt</a>.',
   },
 ];
 ---
@@ -47,15 +61,14 @@ const elsewhere = [
   jsonLd={[
     websiteNode(),
     personNode(),
-    profilePageNode('/', SITE_CONFIG.title, SITE_CONFIG.description),
+    profilePageNode('/', SITE_CONFIG.name, SITE_CONFIG.description),
   ]}
 >
   <div class="pt-4 text-center sm:pt-8">
     <Woodcut class="mx-auto mb-6 h-32 w-32" />
 
     <h1 class="font-serif font-semibold uppercase leading-tight">
-      <span class="block pl-[0.16em] text-4xl font-bold tracking-[0.16em] text-accent sm:text-5xl">From Rajat</span>
-      <span class="mt-2 block pl-[0.2em] text-2xl font-semibold tracking-[0.2em] text-ink sm:text-3xl">
+      <span class="block pl-[0.16em] text-[1.75rem] font-bold leading-[1.15] tracking-[0.16em] text-accent sm:text-4xl">
         Builds &amp; Threads
       </span>
       <span class="mt-1.5 block pl-[0.2em] text-lg font-semibold tracking-[0.2em] text-ink sm:text-xl">
@@ -87,17 +100,18 @@ const elsewhere = [
       down the coast, or tinkering on the bare-metal homelab serving you this page.
     </p>
     <p class="mt-5">
-      Feel free to poke around the <a href="/builds/" class="link">things I&rsquo;ve built</a>, read through my
-      <a href="/notes/" class="link">notes &amp; essays</a>, browse the
-      <a href="/threads/" class="link">books &amp; threads</a> on my nightstand, or
-      <a href={`mailto:${email}`} class="link">send me an email</a>. I&rsquo;m glad you&rsquo;re here.
+      Feel free to poke around the <a href="/builds/" class="link">things I&rsquo;ve built</a>, read the
+      <a href="/threads/" class="link">threads</a> I&rsquo;ve written, browse the
+      <a href="/reads/" class="link">books</a> on my nightstand, read a little more
+      <a href="/about/" class="link">about me</a>, or <a href={`mailto:${email}`} class="link">send me an email</a>.
+      I&rsquo;m glad you&rsquo;re here.
     </p>
   </div>
 
   <BirdDivider class="my-12" />
 
   <section aria-labelledby="latest-heading">
-    <SectionHeading id="latest-heading">Latest notes</SectionHeading>
+    <SectionHeading id="latest-heading">Latest posts</SectionHeading>
     <div class="mt-8">
       {
         latest.length > 0 ? (
@@ -108,7 +122,7 @@ const elsewhere = [
       }
     </div>
     <p class="mt-6 text-center text-base">
-      <a href="/notes/" class="link text-muted">All notes →</a>
+      <a href="/threads/" class="link text-muted">All posts →</a>
     </p>
   </section>
 

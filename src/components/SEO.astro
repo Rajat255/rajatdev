@@ -11,8 +11,10 @@ import { graph, type JsonLdNode } from '../lib/seo/schema';
  * Rendered once per page by BaseLayout.astro.
  */
 interface Props {
-  /** The full document title. */
+  /** The browser-tab title. */
   title: string;
+  /** Title for social cards, which show the full name instead of the monogram. */
+  shareTitle: string;
   description: string;
   /** Absolute canonical URL. */
   canonical: string;
@@ -27,7 +29,7 @@ interface Props {
   jsonLd?: readonly JsonLdNode[];
 }
 
-const { title, description, canonical, image, type, noindex = false, article, alternates = [], jsonLd = [] } =
+const { title, shareTitle, description, canonical, image, type, noindex = false, article, alternates = [], jsonLd = [] } =
   Astro.props;
 ---
 
@@ -37,24 +39,26 @@ const { title, description, canonical, image, type, noindex = false, article, al
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-<link rel="alternate" type="application/rss+xml" title={`${SITE_CONFIG.title} · Notes`} href="/rss.xml" />
+<link rel="alternate" type="application/rss+xml" title={`${SITE_CONFIG.name} · Threads`} href="/rss.xml" />
 {alternates.map((alt) => <link rel="alternate" type={alt.type} title={alt.title} href={alt.href} />)}
 
 <meta property="og:type" content={type} />
-<meta property="og:site_name" content={SITE_CONFIG.title} />
-<meta property="og:title" content={title} />
+<meta property="og:site_name" content={SITE_CONFIG.name} />
+<meta property="og:title" content={shareTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={image} />
-<meta property="og:image:alt" content={`${SITE_CONFIG.author}`} />
+<meta property="og:image:alt" content={`${SITE_CONFIG.name}: things I've made, things I've written, books I've read`} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:locale" content={SITE_CONFIG.language.replace('-', '_')} />
 {article && <meta property="article:published_time" content={article.publishedTime.toISOString()} />}
 {article?.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime.toISOString()} />}
 {article && <meta property="article:author" content={SITE_CONFIG.author} />}
 {article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content={title} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={shareTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={image} />
 

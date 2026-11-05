@@ -49,13 +49,13 @@ export const showcaseItems: ShowcaseItems = ShowcaseItems.parse([
   },
   {
     // TODO: confirm the year the homelab went live and its actual stack.
-    title: 'The Pune Homelab',
+    title: 'The Homelab',
     tagline: 'The bare-metal box this site runs on.',
     status: 'Live',
     url: 'https://rajatdev.fun',
     techStack: ['Linux', 'Astro', 'Self-hosted'],
     year: 2025,
-    note: 'A server at home in Pune that serves rajatdev.fun to the open web. The uptime guarantee is simple: if you can read this, it is up.',
+    note: 'A server at home that serves rajatdev.fun to the open web. The uptime guarantee is simple: if you can read this, it is up.',
   },
   {
     title: 'Untitled Site No. 1',

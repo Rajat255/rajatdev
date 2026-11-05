@@ -49,6 +49,16 @@ export type Projects = z.infer<typeof Projects>;
 
 export const projects: Projects = Projects.parse([
   {
+    // TODO: Rajat, describe what plot-it does, add tags, and add links once
+    // they're public: { type: 'website', href: 'https://plot-it.fun' } and
+    // { type: 'github', href: 'https://github.com/Rajat255/<repo>' }.
+    title: 'plot-it.fun',
+    description: 'A new app I’m building now. Still in progress; more here when it’s ready to show.',
+    dates: '2026 · in progress',
+    tags: [],
+    featured: true,
+  },
+  {
     title: 'GeekFixx',
     description:
       'A wellness application that looks after you while you use your computer. It uses machine learning to correct your posture and nudges you to look away from the screen, drink water, and take breaks.',

@@ -6,7 +6,7 @@
  * other by `@id` and are emitted together as one `@graph` per page by SEO.astro.
  */
 import { SITE_CONFIG, absoluteUrl } from '../../config/site';
-import type { Book } from '../../data/books';
+import { bookHref, type BookEntry } from '../books';
 import { certifications } from '../../data/certifications';
 import { experience } from '../../data/experience';
 import { profile } from '../../data/profile';
@@ -17,7 +17,7 @@ export type JsonLdNode = { '@type': string | string[]; '@id'?: string } & Record
 
 export const PERSON_ID = absoluteUrl('/#person');
 export const WEBSITE_ID = absoluteUrl('/#website');
-export const BLOG_ID = absoluteUrl('/notes/#blog');
+export const BLOG_ID = absoluteUrl('/threads/#blog');
 
 const ref = (id: string) => ({ '@id': id });
 
@@ -35,7 +35,6 @@ export function personNode(): JsonLdNode {
     '@id': PERSON_ID,
     name: profile.name,
     url: absoluteUrl('/'),
-    image: absoluteUrl(profile.avatarUrl),
     jobTitle: profile.role,
     description: profile.summary,
     email: `mailto:${profile.email}`,
@@ -63,7 +62,7 @@ export function websiteNode(): JsonLdNode {
     '@type': 'WebSite',
     '@id': WEBSITE_ID,
     url: absoluteUrl('/'),
-    name: SITE_CONFIG.title,
+    name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     inLanguage: SITE_CONFIG.language,
     author: ref(PERSON_ID),
@@ -119,18 +118,18 @@ export function blogPostingNode(note: Note, stats: NoteStats): JsonLdNode {
     ...(tags.length > 0 ? { keywords: tags } : {}),
     wordCount: stats.words,
     timeRequired: `PT${stats.minutes}M`,
-    image: absoluteUrl(profile.avatarUrl),
+    image: absoluteUrl('/og-card.png'),
     ...(note.data.canonicalUrl ? { sameAs: note.data.canonicalUrl } : {}),
   };
 }
 
-/** The `/notes` index, listing every published note. */
+/** The posts on `/threads`, listing every published note. */
 export function blogNode(notes: readonly Note[]): JsonLdNode {
   return {
     '@type': 'Blog',
     '@id': BLOG_ID,
-    url: absoluteUrl('/notes/'),
-    name: `Notes · ${SITE_CONFIG.title}`,
+    url: absoluteUrl('/threads/'),
+    name: `Threads · ${SITE_CONFIG.name}`,
     description: 'Essays and notes on cloud infrastructure, cost work, self-hosting, and rabbit holes.',
     inLanguage: SITE_CONFIG.language,
     author: ref(PERSON_ID),
@@ -145,8 +144,37 @@ export function blogNode(notes: readonly Note[]): JsonLdNode {
   };
 }
 
+/** A `Book`, with Rajat's note on it as a `Review` (linked to its page on /reads). */
+function bookItem(book: BookEntry): Record<string, unknown> {
+  const { title, translatedTitle, author, year, language, category, notes } = book.data;
+  const url = absoluteUrl(bookHref(book));
+  return {
+    '@type': 'Book',
+    '@id': `${url}#book`,
+    name: title,
+    ...(translatedTitle ? { alternateName: translatedTitle } : {}),
+    author: { '@type': 'Person', name: author },
+    inLanguage: language.toLowerCase(),
+    datePublished: String(year),
+    genre: category,
+    url,
+    review: {
+      '@type': 'Review',
+      author: ref(PERSON_ID),
+      reviewBody: notes,
+      inLanguage: 'en',
+      url,
+    },
+  };
+}
+
+/** One book, for its own page. */
+export function bookNode(book: BookEntry): JsonLdNode {
+  return bookItem(book) as JsonLdNode;
+}
+
 /** An `ItemList` of books, each with Rajat's note on it as a `Review`. */
-export function bookListNode(books: readonly Book[], path: string): JsonLdNode {
+export function bookListNode(books: readonly BookEntry[], path: string): JsonLdNode {
   return {
     '@type': 'ItemList',
     '@id': `${absoluteUrl(path)}#books`,
@@ -155,21 +183,7 @@ export function bookListNode(books: readonly Book[], path: string): JsonLdNode {
     itemListElement: books.map((book, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: {
-        '@type': 'Book',
-        name: book.title,
-        ...(book.translatedTitle ? { alternateName: book.translatedTitle } : {}),
-        author: { '@type': 'Person', name: book.author },
-        inLanguage: book.language.toLowerCase(),
-        datePublished: String(book.year),
-        genre: book.category,
-        review: {
-          '@type': 'Review',
-          author: ref(PERSON_ID),
-          reviewBody: book.notes,
-          inLanguage: 'en',
-        },
-      },
+      item: bookItem(book),
     })),
   };
 }

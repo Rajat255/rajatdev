@@ -151,7 +151,37 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		"notes": {
+		"books": {
+"a-thousand-splendid-suns.md": {
+	id: "a-thousand-splendid-suns.md";
+  slug: "a-thousand-splendid-suns";
+  body: string;
+  collection: "books";
+  data: InferEntrySchema<"books">
+} & { render(): Render[".md"] };
+"l-etranger.md": {
+	id: "l-etranger.md";
+  slug: "l-etranger";
+  body: string;
+  collection: "books";
+  data: InferEntrySchema<"books">
+} & { render(): Render[".md"] };
+"le-petit-prince.md": {
+	id: "le-petit-prince.md";
+  slug: "le-petit-prince";
+  body: string;
+  collection: "books";
+  data: InferEntrySchema<"books">
+} & { render(): Render[".md"] };
+"trust.md": {
+	id: "trust.md";
+  slug: "trust";
+  body: string;
+  collection: "books";
+  data: InferEntrySchema<"books">
+} & { render(): Render[".md"] };
+};
+"notes": {
 "assassinating-load-balancers.md": {
 	id: "assassinating-load-balancers.md";
   slug: "assassinating-load-balancers";

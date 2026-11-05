@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomelabWidget from '../../components/islands/HomelabWidget.tsx';
+import PageTitle from '../../components/site/PageTitle.astro';
+import SectionHeading from '../../components/site/SectionHeading.astro';
+import { getPublishedNotes, noteHref } from '../../lib/notes';
+import { personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * The homelab: the bare-metal box that serves this site, its readings, and the
+ * path a request takes to reach it.
+ */
+/** The essay about self-hosting, linked at the bottom if it's still published. */
+const essay = (await getPublishedNotes()).find((note) => note.slug === 'notes-from-a-pune-homelab');
+const description =
+  'The bare-metal Linux box at home that serves rajatdev.fun: its readings, and the path a request takes to reach it.';
+---
+
+<BaseLayout
+  section="homelab"
+  title="The Homelab"
+  description={description}
+  jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/builds/homelab/', name: 'The Homelab', description })]}
+>
+  <PageTitle title="Homelab" subtitle="the box this site runs on">
+    <p>
+      This site doesn&rsquo;t live on a hosting platform. It&rsquo;s a folder of static HTML served from a small
+      bare-metal Linux box at home. There&rsquo;s no database and no server-side code, so the box barely
+      notices visitors. These are its readings.
+    </p>
+  </PageTitle>
+
+  <section aria-labelledby="readings-heading" class="mt-10">
+    <SectionHeading id="readings-heading">Readings</SectionHeading>
+    <div class="mt-10">
+      <HomelabWidget client:visible />
+    </div>
+  </section>
+
+  <p class="mt-16 text-center">
+    There&rsquo;s more on how the site itself is made in the <a href="/colophon/" class="link">colophon</a>{
+      essay ? (
+        <>
+          , and I wrote about why I host it myself in <a href={noteHref(essay)} class="link">{essay.data.title}</a>
+        </>
+      ) : null
+    }. <a href="/builds/" class="link">Back to builds</a>.
+  </p>
+</BaseLayout>

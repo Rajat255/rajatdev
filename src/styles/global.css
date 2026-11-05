@@ -97,14 +97,10 @@
    Space-separated RGB channels, so Tailwind can add an alpha with
    `rgb(var(--token) / <alpha-value>)` (see tailwind.config.mjs).
 
-   Light (cream paper) is the default and lives on `:root`, so the page is right
-   before the no-flash script runs. `.dark` switches to the dark palette.
-
    One accent: crimson. It marks the title, the drop cap, the current page in
    the navigation, and links on hover. Nothing else introduces a hue.
    ========================================================================== */
-:root,
-:root.light {
+:root {
   color-scheme: light;
 
   --paper: 250 247 242; /* #FAF7F2 cream */
@@ -115,16 +111,6 @@
   --rule: 213 203 184; /* #D5CBB8 */
 }
 
-:root.dark {
-  color-scheme: dark;
-
-  --paper: 20 19 17; /* #141311 */
-  --surface: 29 27 24; /* #1D1B18 */
-  --ink: 234 228 215; /* #EAE4D7 */
-  --muted: 154 146 132; /* #9A9284 */
-  --accent: 217 83 79; /* #D9534F */
-  --rule: 56 52 45; /* #38342D */
-}
 
 /* ==========================================================================
    Base
@@ -231,17 +217,6 @@
     line-height: 0.85;
     color: rgb(var(--accent));
   }
-
-  /* An empty photo slot, hatched like a frame waiting for its picture. */
-  .photo-empty {
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgb(var(--rule) / 0.7) 0,
-      rgb(var(--rule) / 0.7) 1px,
-      transparent 1px,
-      transparent 7px
-    );
-  }
 }
 
 /* ==========================================================================
@@ -292,51 +267,4 @@
   --astro-code-token-link: rgb(var(--accent));
 }
 
-:root.dark {
-  --astro-code-token-string: #a9b97c;
-  --astro-code-token-string-expression: #a9b97c;
-  --astro-code-token-constant: #d6b17a;
-}
 
-/* ==========================================================================
-   Theme ripple
-
-   The theme toggle swaps `.dark`/`.light` inside a View Transition. The new
-   snapshot is clipped to a circle that grows from the toggle, and the old one
-   sits beneath, unanimated. Scoped to `[data-theme-transition]`, which is only
-   set during a swap. See src/lib/dom/themeRipple.ts.
-   ========================================================================== */
-::view-transition-old(root),
-::view-transition-new(root) {
-  overflow: clip;
-}
-
-:root[data-theme-transition]::view-transition-old(root),
-:root[data-theme-transition]::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-:root[data-theme-transition]::view-transition-old(root) {
-  z-index: 0;
-}
-
-:root[data-theme-transition]::view-transition-new(root) {
-  z-index: 1;
-  animation: theme-ripple 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes theme-ripple {
-  from {
-    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
-  to {
-    clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root[data-theme-transition]::view-transition-new(root) {
-    animation: none;
-  }
-}

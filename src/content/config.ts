@@ -1,19 +1,20 @@
 import { defineCollection, z } from 'astro:content';
 
 /**
- * Content collections.
+ * Content collections. In both, the filename (minus extension) becomes the URL
+ * slug.
  *
- * `notes` holds the essays under `src/content/notes/`, in Markdown or MDX. The
- * filename (minus extension) becomes the URL slug, so
- * `src/content/notes/foo.md` is published at:
+ * `notes`: the posts under `src/content/notes/`, in Markdown or MDX.
+ * `src/content/notes/foo.md` is published at /threads/foo/ (and raw at
+ * /threads/foo.md), and is added automatically to /rss.xml, /llms.txt,
+ * /llms-full.txt, and the sitemap. Reading time and word count are calculated.
  *
- *   /notes/foo/     the page
- *   /notes/foo.md   the raw Markdown mirror
+ * `books`: one file per book under `src/content/books/`. The frontmatter is the
+ * book's details; the body is what you write about it (leave it empty until
+ * you have something to say). `src/content/books/foo.md` is listed on /reads,
+ * gets its own page at /reads/foo/, and shows on /now while `status: reading`.
  *
- * and is added automatically to /rss.xml, /llms.txt, /llms-full.txt, and the
- * sitemap. Reading time and word count are calculated from the text.
- *
- * The site's structured data (profile, experience, books, ...) lives in
+ * The site's other structured data (profile, experience, ...) lives in
  * `src/data/` instead.
  */
 
@@ -36,4 +37,35 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { notes };
+export const BOOK_STATUSES = ['reading', 'completed', 'antilibrary'] as const;
+export const BOOK_LANGUAGES = ['EN', 'FR'] as const;
+
+const books = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().min(1),
+    /** English title, for a book read in another language. */
+    translatedTitle: z.string().min(1).optional(),
+    author: z.string().min(1),
+    /** Year of first publication. */
+    year: z.number().int().min(1000).max(2100),
+    /**
+     * `reading` (on the nightstand, and shown on /now), `completed`, or
+     * `antilibrary` (bought, not yet read).
+     */
+    status: z.enum(BOOK_STATUSES),
+    /** The language you are reading it in. */
+    language: z.enum(BOOK_LANGUAGES),
+    /** Genre line, printed under the book. */
+    category: z.string().min(1).max(60),
+    /** A one- or two-sentence note, shown in the list on /reads. */
+    notes: z.string().min(1).max(320),
+    /** When you started and finished it. Optional; used to order the shelf. */
+    started: z.coerce.date().optional(),
+    finished: z.coerce.date().optional(),
+    /** Drafts show in `astro dev` and are left out of production builds. */
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { notes, books };

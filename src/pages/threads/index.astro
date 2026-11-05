@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BirdDivider from '../../components/ornaments/BirdDivider.astro';
+import NoteList from '../../components/site/NoteList.astro';
+import PageTitle from '../../components/site/PageTitle.astro';
+import SectionHeading from '../../components/site/SectionHeading.astro';
+import { rabbitHoles } from '../../data/threads';
+import { getPublishedNotes, groupNotesByYear } from '../../lib/notes';
+import { blogNode, personNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * Threads: things I've written. Every post, newest first and grouped by year,
+ * then the threads I keep pulling at away from work: rabbit holes. Books live on /reads.
+ */
+const notes = await getPublishedNotes();
+const years = groupNotesByYear(notes);
+const description =
+  'Posts by Rajat Khirid on cloud infrastructure, cost work, and self-hosting, plus the rabbit holes he keeps falling down.';
+---
+
+<BaseLayout
+  section="threads"
+  title="Threads"
+  description={description}
+  jsonLd={[websiteNode(), personNode(), blogNode(notes)]}
+>
+  <PageTitle title="Threads" subtitle="things I've written">
+    <p class="text-center text-muted">
+      Posts about infrastructure, the homelab, and whatever came up that week, then the other threads I keep pulling
+      at. Also by <a href="/rss.xml" class="link">RSS</a>. Books are on <a href="/reads/" class="link">reads</a>.
+    </p>
+  </PageTitle>
+
+  <section aria-labelledby="posts-heading" class="mt-10">
+    <SectionHeading id="posts-heading">Posts</SectionHeading>
+    <div class="mt-8 space-y-12">
+      {
+        years.length === 0 ? (
+          <p class="text-center italic text-muted">Nothing written yet. Check back soon.</p>
+        ) : (
+          years.map((group) => (
+            <section aria-labelledby={`year-${group.year}`}>
+              <h3 id={`year-${group.year}`} class="mb-5 text-center text-lg font-semibold tracking-[0.18em] text-accent">
+                {group.year}
+              </h3>
+              <NoteList notes={group.notes} />
+            </section>
+          ))
+        )
+      }
+    </div>
+  </section>
+
+  <section aria-labelledby="rabbit-holes" class="mt-16">
+    <SectionHeading id="rabbit-holes">Rabbit holes</SectionHeading>
+    <ul class="mt-8 space-y-5" role="list">
+      {
+        rabbitHoles.map((hole) => (
+          <li>
+            <p class="font-semibold text-ink">{hole.title}</p>
+            <p class="text-ink">
+              {hole.note}
+              {hole.link && (
+                <>
+                  {' '}
+                  <a href={hole.link.href} class="link text-muted">
+                    See {hole.link.label}.
+                  </a>
+                </>
+              )}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <BirdDivider class="my-16" />
+
+  <p class="text-center">
+    What I&rsquo;m up to this month is on the <a href="/now/" class="link">now page</a>.
+  </p>
+</BaseLayout>

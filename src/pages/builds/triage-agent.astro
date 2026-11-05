@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TriageSimulator from '../../components/islands/TriageSimulator.tsx';
+import PageTitle from '../../components/site/PageTitle.astro';
+import SectionHeading from '../../components/site/SectionHeading.astro';
+import { caseFiles } from '../../data/caseFiles';
+import { personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * The triage agent: a hands-on simulator of the agentic CI/CD triage case
+ * study on /builds, with a short summary of what the real one does.
+ */
+const description =
+  'A simulator of the AI agent Rajat Khirid built to triage CI/CD failures: pick a broken pipeline and watch it read the log, call tools over MCP, find the root cause, and act.';
+const study = caseFiles.find((file) => file.title.toLowerCase().includes('triage'));
+---
+
+<BaseLayout
+  section="agent"
+  title="The Triage Agent"
+  description={description}
+  jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/builds/triage-agent/', name: 'The Triage Agent', description })]}
+>
+  <PageTitle title="Triage Agent" subtitle="a pipeline breaks; the agent reads it">
+    <p>
+      At amber I built an agent that watches our CI/CD pipelines. When a build fails it reads the log, asks Kubernetes,
+      git, and the cloud provider what changed, decides whether the failure is real or just flaky, and then fixes it,
+      retries it, or asks a person first. Below is a simulation you can run. The full write-up is a
+      <a href="/builds/#work-heading" class="link">case study on the builds page</a>.
+    </p>
+  </PageTitle>
+
+  <section aria-labelledby="simulator-heading" class="mt-10">
+    <SectionHeading id="simulator-heading">Try it</SectionHeading>
+    <div class="mt-10">
+      <TriageSimulator client:visible />
+    </div>
+  </section>
+
+  {
+    study && (
+      <section aria-labelledby="real-heading" class="mt-16">
+        <SectionHeading id="real-heading">The real one, in numbers</SectionHeading>
+        <dl class="mt-10 space-y-1">
+          {study.metrics.map((metric) => (
+            <div class="grid grid-cols-[6.5rem_1fr] gap-3">
+              <dt class="font-semibold tabular-nums text-ink">{metric.value}</dt>
+              <dd class="text-muted">{metric.label}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="mt-4 text-base text-muted">Built with {study.stack.join(', ')}.</p>
+      </section>
+    )
+  }
+
+  <p class="mt-16 text-center">
+    It runs on the same kind of infrastructure as <a href="/builds/homelab/" class="link">the homelab</a>, just much
+    bigger. <a href="/builds/" class="link">Back to builds</a>.
+  </p>
+</BaseLayout>

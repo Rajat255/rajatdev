@@ -38,7 +38,7 @@ const markdownHref = noteMarkdownHref(note);
 ---
 
 <BaseLayout
-  section="notes"
+  section="threads"
   title={title}
   description={description}
   article={{ publishedTime: pubDate, modifiedTime: updatedDate, tags }}
@@ -86,7 +86,7 @@ const markdownHref = noteMarkdownHref(note);
     }
   </article>
 
-  <nav aria-label="More notes" class="mt-12 border-t border-rule pt-6">
+  <nav aria-label="More posts" class="mt-12 border-t border-rule pt-6">
     <ul class="grid gap-6 sm:grid-cols-2" role="list">
       <li>
         {
@@ -114,7 +114,7 @@ const markdownHref = noteMarkdownHref(note);
       </li>
     </ul>
     <p class="mt-8 text-center">
-      <a href="/notes/" class="link text-muted">← Back to all notes</a>
+      <a href="/threads/" class="link text-muted">← Back to all threads</a>
     </p>
   </nav>
 </BaseLayout>

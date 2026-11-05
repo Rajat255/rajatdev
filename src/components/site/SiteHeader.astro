@@ -4,8 +4,8 @@ import { getNavItems, type SectionKey } from '../../config/site';
 /**
  * SiteHeader.astro — the navigation across the top of every page, set in the
  * system sans so it reads as wayfinding rather than text: "r · k" (home), then
- * notes, builds, and threads, spread evenly across a 600px row. `/showcase`
- * joins them only when `SITE_CONFIG.showShowcaseInNav` is true.
+ * builds, threads, and reads, spread evenly across a 600px row. Always four
+ * items; every other page is linked from the footer's "Elsewhere" row.
  */
 interface Props {
   section: SectionKey;
@@ -23,7 +23,8 @@ const items = getNavItems();
     >
       {
         items.map((item) => {
-          const current = item.key === section;
+          // The homelab and triage agent pages live under /builds.
+          const current = item.key === section || (item.key === 'builds' && (section === 'homelab' || section === 'agent'));
           return (
             <li>
               <a

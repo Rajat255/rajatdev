@@ -22,12 +22,12 @@ export async function getPublishedNotes(): Promise<Note[]> {
 
 /** Root-relative URL of a note's page. Trailing slash matches the `directory` build format. */
 export function noteHref(note: Note): string {
-  return `/notes/${note.slug}/`;
+  return `/threads/${note.slug}/`;
 }
 
 /** Root-relative URL of a note's raw Markdown mirror. */
 export function noteMarkdownHref(note: Note): string {
-  return `/notes/${note.slug}.md`;
+  return `/threads/${note.slug}.md`;
 }
 
 /**

@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/site/PageTitle.astro';
+import SectionHeading from '../components/site/SectionHeading.astro';
+import { bookHref, booksByStatus, getBooks } from '../lib/books';
+import { now } from '../data/now';
+import { formatLongDate } from '../lib/format';
+import { personNode, webPageNode, websiteNode } from '../lib/seo/schema';
+
+/**
+ * Now: what I'm focused on at the moment, in the nownownow.com style. Edit
+ * `src/data/now.ts`; the reading list comes from the `reading` books in
+ * `src/content/books/`, the same list as /reads.
+ */
+const updated = new Date(`${now.updated}T00:00:00Z`);
+const reading = booksByStatus(await getBooks(), 'reading');
+const description = 'What Rajat Khirid is focused on at the moment: work, what he is building, learning, and reading.';
+---
+
+<BaseLayout
+  section="now"
+  title="Now"
+  description={description}
+  jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/now/', name: 'Now', description })]}
+>
+  <PageTitle title="Now" subtitle="what I'm doing these days">
+    <p class="text-center text-muted">
+      Updated <time datetime={now.updated}>{formatLongDate(updated)}</time>, from {now.location}. This is a
+      <a href="https://nownownow.com/about" class="link">now page</a>: what I&rsquo;d tell you if we hadn&rsquo;t
+      spoken in a year.
+    </p>
+  </PageTitle>
+
+  <section aria-labelledby="focus-heading" class="mt-10">
+    <SectionHeading id="focus-heading">At the moment</SectionHeading>
+    <ul class="mt-8 space-y-5" role="list">
+      {
+        now.items.map((item) => (
+          <li>
+            <p class="font-semibold text-ink">{item.heading}</p>
+            <p class="text-ink">
+              {item.text}
+              {item.link && (
+                <>
+                  {' '}
+                  <a href={item.link.href} class="link text-muted">
+                    See {item.link.label}.
+                  </a>
+                </>
+              )}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="reading-heading" class="mt-16">
+    <SectionHeading id="reading-heading">Reading</SectionHeading>
+    {
+      reading.length > 0 ? (
+        <ul class="mt-8 space-y-3" role="list">
+          {reading.map((book) => (
+            <li>
+              <a href={bookHref(book)} class="link">
+                <cite class="font-semibold not-italic text-ink" lang={book.data.language === 'FR' ? 'fr' : undefined}>
+                  {book.data.title}
+                </cite>
+              </a>
+              {book.data.translatedTitle && <span class="italic text-muted"> ({book.data.translatedTitle})</span>}
+              <span class="text-muted">, by {book.data.author}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="mt-8 italic text-muted">Between books right now.</p>
+      )
+    }
+    <p class="mt-6 text-base">
+      <a href="/reads/" class="link text-muted">Everything I&rsquo;ve read, with notes →</a>
+    </p>
+  </section>
+
+  <p class="mt-16 text-center">
+    There&rsquo;s a longer introduction on the <a href="/about/" class="link">about page</a>.
+  </p>
+</BaseLayout>

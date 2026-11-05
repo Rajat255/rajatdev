@@ -7,19 +7,42 @@ import { SITE_CONFIG } from '../../src/config/site';
  *
  * Asserts the failure modes a layout most often regresses into (horizontal
  * overflow, a missing or duplicated <h1>), the single-column width, structured
- * data on every page, and the `/showcase` feature flag: an unlisted page must
- * stay out of the navigation, the sitemap, llms.txt, and the index.
+ * data on every page, that every page links to every other, and the
+ * `/showcase` feature flag.
  */
 
 /** Widths spanning the smallest supported phone to a large desktop. */
 const WIDTHS = [360, 480, 768, 1280, 1920];
 
-const PAGES = ['/', '/notes/', '/builds/', '/threads/', '/colophon/', '/showcase/'];
+const PAGES = [
+  '/',
+  '/builds/',
+  '/builds/homelab/',
+  '/builds/triage-agent/',
+  '/threads/',
+  '/reads/',
+  '/reads/trust/',
+  '/now/',
+  '/about/',
+  '/colophon/',
+  '/showcase/',
+];
+
+/** Pages every page should link to (top nav plus the footer's "Elsewhere" row). */
+const LINKED_EVERYWHERE = [
+  '/builds/',
+  '/threads/',
+  '/reads/',
+  '/about/',
+  '/now/',
+  '/builds/homelab/',
+  '/builds/triage-agent/',
+  '/colophon/',
+];
 
 /**
  * Islands ignore clicks until hydrated, and Astro removes `ssr` from an island
- * once it is. Waits only for the island containing `control`: `client:visible`
- * islands elsewhere on the page stay unhydrated until scrolled to.
+ * once it is. Waits only for the island containing `control`.
  */
 const waitForHydration = (control: Locator) =>
   expect(control.locator('xpath=ancestor::astro-island[1]')).not.toHaveAttribute('ssr', /.*/);
@@ -51,7 +74,6 @@ test.describe('layout', () => {
       await page.goto(path);
       const box = await page.locator('main').boundingBox();
       expect(box).not.toBeNull();
-      // The 620px column minus its 24px side padding on each side.
       expect(box!.width).toBeLessThanOrEqual(620);
     });
 
@@ -63,12 +85,20 @@ test.describe('layout', () => {
       expect(Array.isArray(data['@graph'])).toBe(true);
       await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveCount(1);
     });
+
+    test(`${path} links to every other page and has a four-item nav`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('nav[aria-label="Main"] a')).toHaveCount(4);
+      for (const target of LINKED_EVERYWHERE) {
+        await expect(page.locator(`a[href="${target}"]`).first()).toBeAttached();
+      }
+    });
   }
 
-  test('every note in the list opens, with a raw Markdown mirror', async ({ page, request }) => {
-    await page.goto('/notes/');
+  test('every post opens, with a raw Markdown mirror', async ({ page, request }) => {
+    await page.goto('/threads/');
     const links = await page
-      .locator('main a[href^="/notes/"]')
+      .locator('main ul a[href^="/threads/"]')
       .evaluateAll((anchors) => anchors.map((a) => a.getAttribute('href') ?? ''));
     expect(links.length).toBeGreaterThan(0);
 
@@ -77,23 +107,36 @@ test.describe('layout', () => {
       expect(response?.status()).toBe(200);
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('article time[datetime]').first()).toBeVisible();
-      await expect(page.getByRole('link', { name: '← Back to all notes' })).toBeVisible();
+      await expect(page.getByRole('link', { name: '← Back to all threads' })).toBeVisible();
 
       const markdown = await request.get(href.replace(/\/$/, '.md'));
       expect(markdown.status()).toBe(200);
       expect(await markdown.text()).toMatch(/^---\ntitle: /);
     }
   });
+
+  test('old /notes post URLs redirect to /threads', async ({ page }) => {
+    await page.goto('/notes/assassinating-load-balancers/');
+    await expect(page).toHaveURL(/\/threads\/assassinating-load-balancers\/$/);
+  });
 });
 
 test.describe('machine-readable files', () => {
-  for (const path of ['/llms.txt', '/llms-full.txt', '/rss.xml', '/robots.txt', '/sitemap-index.xml']) {
+  for (const path of ['/llms.txt', '/llms-full.txt', '/rss.xml', '/robots.txt', '/sitemap-index.xml', '/og-card.png']) {
     test(`${path} is published`, async ({ request }) => {
       const response = await request.get(path);
       expect(response.status()).toBe(200);
-      expect((await response.text()).length).toBeGreaterThan(100);
+      expect((await response.body()).length).toBeGreaterThan(100);
     });
   }
+
+  test('the sitemap lists the new pages and not the redirects', async ({ request }) => {
+    const sitemap = await (await request.get('/sitemap-0.xml')).text();
+    for (const path of ['/reads/', '/now/', '/about/', '/builds/homelab/', '/builds/triage-agent/']) {
+      expect(sitemap).toContain(path);
+    }
+    expect(sitemap).not.toContain('/notes/');
+  });
 });
 
 test.describe('showcase feature flag', () => {
@@ -138,7 +181,7 @@ test.describe('interactive parts', () => {
   });
 
   test('the triage simulator runs all four steps', async ({ page }) => {
-    await page.goto('/builds/');
+    await page.goto('/builds/triage-agent/');
     const button = page.getByRole('button', { name: 'Simulate pipeline failure' });
     await button.scrollIntoViewIfNeeded();
     await waitForHydration(button);
@@ -147,7 +190,7 @@ test.describe('interactive parts', () => {
   });
 
   test('the shelf filters to French books', async ({ page }) => {
-    await page.goto('/threads/');
+    await page.goto('/reads/');
     const button = page.getByRole('button', { name: /^FR/ });
     await button.scrollIntoViewIfNeeded();
     await waitForHydration(button);
@@ -155,22 +198,32 @@ test.describe('interactive parts', () => {
     await expect(page.getByText('2 of 4')).toBeVisible();
   });
 
-  test('the Konkan route unfolds from the timeline', async ({ page }) => {
-    await page.goto('/threads/');
-    const button = page.getByRole('button', { name: /the route/ });
-    await button.scrollIntoViewIfNeeded();
-    await waitForHydration(button);
-    await button.click();
-    await expect(button).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByRole('img', { name: /Konkan coast/ })).toBeVisible();
+  test('the now page lists what is being read', async ({ page }) => {
+    await page.goto('/now/');
+    await expect(page.locator('main cite', { hasText: 'Trust' })).toBeVisible();
+    await expect(page.locator('main time[datetime]')).toHaveCount(1);
   });
 
-  test('the dark mode toggle switches the theme', async ({ page }) => {
-    await page.goto('/');
-    const toggle = page.getByRole('button', { name: 'dark mode' });
-    await toggle.scrollIntoViewIfNeeded();
-    await waitForHydration(toggle);
-    await toggle.click();
-    await expect(page.locator('html')).toHaveClass(/dark/);
+  test('every book on the shelf has its own page', async ({ page }) => {
+    await page.goto('/reads/');
+    const links = await page
+      .locator('main ul a[href^="/reads/"]')
+      .evaluateAll((anchors) => [...new Set(anchors.map((a) => a.getAttribute('href') ?? ''))]);
+    expect(links.length).toBeGreaterThanOrEqual(4);
+    for (const href of links) {
+      const response = await page.goto(href);
+      expect(response?.status()).toBe(200);
+      await expect(page.locator('h1 cite')).toHaveCount(1);
+      await expect(page.getByRole('link', { name: '← Back to all reads' })).toBeVisible();
+    }
+  });
+
+  test('the age counter on /about ticks', async ({ page }) => {
+    await page.goto('/about/');
+    const counter = page.locator('main p', { hasText: 'seconds old' });
+    await expect(counter).toContainText(/\d+ years/);
+    const first = await counter.textContent();
+    await page.waitForTimeout(1500);
+    expect(await counter.textContent()).not.toBe(first);
   });
 });

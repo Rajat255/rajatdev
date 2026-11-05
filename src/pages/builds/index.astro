@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BirdDivider from '../../components/ornaments/BirdDivider.astro';
+import StatCounters from '../../components/islands/StatCounters.tsx';
+import PageTitle from '../../components/site/PageTitle.astro';
+import SectionHeading from '../../components/site/SectionHeading.astro';
+import WorkHistory from '../../components/site/WorkHistory.astro';
+import { SITE_CONFIG } from '../../config/site';
+import { certifications } from '../../data/certifications';
+import { orderedProjects } from '../../data/projects';
+import { skillGroups } from '../../data/skills';
+import { stats } from '../../data/stats';
+import { personNode, profilePageNode, websiteNode } from '../../lib/seo/schema';
+
+/**
+ * Builds: things I've made. Ordered for someone deciding whether to hire me:
+ * the headline figures, certifications, work with its case studies, side
+ * projects, then the two deeper pages (the triage agent and the homelab, each
+ * on its own page), and the tools index last.
+ */
+const { contact } = SITE_CONFIG;
+const description =
+  "Rajat Khirid's work as a Cloud and DevOps engineer: AWS certifications, roles at amber, IAMOPS and LTIMindtree, case studies on an EKS migration, a $200K/yr AWS cost programme and agentic CI/CD triage, and side projects including plot-it.fun.";
+
+const deeper = [
+  {
+    label: 'The triage agent',
+    href: '/builds/triage-agent/',
+    note: 'Break a CI/CD pipeline and watch the agent from the third case study work out what went wrong.',
+  },
+  {
+    label: 'The homelab',
+    href: '/builds/homelab/',
+    note: 'The bare-metal box at home that serves this site: its readings, and the path a request takes to reach it.',
+  },
+];
+---
+
+<BaseLayout
+  section="builds"
+  title="Builds & Work"
+  description={description}
+  ogType="profile"
+  jsonLd={[websiteNode(), personNode(), profilePageNode('/builds/', 'Builds & Work', description)]}
+>
+  <PageTitle title="Builds" subtitle="things I've made">
+    <p>
+      I&rsquo;m a Cloud and DevOps engineer at amber. For most of the last two years I&rsquo;ve looked after
+      production AWS for 50+ services, and before that I spent a year consulting at IAMOPS. The bigger pieces of work
+      are written up below as case studies. The <a href={contact.resume} class="link" download>résumé</a> has the same
+      thing on one page, and there&rsquo;s more about me on the <a href="/about/" class="link">about page</a>.
+    </p>
+  </PageTitle>
+
+  {/* Counts up once when scrolled into view. The final figures are in the
+      server-rendered HTML, so they show without JavaScript too. */}
+  <div class="mt-10">
+    <StatCounters client:visible stats={stats} />
+  </div>
+
+  <section aria-labelledby="certs-heading" class="mt-16">
+    <SectionHeading id="certs-heading">Certifications</SectionHeading>
+    <ul class="mt-10 grid grid-cols-3 gap-4 text-center" role="list">
+      {
+        certifications.map((cert) => (
+          <li>
+            {cert.verifyUrl ? (
+              <a href={cert.verifyUrl} target="_blank" rel="noopener noreferrer" class="group block">
+                <img
+                  src={cert.imageUrl}
+                  alt={`${cert.altText} (verify on Credly)`}
+                  width="340"
+                  height="340"
+                  loading="lazy"
+                  decoding="async"
+                  class="mx-auto aspect-square w-full max-w-[6.5rem] object-contain"
+                />
+                <span class="mt-2 block text-base leading-snug text-ink group-hover:text-accent">{cert.name}</span>
+              </a>
+            ) : (
+              <>
+                <img
+                  src={cert.imageUrl}
+                  alt={cert.altText}
+                  width="340"
+                  height="340"
+                  loading="lazy"
+                  decoding="async"
+                  class="mx-auto aspect-square w-full max-w-[6.5rem] object-contain"
+                />
+                <span class="mt-2 block text-base leading-snug text-ink">{cert.name}</span>
+              </>
+            )}
+            {cert.date && <span class="smallcaps block text-muted">{cert.date}</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="work-heading" class="mt-16">
+    <SectionHeading id="work-heading">Work</SectionHeading>
+    <div class="mt-10">
+      <WorkHistory />
+    </div>
+  </section>
+
+  <section aria-labelledby="projects-heading" class="mt-16">
+    <SectionHeading id="projects-heading">Side projects</SectionHeading>
+    <ul class="mt-10 space-y-8" role="list">
+      {
+        orderedProjects.map((project) => (
+          <li>
+            {project.image && (
+              <img
+                src={project.image}
+                alt={`${project.title} preview`}
+                width="302"
+                height="247"
+                loading="lazy"
+                decoding="async"
+                class="float-right mb-2 ml-5 w-32 border border-rule bg-[#fffdf8] object-contain p-1.5 sm:w-40"
+              />
+            )}
+            <h3 class="text-[1.6rem] font-semibold leading-tight text-ink">{project.title}</h3>
+            <p class="smallcaps text-muted">{project.dates}</p>
+            <p class="mt-2">{project.description}</p>
+            {project.tags.length > 0 && <p class="mt-1 text-base text-muted">{project.tags.join(', ')}</p>}
+            {project.links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer" class="link mr-4 mt-1 inline-block text-base">
+                {link.label ?? (link.type === 'github' ? 'Source on GitHub' : 'Visit the site')}
+              </a>
+            ))}
+            <div class="clear-both" />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="deeper-heading" class="mt-16">
+    <SectionHeading id="deeper-heading">Two to play with</SectionHeading>
+    <ul class="mt-10 space-y-4" role="list">
+      {
+        deeper.map((item) => (
+          <li>
+            <a href={item.href} class="link font-semibold text-ink">
+              {item.label}
+            </a>
+            <span class="text-muted"> — {item.note}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <BirdDivider class="my-16" />
+
+  <section aria-labelledby="skills-heading">
+    <SectionHeading id="skills-heading">Index of tools</SectionHeading>
+    <dl class="mt-10 space-y-3">
+      {
+        skillGroups.map((group) => (
+          <div>
+            <dt class="smallcaps text-accent">{group.category}</dt>
+            <dd class="text-ink">{group.items.join(', ')}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <p class="mt-16 text-center">
+    Want to talk about any of this? <a href={`mailto:${contact.email}`} class="link">Send me an email</a>.
+  </p>
+</BaseLayout>

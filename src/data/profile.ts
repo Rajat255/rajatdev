@@ -50,6 +50,8 @@ export const ProfileSchema = z.object({
   /** Role / title line shown under the name. */
   role: z.string().min(1).max(120),
   birthday: IsoDate,
+  /** The exact moment of birth, ISO 8601 with offset. Drives the age counter on /about. */
+  bornAt: z.string().datetime({ offset: true }),
   location: z.string().min(1),
   /** Concise tagline. Kept short so the hero stays compact. */
   description: z.string().min(1).max(280),
@@ -87,7 +89,9 @@ export const profile: Profile = ProfileSchema.parse({
   name: 'Rajat Khirid',
   initials: 'RK',
   role: 'Cloud & DevOps Engineer',
-  birthday: '2001-01-01', // TODO: set your real birthday (drives the age line).
+  birthday: '2001-08-04',
+  // 16:16 in India (IST, UTC+05:30). Drives the live age counter on /about.
+  bornAt: '2001-08-04T16:16:00+05:30',
   // Contact fields come from `src/config/site.ts`, the single source of truth.
   location: contact.location,
   // Doubles as the hero subtext and the meta/OG description, so it has to state

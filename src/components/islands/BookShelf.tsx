@@ -1,20 +1,23 @@
 /**
- * BookShelf — the Reading Room on /threads (React island).
+ * BookShelf — the books on /reads (React island).
  *
  * Books are grouped by shelf ("Reading now", "Finished"), each with its status,
- * language, and a short margin note. Filter buttons narrow the list to what's
+ * language, and a short margin note. Each title links to the book's own page,
+ * where the longer writing lives. Filter buttons narrow the list to what's
  * being read, what's finished, or the French books.
  *
  * The server renders the unfiltered list, so every book is on the page before
  * (and without) JavaScript; only filtering waits for hydration. The data arrives
- * as props from the validated content module, so Zod stays on the server.
+ * as plain props (`ShelfBook`), so nothing from the content layer ships to the
+ * browser.
  */
 import { useId, useState } from 'react';
 
-import type { Book, BookLanguage, BookStatus } from '../../data/books';
+import type { BookLanguage, BookStatus, ShelfBook } from '../../lib/books';
 
 export interface BookShelfProps {
-  readonly books: readonly Book[];
+  readonly books: readonly ShelfBook[];
+  readonly shelfOrder: readonly BookStatus[];
   readonly shelfTitles: Readonly<Record<BookStatus, string>>;
   readonly statusTags: Readonly<Record<BookStatus, string>>;
   readonly languageNames: Readonly<Record<BookLanguage, string>>;
@@ -29,9 +32,7 @@ const FILTERS: readonly { readonly id: Filter; readonly label: string }[] = [
   { id: 'fr', label: 'FR' },
 ];
 
-const SHELF_ORDER: readonly BookStatus[] = ['reading', 'completed', 'antilibrary'];
-
-function matches(book: Book, filter: Filter): boolean {
+function matches(book: ShelfBook, filter: Filter): boolean {
   switch (filter) {
     case 'all':
       return true;
@@ -44,15 +45,14 @@ function matches(book: Book, filter: Filter): boolean {
   }
 }
 
-export default function BookShelf({ books, shelfTitles, statusTags, languageNames }: BookShelfProps) {
+export default function BookShelf({ books, shelfOrder, shelfTitles, statusTags, languageNames }: BookShelfProps) {
   const [filter, setFilter] = useState<Filter>('all');
   const countId = useId();
 
   const visible = books.filter((book) => matches(book, filter));
-  const shelves = SHELF_ORDER.map((status) => ({
-    status,
-    books: visible.filter((book) => book.status === status),
-  })).filter((shelf) => shelf.books.length > 0);
+  const shelves = shelfOrder
+    .map((status) => ({ status, books: visible.filter((book) => book.status === status) }))
+    .filter((shelf) => shelf.books.length > 0);
 
   return (
     <div>
@@ -80,20 +80,22 @@ export default function BookShelf({ books, shelfTitles, statusTags, languageName
       <div className="mt-8 space-y-12">
         {shelves.map((shelf) => (
           <section key={shelf.status} aria-labelledby={`shelf-${shelf.status}`}>
-            <h3 id={`shelf-${shelf.status}`} className="text-center text-lg font-semibold tracking-[0.18em] text-accent">
+            <h2 id={`shelf-${shelf.status}`} className="text-center text-lg font-semibold tracking-[0.18em] text-accent">
               {shelfTitles[shelf.status]}
-            </h3>
+            </h2>
             <ul className="mt-6 space-y-8" role="list">
               {shelf.books.map((book) => (
-                <li key={`${book.title}-${book.author}`}>
+                <li key={book.slug}>
                   <p className="flex flex-wrap items-baseline justify-between gap-x-4">
                     <span>
-                      <cite
-                        className="text-[1.35rem] font-semibold not-italic text-ink"
-                        lang={book.language === 'FR' ? 'fr' : undefined}
-                      >
-                        {book.title}
-                      </cite>
+                      <a href={book.href} className="link">
+                        <cite
+                          className="text-[1.35rem] font-semibold not-italic text-ink"
+                          lang={book.language === 'FR' ? 'fr' : undefined}
+                        >
+                          {book.title}
+                        </cite>
+                      </a>
                       {book.translatedTitle && <span className="italic text-muted"> ({book.translatedTitle})</span>}
                     </span>
                     <span className="smallcaps text-muted">
@@ -108,7 +110,18 @@ export default function BookShelf({ books, shelfTitles, statusTags, languageName
                     {book.author}, {book.year}
                   </p>
                   <p className="mt-2 border-l-2 border-accent/60 pl-4 text-ink">{book.notes}</p>
-                  <p className="mt-1 pl-4 text-base text-muted">{book.category}</p>
+                  <p className="mt-1 pl-4 text-base text-muted">
+                    {book.category}
+                    {book.hasWriting && (
+                      <>
+                        <span aria-hidden="true"> · </span>
+                        <a href={book.href} className="link">
+                          Read my notes
+                          <span className="sr-only"> on {book.title}</span>
+                        </a>
+                      </>
+                    )}
+                  </p>
                 </li>
               ))}
             </ul>

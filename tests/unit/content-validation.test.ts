@@ -6,9 +6,7 @@ import { experience, Experience } from '@data/experience';
 import { projects, Projects, orderedProjects } from '@data/projects';
 import { certifications, Certifications } from '@data/certifications';
 import { achievements, Achievements } from '@data/achievements';
-import { timeline, Timeline } from '@data/timeline';
 import { stats, Stats } from '@data/stats';
-import { books, Books, booksByStatus } from '@data/books';
 import { showcaseItems, ShowcaseItems } from '@data/showcase';
 import { isCounted } from '@lib/stats';
 import { caseFiles, CaseFiles } from '@data/caseFiles';
@@ -122,12 +120,6 @@ describe('achievements', () => {
   });
 });
 
-describe('timeline', () => {
-  it('satisfies its schema', () => {
-    expect(() => Timeline.parse(timeline)).not.toThrow();
-  });
-});
-
 describe('stats', () => {
   it('satisfies its schema', () => {
     expect(() => Stats.parse(stats)).not.toThrow();
@@ -142,17 +134,6 @@ describe('stats', () => {
       expect(Number.isFinite(stat.value)).toBe(true);
       expect(stat.value).toBeGreaterThanOrEqual(0);
     }
-  });
-});
-
-describe('books', () => {
-  it('satisfies its schema', () => {
-    expect(() => Books.parse(books)).not.toThrow();
-  });
-
-  it('has something on the nightstand and something finished', () => {
-    expect(booksByStatus('reading').length).toBeGreaterThan(0);
-    expect(booksByStatus('completed').length).toBeGreaterThan(0);
   });
 });
 

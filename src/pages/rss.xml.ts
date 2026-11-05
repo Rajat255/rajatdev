@@ -39,8 +39,8 @@ export const GET: APIRoute = async () => {
   );
 
   return rss({
-    title: `${SITE_CONFIG.title} · Notes`,
-    description: `Notes and essays by ${SITE_CONFIG.author} on cloud infrastructure, cost work, self-hosting, and rabbit holes.`,
+    title: `${SITE_CONFIG.name} · Threads`,
+    description: `Posts by ${SITE_CONFIG.author} on cloud infrastructure, cost work, self-hosting, and rabbit holes.`,
     site: SITE_CONFIG.url,
     items,
     xmlns: { dc: 'http://purl.org/dc/elements/1.1/', atom: 'http://www.w3.org/2005/Atom' },

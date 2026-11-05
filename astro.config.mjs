@@ -18,13 +18,22 @@ import { SITE_CONFIG, showcaseIsPublic } from './src/config/site.ts';
  * `site` builds canonical, Open Graph, sitemap, and feed URLs.
  */
 
-/** Paths kept out of the sitemap: /showcase while it is unlisted. */
-const unlisted = showcaseIsPublic() ? [] : ['/showcase/'];
+/**
+ * Paths kept out of the sitemap: the /notes redirect pages, and /showcase
+ * while it is unlisted.
+ */
+const unlisted = ['/notes/', ...(showcaseIsPublic() ? [] : ['/showcase/'])];
 
 export default defineConfig({
   site: SITE_CONFIG.url,
   output: 'static',
   trailingSlash: 'ignore',
+  // Posts moved from /notes to /threads after the site went live. This keeps
+  // the old index working; each old post URL is redirected by
+  // src/pages/notes/[slug].astro (static builds can't do dynamic redirects here).
+  redirects: {
+    '/notes': '/threads',
+  },
   devToolbar: { enabled: false },
   integrations: [
     react(),

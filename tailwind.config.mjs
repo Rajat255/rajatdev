@@ -3,9 +3,6 @@ import typography from '@tailwindcss/typography';
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}'],
-  // Theme switching keys off a `.dark` / `.light` class on <html>, set by the
-  // no-flash script in BaseLayout.astro. Light is the default.
-  darkMode: 'class',
   theme: {
     screens: {
       xs: '360px',
@@ -51,8 +48,7 @@ export default {
       },
       typography: {
         // `prose-stone`, recoloured from the site's own tokens (this merges over
-        // the plugin's stone palette), so essays sit on warm newsprint and
-        // follow the theme toggle without a separate dark variant.
+        // the plugin's stone palette), so essays sit on warm newsprint.
         stone: {
           css: {
             '--tw-prose-body': 'rgb(var(--ink))',

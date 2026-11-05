@@ -3,13 +3,13 @@
  *
  *   /llms.txt          an index in the llms.txt format (https://llmstxt.org)
  *   /llms-full.txt     everything on the site in one Markdown document
- *   /notes/<slug>.md   each note's raw Markdown with metadata
+ *   /threads/<slug>.md each post's raw Markdown with metadata
  *
  * All three are built from the same data modules and content collection as the
  * HTML pages, so they cannot drift from what a visitor reads.
  */
 import { SITE_CONFIG, absoluteUrl, showcaseIsPublic } from '../config/site';
-import { LANGUAGE_NAMES, SHELF_TITLES, books, booksByStatus, type BookStatus } from '../data/books';
+import { LANGUAGE_NAMES, SHELF_ORDER, SHELF_TITLES, bookHref, booksByStatus, hasWriting, type BookEntry } from './books';
 import { caseFilesFor } from '../data/caseFiles';
 import { certifications } from '../data/certifications';
 import { experience } from '../data/experience';
@@ -17,8 +17,7 @@ import { profile } from '../data/profile';
 import { orderedProjects } from '../data/projects';
 import { skillGroups } from '../data/skills';
 import { stats } from '../data/stats';
-import { frenchLog, rabbitHoles } from '../data/threads';
-import { timeline } from '../data/timeline';
+import { rabbitHoles } from '../data/threads';
 import { toIsoDate } from './format';
 import { noteHref, noteMarkdownHref, noteStats, type Note } from './notes';
 import { displayStat } from './stats';
@@ -79,9 +78,13 @@ export function shiftHeadings(markdown: string, levels: number): string {
 /** The pages worth reading, with one line on each. */
 function pageLinks(): string[] {
   return [
-    `- [Builds & work](${absoluteUrl('/builds/')}): Cloud engineering at amber and IAMOPS, case studies (an ECS to EKS migration, a $200K/yr AWS cost programme, agentic CI/CD triage), side projects, certifications, and the homelab this site runs on.`,
-    `- [Threads & books](${absoluteUrl('/threads/')}): Books he is reading and has read (in English and French), with a note on each, a French learning log, ongoing rabbit holes, and a timeline from 2022 on.`,
-    `- [Notes](${absoluteUrl('/notes/')}): All essays, newest first.`,
+    `- [Builds](${absoluteUrl('/builds/')}): Certifications, cloud engineering at amber and IAMOPS, case studies (an ECS to EKS migration, a $200K/yr AWS cost programme, agentic CI/CD triage), and side projects including plot-it.fun.`,
+    `- [The triage agent](${absoluteUrl('/builds/triage-agent/')}): A simulator of the CI/CD triage agent from the case studies.`,
+    `- [The homelab](${absoluteUrl('/builds/homelab/')}): The bare-metal box at home that serves this site, and the path a request takes to reach it.`,
+    `- [Threads](${absoluteUrl('/threads/')}): Every post, newest first, plus the rabbit holes he is in.`,
+    `- [Reads](${absoluteUrl('/reads/')}): Books he is reading and has read, in English and French, with a note on each and a page per book.`,
+    `- [Now](${absoluteUrl('/now/')}): What he is focused on at the moment.`,
+    `- [About](${absoluteUrl('/about/')}): A longer introduction.`,
     `- [Colophon](${absoluteUrl('/colophon/')}): How this site is built and hosted, and its feeds.`,
     ...(showcaseIsPublic()
       ? [`- [Showcase](${absoluteUrl('/showcase/')}): Independent web projects and experiments.`]
@@ -90,25 +93,34 @@ function pageLinks(): string[] {
 }
 
 /** /llms.txt: a short index of the site, in the llms.txt format. */
-export function buildLlmsTxt(notes: readonly Note[]): string {
+export function buildLlmsTxt(notes: readonly Note[], books: readonly BookEntry[]): string {
   const lines = [
     `# ${TITLE}`,
     '',
     `> ${profile.summary}`,
     '',
-    `This is the personal site of ${profile.name}: things he has built, notes he has written, and books he has read. Every note is also available as raw Markdown by adding \`.md\` to its URL, and the whole site is available as one document at ${absoluteUrl('/llms-full.txt')}.`,
+    `This is the personal site of ${profile.name}: things he has built, posts he has written, and books he has read. Every post is also available as raw Markdown by adding \`.md\` to its URL, and the whole site is available as one document at ${absoluteUrl('/llms-full.txt')}.`,
     '',
     '## Pages',
     '',
     ...pageLinks(),
     '',
-    '## Notes',
+    '## Posts',
     '',
     ...(notes.length === 0
-      ? ['- No notes published yet.']
+      ? ['- No posts published yet.']
       : notes.map(
           (note) =>
             `- [${note.data.title}](${absoluteUrl(noteHref(note))}): ${note.data.description} Published ${toIsoDate(note.data.pubDate)}. Markdown: ${absoluteUrl(noteMarkdownHref(note))}`,
+        )),
+    '',
+    '## Books',
+    '',
+    ...(books.length === 0
+      ? ['- No books listed yet.']
+      : books.map(
+          (book) =>
+            `- [${book.data.title}, by ${book.data.author}](${absoluteUrl(bookHref(book))}): ${SHELF_TITLES[book.data.status]}. ${book.data.notes}`,
         )),
     '',
     '## Feeds',
@@ -118,7 +130,7 @@ export function buildLlmsTxt(notes: readonly Note[]): string {
     '',
     '## Optional',
     '',
-    `- [Full text for LLMs](${absoluteUrl('/llms-full.txt')}): The bio, work history, case studies, books, and every note in one Markdown file.`,
+    `- [Full text for LLMs](${absoluteUrl('/llms-full.txt')}): The bio, work history, case studies, books, and every post in one Markdown file.`,
     `- [Résumé (PDF)](${absoluteUrl(SITE_CONFIG.contact.resume)})`,
     `- [GitHub](${SITE_CONFIG.contact.github})`,
     `- [LinkedIn](${SITE_CONFIG.contact.linkedin})`,
@@ -129,7 +141,7 @@ export function buildLlmsTxt(notes: readonly Note[]): string {
 }
 
 /** /llms-full.txt: the whole site as one Markdown document. */
-export function buildLlmsFullTxt(notes: readonly Note[]): string {
+export function buildLlmsFullTxt(notes: readonly Note[], books: readonly BookEntry[]): string {
   const out: string[] = [];
   const push = (...lines: string[]) => out.push(...lines);
 
@@ -188,33 +200,28 @@ export function buildLlmsFullTxt(notes: readonly Note[]): string {
   push('');
 
   push('## Books', '');
-  const shelves: BookStatus[] = ['reading', 'completed', 'antilibrary'];
-  for (const status of shelves) {
-    const shelf = booksByStatus(status, books);
+  for (const status of SHELF_ORDER) {
+    const shelf = booksByStatus(books, status);
     if (shelf.length === 0) continue;
     push(`### ${SHELF_TITLES[status]}`, '');
     for (const book of shelf) {
-      const title = book.translatedTitle ? `${book.title} (${book.translatedTitle})` : book.title;
-      push(`- ${title}, by ${book.author} (${book.year}). ${book.category}. Read in ${LANGUAGE_NAMES[book.language]}.`);
-      push(`  Note: ${book.notes}`);
+      const { title, translatedTitle, author, year, category, language, notes } = book.data;
+      const name = translatedTitle ? `${title} (${translatedTitle})` : title;
+      push(`#### ${name}, by ${author} (${year})`, '');
+      push(`${category}. Read in ${LANGUAGE_NAMES[language]}. Page: ${absoluteUrl(bookHref(book))}`, '');
+      push(`> ${notes}`, '');
+      // His longer writing on the book, nested under its heading.
+      if (hasWriting(book)) push(shiftHeadings(book.body.replace(/<!--[\s\S]*?-->/g, '').trim(), 4), '');
     }
     push('');
   }
 
   push('## Rabbit holes', '');
   for (const hole of rabbitHoles) push(`- ${hole.title}: ${hole.note}`);
-  push('', '### French log', '');
-  for (const line of frenchLog) push(`- "${line.french}" — ${line.english} (${line.source})`);
   push('');
 
-  push('## Timeline', '');
-  for (const entry of timeline) {
-    push(`- ${entry.date}: ${entry.title}. ${entry.description}${entry.flair ? ` ${entry.flair}` : ''}`);
-  }
-  push('');
-
-  push('## Notes', '');
-  if (notes.length === 0) push('No notes published yet.', '');
+  push('## Posts', '');
+  if (notes.length === 0) push('No posts published yet.', '');
   for (const note of notes) {
     const { words } = noteStats(note);
     push(`### ${note.data.title}`, '');
