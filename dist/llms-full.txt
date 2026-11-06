@@ -2,7 +2,7 @@
 
 > Rajat Khirid is a Cloud and DevOps engineer based in Pune, India, and an AWS Certified Solutions Architect – Professional (SAP-C02). At amber, where he spent more than eight months as the sole DevOps engineer for 50+ production services on AWS, he led a FinOps programme that cut monthly AWS spend by 45% (about $200K a year), migrated workloads from ECS to Amazon EKS with Karpenter and KEDA, and built MCP-based AI agents that triage and fix CI/CD failures on their own. He self-hosts this site on a bare-metal homelab.
 
-Source: https://rajatdev.fun/. Generated from the same data as the site at build time, 2026-11-05.
+Source: https://rajatdev.fun/. Generated from the same data as the site at build time, 2026-11-06.
 
 ## About
 
@@ -158,15 +158,9 @@ Link: https://github.com/Rajat255/GeekFixx-ReactApp
 
 ### Reading now
 
-#### L'Étranger (The Stranger), by Albert Camus (1942)
-
-Philosophy · Absurdism (B1 French). Read in Français. Page: https://rajatdev.fun/reads/l-etranger/
-
-> Reading Camus in the original French—deceptively simple sentences where the Algerian sun and quiet existential indifference do all the heavy lifting.
-
 #### Trust, by Hernan Diaz (2022)
 
-Fiction · Capital & Narrative. Read in English. Page: https://rajatdev.fun/reads/trust/
+Fiction · Capital & Narrative. Page: https://rajatdev.fun/reads/trust/
 
 > An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
 
@@ -174,32 +168,43 @@ Fiction · Capital & Narrative. Read in English. Page: https://rajatdev.fun/read
 
 #### A Thousand Splendid Suns, by Khaled Hosseini (2007)
 
-Historical Fiction. Read in English. Page: https://rajatdev.fun/reads/a-thousand-splendid-suns/
+Historical Fiction. Page: https://rajatdev.fun/reads/a-thousand-splendid-suns/
 
 > A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
 
+#### Jonathan Livingston Seagull, by Richard Bach (1970)
+
+Fiction · Fable. Page: https://rajatdev.fun/reads/jonathan-livingston-seagull/
+
+> A short fable about a gull who cares more about learning to fly well than about fitting in with the flock.
+
+#### L'Étranger (The Stranger), by Albert Camus (1942)
+
+Philosophy · Absurdism. Page: https://rajatdev.fun/reads/l-etranger/
+
+> Deceptively simple sentences, where the Algerian sun and quiet existential indifference do all the heavy lifting.
+
 #### Le Petit Prince, by Antoine de Saint-Exupéry (1943)
 
-Classic · Fable (FR). Read in Français. Page: https://rajatdev.fun/reads/le-petit-prince/
+Classic · Fable. Page: https://rajatdev.fun/reads/le-petit-prince/
 
-> The rite of passage for anyone learning French, and still sharper about adult absurdity and bureaucracy than most books ten times its length.
+> Still sharper about adult absurdity and bureaucracy than most books ten times its length.
 
 ## Rabbit holes
 
-- French, at about B1: I read French books in the original, slowly, with a dictionary within reach.
 - Two wheels: A bicycle most of the time, and a motorbike for the longer trips, like the 1,500 km ride down the Konkan coast from Mumbai to Goa and back.
 - Photography: Mostly taken on rides.
 - The homelab: The bare-metal box at home that serves this site, and the reason I learn something new about Linux every month.
 
 ## Posts
 
-### Notes from a Pune Homelab: Why I Traded My Portfolio Template for Newsprint
+### Why I Traded My Portfolio Template for Newsprint
 
-Published 2026-10-26. Field Notes. 371 words. URL: https://rajatdev.fun/threads/notes-from-a-pune-homelab/
+Published 2026-10-26. Field Notes. 364 words. URL: https://rajatdev.fun/threads/notes-from-a-homelab/
 
 > A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble.
 
-The previous version of this site was a single page of frosted-glass cards floating over an animated aurora. It was well built, and it looked like every other developer portfolio on the internet, mine included. It said "please hire me" very politely, and it didn't say much else.
+The previous version of this site was a single page of frosted-glass cards floating over an animated aurora. It was well built, and it looked like every other developer portfolio on the internet, mine included. It said "please hire me" very politely (and it did sometimes work), but it didn't say much else.
 
 This version is a page of type on cream paper, and the change was mostly about what a page is allowed to contain.
 
@@ -207,35 +212,33 @@ This version is a page of type on cream paper, and the change was mostly about w
 
 A portfolio has one job, so everything on it has to serve that job. A personal site doesn't. The engineering is still here, in full, on [the builds page](/builds/). But the front page is also allowed to mention a Camus novel and a motorbike ride down the Konkan coast, and there's a [whole page for books and rabbit holes](/threads/). Those things are true about me too, and the template had no place to put them.
 
-The nudge came from Jason's site at [fromjason.xyz](https://www.fromjason.xyz/), which reads like a person rather than a pitch deck. Next to it, my portfolio looked like what it was: a brochure.
-
 #### The box
 
-This site is served from a machine at home in Pune. A request for it goes through Cloudflare's edge, down an encrypted tunnel, over an ordinary residential fibre line, through a reverse proxy, and into a container on a bare-metal Linux host. What comes back is a folder of static HTML that Astro built ahead of time.
+This site is served from a machine from my home. A request for it goes through Cloudflare's edge, down an encrypted tunnel, over an ordinary residential fibre line, through a reverse proxy, and into a container on a bare-metal Linux host. What comes back is a folder of static HTML that Astro built ahead of time.
 
 There is no database and no server-side code, so the box barely notices visitors. You can see [its readings](/builds/#homelab) on the builds page. The uptime guarantee is simple: if you can read this, it is up.
 
 #### Why bother
 
-Hosting it myself is not the cheapest way to put a website online, and it's certainly not the easiest. But the address is mine, the hardware is mine, and nobody's algorithm decides who sees it. If the site breaks, it breaks because of something I did, which also means I can fix it.
+Hosting it myself is not the cheapest way to put a website online, and it's certainly not the easiest. But the address is mine, the hardware is mine, and nobody's algorithm decides who sees it. If the site breaks, it breaks because of something I did, which also means I can fix it, which does keep happening. 
 
-The independent web runs on people doing slightly impractical things with their own corner of it: blogs with strange layouts, digital gardens, sites that are just a list of the books someone liked. This is my corner.
+The independent web runs on people doing slightly impractical things with their own corner of it: blogs with strange layouts, digital gardens, sites that are just a list of the books someone liked. This is my corner. And it could be something else entirely the next time you visit, so keep visiting.
 
 Thanks for reading.
 
-### How to Assassinate 10 Load Balancers and Cut an AWS Bill by 45% Without Anyone Noticing
+### How to Cut an AWS Bill by 45% Without Anyone Noticing
 
-Published 2026-09-14. Infrastructure. 531 words. URL: https://rajatdev.fun/threads/assassinating-load-balancers/
+Published 2026-09-14. Infrastructure. 925 words. URL: https://rajatdev.fun/threads/how-to-cut-your-aws-bill-by-45-percent/
 
 > Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly.
 
-The bill was somewhere between $35,000 and $38,000 a month. Two and a half months later it was between $19,000 and $21,000, which works out to roughly $200,000 a year. Availability didn't change, nobody shipped a feature differently, and nobody outside the team noticed anything, which was the point.
+The bill was somewhere between $35,000 and $38,000 a month. Two and a half months later it was between $18,000 and $20,000, which works out to roughly $200,000 a year. Availability didn't change, nobody shipped a feature differently, and nobody outside the team noticed anything, which was the point.
 
-Cost work gets a bad name because it is usually done loudly: a freeze on new resources, a spreadsheet of blame, a quarter of people arguing about tags. None of that was necessary. Most of the money was going to things nobody had looked at since they were created.
+Cost work gets a bad name because it is usually done loudly: a freeze on new resources, existing apps running slow, a spreadsheet of blame, and arguing about tags. Most of the money was going to things nobody had looked at since they were created. And we did not achieve this by simply buying out the AWS servers in advance.
 
 #### Rule one: commitments go last
 
-The tempting first move is to buy Savings Plans, because it is one click and the discount is large. It is also the move that locks in whatever waste you already have, for one to three years. If you commit to the spend of an over-provisioned fleet, you have made the waste cheaper rather than removing it.
+The tempting first move and the lowest hanging fruit of them all is always to buy Savings Plans and Reservations, It is what most of the consultants in the field suggest, because it is one click and the discount is large. It is also the move that locks in whatever waste you already have, for one to three years. If you commit to the spend of an over-provisioned fleet, you have made the waste cheaper rather than removing it.
 
 So the order was: right-size, re-platform, consolidate, and only then commit, once capacity had settled into something predictable.
 
@@ -243,14 +246,14 @@ So the order was: right-size, re-platform, consolidate, and only then commit, on
 
 The databases were the biggest line, and the most interesting.
 
-- **Aurora Serverless to provisioned Graviton.** Serverless is a good deal when load is spiky or unknown. Ours was neither. A steady workload on Serverless pays a premium for elasticity it never uses, so it moved to provisioned r7g instances.
-- **Redis to Valkey, on Graviton.** Same workload, same client libraries, cheaper hardware.
-- **Redshift dc2.large to RA3.** The dc2 family bundles storage with compute, so holding about 2 TB of data meant paying for compute just to have somewhere to keep it. RA3 separates the two.
-- **Heavy Athena scans, rerouted.** Athena bills by data scanned. A few queries scanned the same large datasets over and over; a right-sized database answers them for a fraction of the cost.
+- **Aurora Serverless to provisioned Graviton.** Serverless is a good deal when load is spiky or unknown. Understanding where our spikes came from was a crucial task, we spent some time looking at the usage graphs, the website traffic goes up drastically during the evening but the database spikes did not show the same pattern, it looked rather like some crons were running. We looked removed heavy crons, looked at the most time consuming queries and built and index for their tables, a few optimizations in the code and we had a system where the load predictable. And a steady workload on Serverless pays a premium for elasticity it never uses, so it moved to provisioned r7g instances. Further down the road we changed the storage to I/O Optimized as our data storage was rathr less but the TPM was slightly high which worked greatly in ur favour.
+- **Redis to Valkey, on Graviton.** Valkey was launched by AWS on AWS as an answer to the pricing model of Redis, it is esentially just a fork of redis when it was free. Now at the time of writing this page I hear that redis has again put out their new version with a free pricing. Although AWS has kind of now locked in the people who migrated to valkey by selling reservations tied to the engine, we have little incentive to go back to Redis anyways.
+- **Redshift dc2.large to RA3.** The dc2 family bundles storage with compute so if your data warehouse requires more storage you've got buy RAM and CPU as well, so holding about 2 TB of data meant paying for compute just to have somewhere to keep it. RA3 separates the two and moving to it made huge sense.
+- **Heavy Athena scans, rerouted.** Athena bills by data scanned. And we had so many automations which started small but as time went by the data kept piling up, and just in a few years we had hundreds of automations scanning TBs of data per day, queries kept scanning the same large datasets over and over; We created right-sized database put in the seeded the data into it and now the automations run at fraction of the cost. We were even able to turn off the database when the automations were not runing.
 
 #### Compute
 
-ECS Fargate is lovely until you read the invoice. The services moved to EC2 on Graviton, with Spot capacity for the jobs that can survive an interruption. CI runners moved to self-hosted machines as well, which turned a per-minute bill into a fixed one.
+ECS Fargate which is publicized as a serverless, and an all time running server is lovely until you read the invoice, escpecially when you are restricted to only use x86 processors. I moved the all our ECS services to EC2 on Graviton, with Spot capacity for the jobs that can survive an interruption. 
 
 #### The assassinations
 
@@ -277,6 +280,8 @@ That one setting cut SQS costs by about 90%.
 
 #### Then, and only then, the commitment
 
-With the fleet right-sized and the architecture settled, the remaining baseline was steady enough to commit to. Compute Savings Plans went on last, sized to what was actually left.
+With the the architecture settled, the fleet right-sized, and the system optimized the remaining baseline was steady enough to commit to. Compute Savings Plans went on last, sized to what was actually left.
+The databases, elasticache, and elasticSearch nodes were now reserved, instances and lambdas shared the saving plans.
 
-The billing dashboard has not been the same since. Neither have the ten load balancers.
+The billing dashboard has not been the same since. Even 
+after 1.5 years of scaling out and growing we still haven't every crossed the 25K USD mark. Writing the prcess down does make me feel like we had to know a lot of stuff and get everything right at each step, but the process itself was super easy, just look at the bill, get your pain points ready, and start with the largest and highest impact ones to the smallest.

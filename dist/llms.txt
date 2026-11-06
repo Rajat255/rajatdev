@@ -10,22 +10,23 @@ This is the personal site of Rajat Khirid: things he has built, posts he has wri
 - [The triage agent](https://rajatdev.fun/builds/triage-agent/): A simulator of the CI/CD triage agent from the case studies.
 - [The homelab](https://rajatdev.fun/builds/homelab/): The bare-metal box at home that serves this site, and the path a request takes to reach it.
 - [Threads](https://rajatdev.fun/threads/): Every post, newest first, plus the rabbit holes he is in.
-- [Reads](https://rajatdev.fun/reads/): Books he is reading and has read, in English and French, with a note on each and a page per book.
+- [Reads](https://rajatdev.fun/reads/): Books he is reading and has read, with a note on each and a page per book.
 - [Now](https://rajatdev.fun/now/): What he is focused on at the moment.
 - [About](https://rajatdev.fun/about/): A longer introduction.
 - [Colophon](https://rajatdev.fun/colophon/): How this site is built and hosted, and its feeds.
 
 ## Posts
 
-- [Notes from a Pune Homelab: Why I Traded My Portfolio Template for Newsprint](https://rajatdev.fun/threads/notes-from-a-pune-homelab/): A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble. Published 2026-10-26. Markdown: https://rajatdev.fun/threads/notes-from-a-pune-homelab.md
-- [How to Assassinate 10 Load Balancers and Cut an AWS Bill by 45% Without Anyone Noticing](https://rajatdev.fun/threads/assassinating-load-balancers/): Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly. Published 2026-09-14. Markdown: https://rajatdev.fun/threads/assassinating-load-balancers.md
+- [Why I Traded My Portfolio Template for Newsprint](https://rajatdev.fun/threads/notes-from-a-homelab/): A short note on serving this site from a box at home, and on why the weird, independent web is worth the trouble. Published 2026-10-26. Markdown: https://rajatdev.fun/threads/notes-from-a-homelab.md
+- [How to Cut an AWS Bill by 45% Without Anyone Noticing](https://rajatdev.fun/threads/how-to-cut-your-aws-bill-by-45-percent/): Two and a half months, roughly $200K a year, and not one customer-facing change. A field guide to cutting a cloud bill quietly. Published 2026-09-14. Markdown: https://rajatdev.fun/threads/how-to-cut-your-aws-bill-by-45-percent.md
 
 ## Books
 
-- [L'Étranger, by Albert Camus](https://rajatdev.fun/reads/l-etranger/): Reading now. Reading Camus in the original French—deceptively simple sentences where the Algerian sun and quiet existential indifference do all the heavy lifting.
 - [Trust, by Hernan Diaz](https://rajatdev.fun/reads/trust/): Reading now. An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
 - [A Thousand Splendid Suns, by Khaled Hosseini](https://rajatdev.fun/reads/a-thousand-splendid-suns/): Finished. A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
-- [Le Petit Prince, by Antoine de Saint-Exupéry](https://rajatdev.fun/reads/le-petit-prince/): Finished. The rite of passage for anyone learning French, and still sharper about adult absurdity and bureaucracy than most books ten times its length.
+- [Jonathan Livingston Seagull, by Richard Bach](https://rajatdev.fun/reads/jonathan-livingston-seagull/): Finished. A short fable about a gull who cares more about learning to fly well than about fitting in with the flock.
+- [L'Étranger, by Albert Camus](https://rajatdev.fun/reads/l-etranger/): Finished. Deceptively simple sentences, where the Algerian sun and quiet existential indifference do all the heavy lifting.
+- [Le Petit Prince, by Antoine de Saint-Exupéry](https://rajatdev.fun/reads/le-petit-prince/): Finished. Still sharper about adult absurdity and bureaucracy than most books ten times its length.
 
 ## Feeds
 
