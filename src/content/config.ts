@@ -38,7 +38,6 @@ const notes = defineCollection({
 });
 
 export const BOOK_STATUSES = ['reading', 'completed', 'antilibrary'] as const;
-export const BOOK_LANGUAGES = ['EN', 'FR'] as const;
 
 const books = defineCollection({
   type: 'content',
@@ -54,8 +53,15 @@ const books = defineCollection({
      * `antilibrary` (bought, not yet read).
      */
     status: z.enum(BOOK_STATUSES),
-    /** The language you are reading it in. */
-    language: z.enum(BOOK_LANGUAGES),
+    /**
+     * BCP 47 code of the language the title is in: `en`, `fr`, `mr` (Marathi),
+     * `hi`, … Never shown; it sets `lang` on the title so browsers and screen
+     * readers pronounce it right, and `inLanguage` in the JSON-LD.
+     */
+    language: z
+      .string()
+      .regex(/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/, 'Use a lowercase BCP 47 code, e.g. en, fr, mr')
+      .default('en'),
     /** Genre line, printed under the book. */
     category: z.string().min(1).max(60),
     /** A one- or two-sentence note, shown in the list on /reads. */

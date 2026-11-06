@@ -9,7 +9,7 @@ import { getPublishedNotes, groupNotesByYear } from '../../lib/notes';
 import { blogNode, personNode, websiteNode } from '../../lib/seo/schema';
 
 /**
- * Threads: things I've written. Every post, newest first and grouped by year,
+ * Threads. Every post, newest first and grouped by year,
  * then the threads I keep pulling at away from work: rabbit holes. Books live on /reads.
  */
 const notes = await getPublishedNotes();
@@ -24,7 +24,7 @@ const description =
   description={description}
   jsonLd={[websiteNode(), personNode(), blogNode(notes)]}
 >
-  <PageTitle title="Threads" subtitle="things I've written">
+  <PageTitle title="Threads">
     <p class="text-center text-muted">
       Posts about infrastructure, the homelab, and whatever came up that week, then the other threads I keep pulling
       at. Also by <a href="/rss.xml" class="link">RSS</a>. Books are on <a href="/reads/" class="link">reads</a>.

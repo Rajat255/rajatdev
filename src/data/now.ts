@@ -41,11 +41,6 @@ export const now: NowPage = {
       link: { label: 'builds', href: '/builds/#projects-heading' },
     },
     {
-      heading: 'Learning',
-      text: 'French, at about a B1 level, mostly by reading novels slowly with a dictionary nearby.',
-      link: { label: 'what I’m reading', href: '/reads/' },
-    },
-    {
       heading: 'Tinkering',
       text: 'Keeping the homelab that serves this site running, and breaking it on purpose now and then.',
       link: { label: 'the homelab', href: '/builds/homelab/' },

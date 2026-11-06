@@ -9,7 +9,7 @@
  * HTML pages, so they cannot drift from what a visitor reads.
  */
 import { SITE_CONFIG, absoluteUrl, showcaseIsPublic } from '../config/site';
-import { LANGUAGE_NAMES, SHELF_ORDER, SHELF_TITLES, bookHref, booksByStatus, hasWriting, type BookEntry } from './books';
+import { SHELF_ORDER, SHELF_TITLES, bookHref, booksByStatus, hasWriting, type BookEntry } from './books';
 import { caseFilesFor } from '../data/caseFiles';
 import { certifications } from '../data/certifications';
 import { experience } from '../data/experience';
@@ -82,7 +82,7 @@ function pageLinks(): string[] {
     `- [The triage agent](${absoluteUrl('/builds/triage-agent/')}): A simulator of the CI/CD triage agent from the case studies.`,
     `- [The homelab](${absoluteUrl('/builds/homelab/')}): The bare-metal box at home that serves this site, and the path a request takes to reach it.`,
     `- [Threads](${absoluteUrl('/threads/')}): Every post, newest first, plus the rabbit holes he is in.`,
-    `- [Reads](${absoluteUrl('/reads/')}): Books he is reading and has read, in English and French, with a note on each and a page per book.`,
+    `- [Reads](${absoluteUrl('/reads/')}): Books he is reading and has read, with a note on each and a page per book.`,
     `- [Now](${absoluteUrl('/now/')}): What he is focused on at the moment.`,
     `- [About](${absoluteUrl('/about/')}): A longer introduction.`,
     `- [Colophon](${absoluteUrl('/colophon/')}): How this site is built and hosted, and its feeds.`,
@@ -205,10 +205,10 @@ export function buildLlmsFullTxt(notes: readonly Note[], books: readonly BookEnt
     if (shelf.length === 0) continue;
     push(`### ${SHELF_TITLES[status]}`, '');
     for (const book of shelf) {
-      const { title, translatedTitle, author, year, category, language, notes } = book.data;
+      const { title, translatedTitle, author, year, category, notes } = book.data;
       const name = translatedTitle ? `${title} (${translatedTitle})` : title;
       push(`#### ${name}, by ${author} (${year})`, '');
-      push(`${category}. Read in ${LANGUAGE_NAMES[language]}. Page: ${absoluteUrl(bookHref(book))}`, '');
+      push(`${category}. Page: ${absoluteUrl(bookHref(book))}`, '');
       push(`> ${notes}`, '');
       // His longer writing on the book, nested under its heading.
       if (hasWriting(book)) push(shiftHeadings(book.body.replace(/<!--[\s\S]*?-->/g, '').trim(), 4), '');

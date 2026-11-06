@@ -13,7 +13,7 @@ import { stats } from '../../data/stats';
 import { personNode, profilePageNode, websiteNode } from '../../lib/seo/schema';
 
 /**
- * Builds: things I've made. Ordered for someone deciding whether to hire me:
+ * Builds. Ordered for someone deciding whether to hire me:
  * the headline figures, certifications, work with its case studies, side
  * projects, then the two deeper pages (the triage agent and the homelab, each
  * on its own page), and the tools index last.
@@ -43,7 +43,7 @@ const deeper = [
   ogType="profile"
   jsonLd={[websiteNode(), personNode(), profilePageNode('/builds/', 'Builds & Work', description)]}
 >
-  <PageTitle title="Builds" subtitle="things I've made">
+  <PageTitle title="Builds">
     <p>
       I&rsquo;m a Cloud and DevOps engineer at amber. For most of the last two years I&rsquo;ve looked after
       production AWS for 50+ services, and before that I spent a year consulting at IAMOPS. The bigger pieces of work
@@ -139,7 +139,7 @@ const deeper = [
   </section>
 
   <section aria-labelledby="deeper-heading" class="mt-16">
-    <SectionHeading id="deeper-heading">Two to play with</SectionHeading>
+    <SectionHeading id="deeper-heading">Interactive</SectionHeading>
     <ul class="mt-10 space-y-4" role="list">
       {
         deeper.map((item) => (

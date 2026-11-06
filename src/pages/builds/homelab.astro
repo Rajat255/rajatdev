@@ -11,7 +11,7 @@ import { personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
  * path a request takes to reach it.
  */
 /** The essay about self-hosting, linked at the bottom if it's still published. */
-const essay = (await getPublishedNotes()).find((note) => note.slug === 'notes-from-a-pune-homelab');
+const essay = (await getPublishedNotes()).find((note) => note.slug === 'notes-from-a-homelab');
 const description =
   'The bare-metal Linux box at home that serves rajatdev.fun: its readings, and the path a request takes to reach it.';
 ---
@@ -22,7 +22,7 @@ const description =
   description={description}
   jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/builds/homelab/', name: 'The Homelab', description })]}
 >
-  <PageTitle title="Homelab" subtitle="the box this site runs on">
+  <PageTitle title="Homelab">
     <p>
       This site doesn&rsquo;t live on a hosting platform. It&rsquo;s a folder of static HTML served from a small
       bare-metal Linux box at home. There&rsquo;s no database and no server-side code, so the box barely

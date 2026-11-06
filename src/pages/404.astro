@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/site/PageTitle.astro';
+import { getPublishedNotes, noteHref } from '../lib/notes';
+
+/**
+ * 404: shown for any address that doesn't exist. Built to `dist/404.html`,
+ * which static hosts and most reverse proxies serve for missing pages (the
+ * server must be set to use it, e.g. nginx `error_page 404 /404.html;`).
+ *
+ * It has the normal nav and footer, so there's always a way forward, plus the
+ * latest post and the main sections.
+ */
+const latest = (await getPublishedNotes())[0];
+---
+
+<BaseLayout section="notfound" title="Not found" description="There's nothing at this address.">
+  <PageTitle title="Not found">
+    <p class="text-center text-muted">
+      The page may have moved, or the link may have a typo. Try one of these instead.
+    </p>
+  </PageTitle>
+
+  <ul class="mx-auto mt-10 max-w-[26rem] space-y-3" role="list">
+    <li><a href="/" class="link font-semibold">The front page</a></li>
+    <li>
+      <a href="/builds/" class="link font-semibold">Builds</a><span class="text-muted"> — work, case studies, and side projects</span>
+    </li>
+    <li>
+      <a href="/threads/" class="link font-semibold">Threads</a><span class="text-muted"> — posts and rabbit holes</span>
+    </li>
+    <li>
+      <a href="/reads/" class="link font-semibold">Reads</a><span class="text-muted"> — books, with a note on each</span>
+    </li>
+    {
+      latest && (
+        <li>
+          <span class="text-muted">Or the latest post: </span>
+          <a href={noteHref(latest)} class="link">
+            {latest.data.title}
+          </a>
+        </li>
+      )
+    }
+  </ul>
+</BaseLayout>

@@ -20,11 +20,6 @@ export interface RabbitHole {
 // anything else you're deep into.
 export const rabbitHoles: readonly RabbitHole[] = [
   {
-    title: 'French, at about B1',
-    note: 'I read French books in the original, slowly, with a dictionary within reach.',
-    link: { label: 'what I’m reading', href: '/reads/' },
-  },
-  {
     title: 'Two wheels',
     note: 'A bicycle most of the time, and a motorbike for the longer trips, like the 1,500 km ride down the Konkan coast from Mumbai to Goa and back.',
   },

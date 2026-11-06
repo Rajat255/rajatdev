@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-import type { BOOK_LANGUAGES, BOOK_STATUSES } from '../content/config';
+import type { BOOK_STATUSES } from '../content/config';
 
 /**
  * Queries over the `books` content collection (one Markdown file per book in
@@ -10,23 +10,6 @@ import type { BOOK_LANGUAGES, BOOK_STATUSES } from '../content/config';
 
 export type BookEntry = CollectionEntry<'books'>;
 export type BookStatus = (typeof BOOK_STATUSES)[number];
-export type BookLanguage = (typeof BOOK_LANGUAGES)[number];
-
-/** A book as plain data, safe to pass to a React island as props. */
-export interface ShelfBook {
-  readonly slug: string;
-  readonly href: string;
-  readonly title: string;
-  readonly translatedTitle?: string;
-  readonly author: string;
-  readonly year: number;
-  readonly status: BookStatus;
-  readonly language: BookLanguage;
-  readonly category: string;
-  readonly notes: string;
-  /** True once there is writing on the book's page. */
-  readonly hasWriting: boolean;
-}
 
 /** Group headings on /reads, one per status, in display order. */
 export const SHELF_TITLES: Record<BookStatus, string> = {
@@ -44,11 +27,10 @@ export const STATUS_TAGS: Record<BookStatus, string> = {
   antilibrary: 'unread',
 };
 
-/** Spelled-out language names for tags and filter labels. */
-export const LANGUAGE_NAMES: Record<BookLanguage, string> = {
-  EN: 'English',
-  FR: 'Français',
-};
+/** Value for `lang` on a book's title: only when it isn't the page's English. */
+export function titleLang(book: BookEntry): string | undefined {
+  return book.data.language.startsWith('en') ? undefined : book.data.language;
+}
 
 /** Root-relative URL of a book's page. */
 export function bookHref(book: BookEntry): string {
@@ -87,21 +69,4 @@ export async function getBooks(): Promise<BookEntry[]> {
 
 export function booksByStatus(books: readonly BookEntry[], status: BookStatus): BookEntry[] {
   return books.filter((book) => book.data.status === status);
-}
-
-export function toShelfBook(book: BookEntry): ShelfBook {
-  const { title, translatedTitle, author, year, status, language, category, notes } = book.data;
-  return {
-    slug: book.slug,
-    href: bookHref(book),
-    title,
-    ...(translatedTitle ? { translatedTitle } : {}),
-    author,
-    year,
-    status,
-    language,
-    category,
-    notes,
-    hasWriting: hasWriting(book),
-  };
 }

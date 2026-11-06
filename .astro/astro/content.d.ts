@@ -159,6 +159,13 @@ declare module 'astro:content' {
   collection: "books";
   data: InferEntrySchema<"books">
 } & { render(): Render[".md"] };
+"jonathan-livingston-seagull.md": {
+	id: "jonathan-livingston-seagull.md";
+  slug: "jonathan-livingston-seagull";
+  body: string;
+  collection: "books";
+  data: InferEntrySchema<"books">
+} & { render(): Render[".md"] };
 "l-etranger.md": {
 	id: "l-etranger.md";
   slug: "l-etranger";
@@ -182,16 +189,16 @@ declare module 'astro:content' {
 } & { render(): Render[".md"] };
 };
 "notes": {
-"assassinating-load-balancers.md": {
-	id: "assassinating-load-balancers.md";
-  slug: "assassinating-load-balancers";
+"how-to-cut-your-aws-bill-by-45-percent.md": {
+	id: "how-to-cut-your-aws-bill-by-45-percent.md";
+  slug: "how-to-cut-your-aws-bill-by-45-percent";
   body: string;
   collection: "notes";
   data: InferEntrySchema<"notes">
 } & { render(): Render[".md"] };
-"notes-from-a-pune-homelab.md": {
-	id: "notes-from-a-pune-homelab.md";
-  slug: "notes-from-a-pune-homelab";
+"notes-from-a-homelab.md": {
+	id: "notes-from-a-homelab.md";
+  slug: "notes-from-a-homelab";
   body: string;
   collection: "notes";
   data: InferEntrySchema<"notes">

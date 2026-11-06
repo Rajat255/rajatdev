@@ -21,7 +21,7 @@ const study = caseFiles.find((file) => file.title.toLowerCase().includes('triage
   description={description}
   jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/builds/triage-agent/', name: 'The Triage Agent', description })]}
 >
-  <PageTitle title="Triage Agent" subtitle="a pipeline breaks; the agent reads it">
+  <PageTitle title="Triage Agent">
     <p>
       At amber I built an agent that watches our CI/CD pipelines. When a build fails it reads the log, asks Kubernetes,
       git, and the cloud provider what changed, decides whether the failure is real or just flaky, and then fixes it,
@@ -31,7 +31,7 @@ const study = caseFiles.find((file) => file.title.toLowerCase().includes('triage
   </PageTitle>
 
   <section aria-labelledby="simulator-heading" class="mt-10">
-    <SectionHeading id="simulator-heading">Try it</SectionHeading>
+    <SectionHeading id="simulator-heading">Simulator</SectionHeading>
     <div class="mt-10">
       <TriageSimulator client:visible />
     </div>
@@ -40,7 +40,7 @@ const study = caseFiles.find((file) => file.title.toLowerCase().includes('triage
   {
     study && (
       <section aria-labelledby="real-heading" class="mt-16">
-        <SectionHeading id="real-heading">The real one, in numbers</SectionHeading>
+        <SectionHeading id="real-heading">In production</SectionHeading>
         <dl class="mt-10 space-y-1">
           {study.metrics.map((metric) => (
             <div class="grid grid-cols-[6.5rem_1fr] gap-3">

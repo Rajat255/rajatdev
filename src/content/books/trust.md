@@ -3,7 +3,7 @@ title: Trust
 author: Hernan Diaz
 year: 2022
 status: reading
-language: EN
+language: en
 category: Fiction · Capital & Narrative
 notes: An investigation into wealth, power, and who gets to write the official version of reality—told across four competing manuscripts that constantly pull the rug out from under the reader.
 ---

@@ -3,11 +3,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BirdDivider from '../../components/ornaments/BirdDivider.astro';
 import { absoluteUrl } from '../../config/site';
 import {
-  LANGUAGE_NAMES,
   STATUS_TAGS,
   bookHref,
   getBooks,
   hasWriting,
+  titleLang,
   type BookEntry,
 } from '../../lib/books';
 import { formatLongDate, toIsoDate } from '../../lib/format';
@@ -34,9 +34,8 @@ interface Props {
 
 const { book, previous, next } = Astro.props;
 const { Content } = await book.render();
-const { title, translatedTitle, author, year, status, language, category, notes, started, finished } = book.data;
+const { title, translatedTitle, author, year, status, category, notes, started, finished } = book.data;
 const written = hasWriting(book);
-const isFrench = language === 'FR';
 const pageTitle = `${title}, by ${author}`;
 const description = `Rajat Khirid on ${title}${translatedTitle ? ` (${translatedTitle})` : ''} by ${author}: ${notes}`;
 ---
@@ -59,11 +58,9 @@ const description = `Rajat Khirid on ${title}${translatedTitle ? ` (${translated
 >
   <article class="pt-14 sm:pt-20">
     <header class="text-center">
-      <p class="smallcaps text-accent">
-        {STATUS_TAGS[status]} · {LANGUAGE_NAMES[language]}
-      </p>
+      <p class="smallcaps text-accent">{STATUS_TAGS[status]}</p>
       <h1 class="mt-3 text-[2rem] font-semibold leading-[1.15] text-ink sm:text-[2.5rem]">
-        <cite class="not-italic" lang={isFrench ? 'fr' : undefined}>{title}</cite>
+        <cite class="not-italic" lang={titleLang(book)}>{title}</cite>
       </h1>
       {translatedTitle && <p class="mt-1 italic text-muted">{translatedTitle}</p>}
       <p class="mt-4 text-ink">

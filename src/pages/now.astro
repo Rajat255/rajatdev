@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageTitle from '../components/site/PageTitle.astro';
 import SectionHeading from '../components/site/SectionHeading.astro';
-import { bookHref, booksByStatus, getBooks } from '../lib/books';
+import { bookHref, booksByStatus, getBooks, titleLang } from '../lib/books';
 import { now } from '../data/now';
-import { formatLongDate } from '../lib/format';
+import { formatMonthYear } from '../lib/format';
 import { personNode, webPageNode, websiteNode } from '../lib/seo/schema';
 
 /**
@@ -23,11 +23,10 @@ const description = 'What Rajat Khirid is focused on at the moment: work, what h
   description={description}
   jsonLd={[websiteNode(), personNode(), webPageNode({ path: '/now/', name: 'Now', description })]}
 >
-  <PageTitle title="Now" subtitle="what I'm doing these days">
+  <PageTitle title="Now">
     <p class="text-center text-muted">
-      Updated <time datetime={now.updated}>{formatLongDate(updated)}</time>, from {now.location}. This is a
-      <a href="https://nownownow.com/about" class="link">now page</a>: what I&rsquo;d tell you if we hadn&rsquo;t
-      spoken in a year.
+      Updated <time datetime={now.updated}>{formatMonthYear(updated)}</time> &middot; Here&rsquo;s what I&rsquo;d
+      tell you if we hadn&rsquo;t spoken in a year.
     </p>
   </PageTitle>
 
@@ -63,7 +62,7 @@ const description = 'What Rajat Khirid is focused on at the moment: work, what h
           {reading.map((book) => (
             <li>
               <a href={bookHref(book)} class="link">
-                <cite class="font-semibold not-italic text-ink" lang={book.data.language === 'FR' ? 'fr' : undefined}>
+                <cite class="font-semibold not-italic text-ink" lang={titleLang(book)}>
                   {book.data.title}
                 </cite>
               </a>

@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "validate:content": "vitest run tests/unit/content-validation.test.ts",
-    "og-card": "node scripts/og-card.mjs"
+    "og-card": "node scripts/og-card.mjs",
+    "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "3.1.9",

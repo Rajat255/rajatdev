@@ -104,7 +104,8 @@ export type SectionKey =
   | 'now'
   | 'about'
   | 'colophon'
-  | 'showcase';
+  | 'showcase'
+  | 'notfound';
 
 export interface NavItem {
   readonly key: SectionKey;
@@ -115,8 +116,7 @@ export interface NavItem {
 /**
  * The top navigation: always these four. The home item's label is drawn by
  * SiteHeader as "r · k" with a crimson middle dot; `label` is its accessible
- * name. The order follows the title: builds (things I've made), threads
- * (things I've written), reads (books I've read).
+ * name.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { key: 'home', label: 'Home', href: '/' },

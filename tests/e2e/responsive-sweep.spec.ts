@@ -28,6 +28,13 @@ const PAGES = [
   '/showcase/',
 ];
 
+test('unknown addresses get the 404 page', async ({ page }) => {
+  const response = await page.goto('/no-such-page/');
+  expect(response?.status()).toBe(404);
+  await expect(page.locator('h1')).toContainText('Not found');
+  await expect(page.locator('nav[aria-label="Main"] a')).toHaveCount(4);
+});
+
 /** Pages every page should link to (top nav plus the footer's "Elsewhere" row). */
 const LINKED_EVERYWHERE = [
   '/builds/',
@@ -115,9 +122,13 @@ test.describe('layout', () => {
     }
   });
 
-  test('old /notes post URLs redirect to /threads', async ({ page }) => {
-    await page.goto('/notes/assassinating-load-balancers/');
-    await expect(page).toHaveURL(/\/threads\/assassinating-load-balancers\/$/);
+  test('old post URLs redirect to the renamed posts', async ({ page }) => {
+    for (const old of ['/notes/assassinating-load-balancers/', '/threads/assassinating-load-balancers/']) {
+      await page.goto(old);
+      await expect(page).toHaveURL(/\/threads\/how-to-cut-your-aws-bill-by-45-percent\/$/);
+    }
+    await page.goto('/notes/how-to-cut-your-aws-bill-by-45-percent/');
+    await expect(page).toHaveURL(/\/threads\/how-to-cut-your-aws-bill-by-45-percent\/$/);
   });
 });
 
@@ -189,13 +200,13 @@ test.describe('interactive parts', () => {
     await expect(page.getByRole('heading', { name: /Automated action/ })).toBeVisible({ timeout: 10_000 });
   });
 
-  test('the shelf filters to French books', async ({ page }) => {
+  test('the shelf is plain HTML, with no filters or language tags', async ({ page }) => {
     await page.goto('/reads/');
-    const button = page.getByRole('button', { name: /^FR/ });
-    await button.scrollIntoViewIfNeeded();
-    await waitForHydration(button);
-    await button.click();
-    await expect(page.getByText('2 of 4')).toBeVisible();
+    await expect(page.locator('main button')).toHaveCount(0);
+    await expect(page.locator('main astro-island')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText(/French|Français/);
+    // Foreign titles still carry `lang` so they are pronounced right.
+    await expect(page.locator('main cite[lang="fr"]').first()).toBeVisible();
   });
 
   test('the now page lists what is being read', async ({ page }) => {
@@ -220,10 +231,11 @@ test.describe('interactive parts', () => {
 
   test('the age counter on /about ticks', async ({ page }) => {
     await page.goto('/about/');
-    const counter = page.locator('main p', { hasText: 'seconds old' });
-    await expect(counter).toContainText(/\d+ years/);
-    const first = await counter.textContent();
-    await page.waitForTimeout(1500);
-    expect(await counter.textContent()).not.toBe(first);
+    await expect(page.locator('main p', { hasText: 'years old' })).toBeVisible();
+    const odometer = page.locator('main [data-odometer]');
+    await expect(odometer).toHaveAttribute('data-age', /^\d+\.\d{6,}$/);
+    const first = await odometer.getAttribute('data-age');
+    await page.waitForTimeout(300);
+    expect(await odometer.getAttribute('data-age')).not.toBe(first);
   });
 });

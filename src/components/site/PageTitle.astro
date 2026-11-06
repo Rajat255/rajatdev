@@ -1,21 +1,19 @@
 ---
 /**
  * PageTitle.astro — the centred title at the top of an inner page, in the
- * same spaced capitals as the front page: a crimson first line, an optional
- * smaller second line, then an optional short introduction.
+ * same spaced crimson capitals as the front page, then an optional short
+ * introduction. No tagline under the title: the title says what the page is.
  */
 interface Props {
   title: string;
-  subtitle?: string;
 }
 
-const { title, subtitle } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <div class="pb-4 pt-14 text-center sm:pt-20">
-  <h1 class="font-serif uppercase leading-tight">
-    <span class="block pl-[0.18em] text-3xl font-semibold tracking-[0.18em] text-accent sm:text-4xl">{title}</span>
-    {subtitle && <span class="mt-2 block pl-[0.15em] text-base tracking-[0.15em] text-ink sm:text-lg">{subtitle}</span>}
+  <h1 class="block pl-[0.18em] font-serif text-3xl font-semibold uppercase leading-tight tracking-[0.18em] text-accent sm:text-4xl">
+    {title}
   </h1>
   {
     Astro.slots.has('default') && (

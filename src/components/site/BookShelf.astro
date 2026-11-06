@@ -1,0 +1,67 @@
+---
+/**
+ * BookShelf.astro — the books on /reads, grouped by shelf ("Reading now",
+ * "Finished", …), each with its status and a short margin note. Each title
+ * links to the book's own page, where the longer writing lives.
+ *
+ * Plain HTML: there is nothing to filter or toggle, so no JavaScript ships.
+ */
+import { SHELF_ORDER, SHELF_TITLES, STATUS_TAGS, bookHref, hasWriting, titleLang, type BookEntry } from '../../lib/books';
+
+interface Props {
+  books: readonly BookEntry[];
+}
+
+const { books } = Astro.props;
+const shelves = SHELF_ORDER.map((status) => ({
+  status,
+  books: books.filter((book) => book.data.status === status),
+})).filter((shelf) => shelf.books.length > 0);
+---
+
+<div class="space-y-12">
+  {
+    shelves.map((shelf) => (
+      <section aria-labelledby={`shelf-${shelf.status}`}>
+        <h2 id={`shelf-${shelf.status}`} class="text-center text-lg font-semibold tracking-[0.18em] text-accent">
+          {SHELF_TITLES[shelf.status]}
+        </h2>
+        <ul class="mt-6 space-y-8" role="list">
+          {shelf.books.map((book) => {
+            const { title, translatedTitle, author, year, status, category, notes } = book.data;
+            return (
+              <li>
+                <p class="flex flex-wrap items-baseline justify-between gap-x-4">
+                  <span>
+                    <a href={bookHref(book)} class="link">
+                      <cite class="text-[1.35rem] font-semibold not-italic text-ink" lang={titleLang(book)}>
+                        {title}
+                      </cite>
+                    </a>
+                    {translatedTitle && <span class="italic text-muted"> ({translatedTitle})</span>}
+                  </span>
+                  <span class="smallcaps text-muted">{STATUS_TAGS[status]}</span>
+                </p>
+                <p class="italic text-ink">
+                  {author}, {year}
+                </p>
+                <p class="mt-2 border-l-2 border-accent/60 pl-4 text-ink">{notes}</p>
+                <p class="mt-1 pl-4 text-base text-muted">
+                  {category}
+                  {hasWriting(book) && (
+                    <>
+                      <span aria-hidden="true"> · </span>
+                      <a href={bookHref(book)} class="link">
+                        Read my notes<span class="sr-only"> on {title}</span>
+                      </a>
+                    </>
+                  )}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))
+  }
+</div>

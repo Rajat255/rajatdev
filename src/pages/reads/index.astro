@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BookShelf from '../../components/islands/BookShelf.tsx';
+import BookShelf from '../../components/site/BookShelf.astro';
 import PageTitle from '../../components/site/PageTitle.astro';
 import { absoluteUrl } from '../../config/site';
-import { LANGUAGE_NAMES, SHELF_ORDER, SHELF_TITLES, STATUS_TAGS, getBooks, toShelfBook } from '../../lib/books';
+import { getBooks } from '../../lib/books';
 import { bookListNode, personNode, webPageNode, websiteNode } from '../../lib/seo/schema';
 
 /**
@@ -12,7 +12,7 @@ import { bookListNode, personNode, webPageNode, websiteNode } from '../../lib/se
  */
 const books = await getBooks();
 const description =
-  'Books Rajat Khirid is reading and has read, in English and French, with a short note on each and a page of his own writing about them.';
+  'Books Rajat Khirid is reading and has read, with a short note on each and a page of his own writing about them.';
 ---
 
 <BaseLayout
@@ -32,22 +32,14 @@ const description =
     bookListNode(books, '/reads/'),
   ]}
 >
-  <PageTitle title="Reads" subtitle="books I've read">
+  <PageTitle title="Reads">
     <p class="text-center text-muted">
-      What I&rsquo;m reading and what I&rsquo;ve finished, with a note on each. The French ones are read in the
-      original, slowly, at about a B1 level. What&rsquo;s on the nightstand this month is also on the
-      <a href="/now/" class="link">now page</a>.
+      What I&rsquo;m reading and what I&rsquo;ve finished, with a note on each. What&rsquo;s on the nightstand this
+      month is also on the <a href="/now/" class="link">now page</a>.
     </p>
   </PageTitle>
 
   <div class="mt-10">
-    <BookShelf
-      client:visible
-      books={books.map(toShelfBook)}
-      shelfOrder={SHELF_ORDER}
-      shelfTitles={SHELF_TITLES}
-      statusTags={STATUS_TAGS}
-      languageNames={LANGUAGE_NAMES}
-    />
+    <BookShelf books={books} />
   </div>
 </BaseLayout>

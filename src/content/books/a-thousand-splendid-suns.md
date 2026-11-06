@@ -3,7 +3,7 @@ title: A Thousand Splendid Suns
 author: Khaled Hosseini
 year: 2007
 status: completed
-language: EN
+language: en
 category: Historical Fiction
 notes: A devastating, deeply human portrait of endurance, unlikely friendship, and quiet defiance across generations in Kabul.
 ---

@@ -45,7 +45,7 @@ export function personNode(): JsonLdNode {
     },
     ...(current ? { worksFor: { '@type': 'Organization', name: current.company } } : {}),
     knowsAbout: profile.knowsAbout,
-    knowsLanguage: ['en', 'fr'],
+    knowsLanguage: ['en', 'mr', 'hi'],
     hasCredential: certifications.map((cert) => ({
       '@type': 'EducationalOccupationalCredential',
       name: cert.name,
@@ -154,7 +154,7 @@ function bookItem(book: BookEntry): Record<string, unknown> {
     name: title,
     ...(translatedTitle ? { alternateName: translatedTitle } : {}),
     author: { '@type': 'Person', name: author },
-    inLanguage: language.toLowerCase(),
+    inLanguage: language,
     datePublished: String(year),
     genre: category,
     url,

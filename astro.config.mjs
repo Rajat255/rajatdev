@@ -22,7 +22,27 @@ import { SITE_CONFIG, showcaseIsPublic } from './src/config/site.ts';
  * Paths kept out of the sitemap: the /notes redirect pages, and /showcase
  * while it is unlisted.
  */
-const unlisted = ['/notes/', ...(showcaseIsPublic() ? [] : ['/showcase/'])];
+/**
+ * Posts whose slug changed after they went live: old slug → new slug. Each old
+ * address, under /threads and /notes, redirects to the new one.
+ */
+const renamedPosts = {
+  'assassinating-load-balancers': 'how-to-cut-your-aws-bill-by-45-percent',
+  'notes-from-a-pune-homelab': 'notes-from-a-homelab',
+};
+const renamedRedirects = Object.fromEntries(
+  Object.entries(renamedPosts).flatMap(([from, to]) => [
+    [`/threads/${from}`, `/threads/${to}/`],
+    [`/notes/${from}`, `/threads/${to}/`],
+  ]),
+);
+
+const unlisted = [
+  '/notes/',
+  '/404',
+  ...Object.keys(renamedPosts).map((slug) => `/threads/${slug}/`),
+  ...(showcaseIsPublic() ? [] : ['/showcase/']),
+];
 
 export default defineConfig({
   site: SITE_CONFIG.url,
@@ -33,6 +53,7 @@ export default defineConfig({
   // src/pages/notes/[slug].astro (static builds can't do dynamic redirects here).
   redirects: {
     '/notes': '/threads',
+    ...renamedRedirects,
   },
   devToolbar: { enabled: false },
   integrations: [

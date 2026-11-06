@@ -17,6 +17,11 @@ export function formatLongDate(date: Date): string {
   }).format(date);
 }
 
+/** "November 2026", for the /now page's "Updated" line. */
+export function formatMonthYear(date: Date): string {
+  return new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+}
+
 /** "Oct" for the month column in essay lists (set in small caps). */
 export function formatMonthAbbr(date: Date): string {
   // en-GB abbreviates September as "Sept"; the list wants exactly three letters.
